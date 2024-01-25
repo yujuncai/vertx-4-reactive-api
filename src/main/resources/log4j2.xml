@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="info" packages="org.ysten.gdog.log4j2">
+    <Properties>
+        <!--日志文件保存路径-->
+        <Property name="LOG_PATH">D:\\LOG\\vertx\\</Property>
+        <!--应用名称-->
+        <Property name="APP_NAME">vertx-log</Property>
+        <!--日志文件最大容量， 超过最大容量后日志文件分割-->
+        <Property name="MAX_FILE_SIZE">50MB</Property>
+        <!--分割日志的最大次数-->
+        <Property name="I_MAX">40</Property>
+        <!--日志输出模版-->
+        <Property name="PATTERN_LAYOUT">%d [%X{traceId}] [%t] %level (%F %M %L) - %msg%n</Property>
+
+        <Property name="CONSOLE_LAYOUT"
+                  value="%style{%d{yyyy-MM-dd HH:mm:ss.SSS}}{Blue,Bright} %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=grey, TRACE=blue} %style{%pid}{magenta} --- %style{[%4.15t] %-10.40c{1.}}{cyan,Bright} : %m%n%ex"/>
+    </Properties>
+    <appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout pattern="${CONSOLE_LAYOUT}" />
+        </Console>
+        <RollingFile name="ERROR-FILE"
+                     fileName="${LOG_PATH}/${APP_NAME}_error.log"
+                     filePattern="${LOG_PATH}/$${date:yyyy-MM}/${APP_NAME}_error_%d{yyyy-MM-dd}_%i.log">
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="${PATTERN_LAYOUT}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${MAX_FILE_SIZE}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${I_MAX}"/>
+        </RollingFile>
+        <RollingFile name="INFO-FILE"
+                     fileName="${LOG_PATH}/${APP_NAME}_info.log"
+                     filePattern="${LOG_PATH}/$${date:yyyy-MM}/${APP_NAME}_info_%d{yyyy-MM-dd}_%i.log">
+            <PatternLayout pattern="${PATTERN_LAYOUT}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${MAX_FILE_SIZE}"/>
+            </Policies>
+            <DefaultRolloverStrategy max="${I_MAX}"/>
+        </RollingFile>
+    </appenders>
+    <loggers>
+        <Root level="INFO" includeLocation="true">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="ERROR-FILE" />
+            <appender-ref ref="INFO-FILE" />
+        </Root>
+    </loggers>
+</configuration>
