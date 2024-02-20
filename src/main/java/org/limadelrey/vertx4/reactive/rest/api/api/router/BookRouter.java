@@ -5,6 +5,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.LoggerFormat;
 import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
 
@@ -28,7 +29,7 @@ public class BookRouter {
      * @param router Router
      */
     public void setRouter(Router router) {
-        router.mountSubRouter("/api/v1", buildBookRouter());
+        router.mountSubRouter("/api/v1", buildBookRouter());;
     }
 
     /**
@@ -39,7 +40,7 @@ public class BookRouter {
         final Router bookRouter = Router.router(vertx);
 
         bookRouter.route("/books*").handler(BodyHandler.create()).handler(LoggerHandler.create(LoggerFormat.DEFAULT));
-        bookRouter.get("/books").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
+        bookRouter.get("/books").handler(bookValidationHandler.readAll()).handler(s -> bookHandler.readAll(s));
         bookRouter.get("/books/:id").handler(bookValidationHandler.readOne()).handler(bookHandler::readOne);
         bookRouter.post("/books").handler(bookValidationHandler.create()).handler(bookHandler::create);
         bookRouter.put("/books/:id").handler(bookValidationHandler.update()).handler(bookHandler::update);

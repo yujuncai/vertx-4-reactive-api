@@ -19,10 +19,10 @@ public class Main {
 
         final Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
                 new MicrometerMetricsOptions()
-                        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(true))
-                        .setJvmMetricsEnabled(true)
+                        .setPrometheusOptions(new VertxPrometheusOptions().setEnabled(false))
+                        .setJvmMetricsEnabled(false)
                         .setMicrometerRegistry(registry)
-                        .setEnabled(true)));
+                        .setEnabled(false)));
 
         vertx.deployVerticle(MainVerticle.class.getName())
                 .onFailure(throwable -> System.exit(-1));

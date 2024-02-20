@@ -2,8 +2,8 @@ package org.limadelrey.vertx4.reactive.rest.api.utils;
 
 public enum LogUtils {
 
-    REGULAR_CALL_SUCCESS_MESSAGE("%s called w/ success - %s"),
-    REGULAR_CALL_ERROR_MESSAGE("%s called w/ error - %s"),
+    REGULAR_CALL_SUCCESS_MESSAGE("%s called  success - %s"),
+    REGULAR_CALL_ERROR_MESSAGE("%s called  error - %s"),
     NO_BOOK_WITH_ID_MESSAGE("No book with id %d"),
     CANNOT_CREATE_BOOK_MESSAGE("Cannot create a new book"),
     RUN_HTTP_SERVER_SUCCESS_MESSAGE("HTTP server running on port %s"),

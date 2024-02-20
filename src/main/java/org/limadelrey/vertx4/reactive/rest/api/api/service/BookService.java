@@ -41,7 +41,7 @@ public class BookService {
                     final int page = QueryUtils.getPage(p);
                     final int limit = QueryUtils.getLimit(l);
                     final int offset = QueryUtils.getOffset(page, limit);
-
+                    LOGGER.info("page {}  , limit {} ,  offset {}" , page, limit, offset);
                     return bookRepository.count(connection)
                             .flatMap(total ->
                                     bookRepository.selectAll(connection, limit, offset)
