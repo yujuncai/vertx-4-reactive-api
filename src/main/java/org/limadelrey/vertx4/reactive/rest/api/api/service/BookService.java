@@ -70,9 +70,6 @@ public class BookService {
      */
     public Future<BookGetByIdResponse> readOne(int id) {
 
-        System.out.println(dbClient);
-
-
         return dbClient.withTransaction(
                 connection -> bookRepository.selectById(connection, id)
                         .map(BookGetByIdResponse::new))
