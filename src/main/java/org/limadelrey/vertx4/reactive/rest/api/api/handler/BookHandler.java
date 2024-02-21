@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;
+import org.limadelrey.vertx4.reactive.rest.api.R.Result;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
@@ -39,7 +40,7 @@ public class BookHandler {
         final String limit = rc.queryParams().get(LIMIT_PARAMETER);
 
         return bookService.readAll(page, limit)
-                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, success))
+                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<BookGetAllResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 
@@ -55,7 +56,7 @@ public class BookHandler {
         final String id = rc.pathParam(ID_PARAMETER);
 
         return bookService.readOne(Integer.parseInt(id))
-                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, success))
+                .onSuccess(success -> ResponseUtils.buildOkResponse(rc,  new Result<BookGetByIdResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 
@@ -71,7 +72,7 @@ public class BookHandler {
         final Book book = rc.getBodyAsJson().mapTo(Book.class);
 
         return bookService.create(book)
-                .onSuccess(success -> ResponseUtils.buildCreatedResponse(rc, success))
+                .onSuccess(success -> ResponseUtils.buildCreatedResponse(rc, new Result<BookGetByIdResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 
@@ -88,7 +89,7 @@ public class BookHandler {
         final Book book = rc.getBodyAsJson().mapTo(Book.class);
 
         return bookService.update(Integer.parseInt(id), book)
-                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, success))
+                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<BookGetByIdResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 
@@ -102,6 +103,7 @@ public class BookHandler {
      */
     public Future<Void> delete(RoutingContext rc) {
         final String id = rc.pathParam(ID_PARAMETER);
+
 
         return bookService.delete(Integer.parseInt(id))
                 .onSuccess(success -> ResponseUtils.buildNoContentResponse(rc))
