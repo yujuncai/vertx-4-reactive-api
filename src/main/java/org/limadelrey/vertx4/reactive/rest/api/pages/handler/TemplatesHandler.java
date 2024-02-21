@@ -1,4 +1,4 @@
-package org.limadelrey.vertx4.reactive.rest.api.api.handler;
+package org.limadelrey.vertx4.reactive.rest.api.pages.handler;
 
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;

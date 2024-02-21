@@ -7,10 +7,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
-import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.handler.TemplateHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
-import io.vertx.ext.web.templ.rocker.RockerTemplateEngine;
 import io.vertx.mysqlclient.MySQLPool;
 
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
@@ -20,7 +17,6 @@ import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.BookRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.HealthCheckRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.MetricsRouter;
-import org.limadelrey.vertx4.reactive.rest.api.api.router.TemplatesRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
