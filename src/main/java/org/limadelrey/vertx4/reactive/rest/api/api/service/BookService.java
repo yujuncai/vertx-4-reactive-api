@@ -3,6 +3,7 @@ package org.limadelrey.vertx4.reactive.rest.api.api.service;
 import com.google.inject.Guice;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
+import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.guice.MainModule;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class BookService {
     private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
 
     private final MySQLPool dbClient= DbUtils.getInstance();
-    private final BookRepository bookRepository=Guice.createInjector(new MainModule()).getInstance(BookRepository.class);
+    private final BookRepository bookRepository= GuiceUtil.getGuice().getInstance(BookRepository.class);
 
 
 

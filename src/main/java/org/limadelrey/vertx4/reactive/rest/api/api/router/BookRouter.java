@@ -9,15 +9,17 @@ import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
+import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.guice.MainModule;
 
 public class BookRouter {
 
     private final Vertx vertx=Vertx.currentContext().owner();
-    private final BookHandler bookHandler= Guice.createInjector(new MainModule()).getInstance(BookHandler.class);
+    private final BookHandler bookHandler= GuiceUtil.getGuice().getInstance(BookHandler.class);
     ;
-    private final BookValidationHandler bookValidationHandler=Guice.createInjector(new MainModule()).getInstance(BookValidationHandler.class);;
+    private final BookValidationHandler bookValidationHandler=GuiceUtil.getGuice().getInstance(BookValidationHandler.class);
 
     public BookRouter() {
 
