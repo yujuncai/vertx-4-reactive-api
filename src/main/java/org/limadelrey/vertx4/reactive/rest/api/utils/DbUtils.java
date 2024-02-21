@@ -2,8 +2,6 @@ package org.limadelrey.vertx4.reactive.rest.api.utils;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
-import io.vertx.mysqlclient.MySQLConnectOptions;
-import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;

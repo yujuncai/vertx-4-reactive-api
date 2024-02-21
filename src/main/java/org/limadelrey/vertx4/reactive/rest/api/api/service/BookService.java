@@ -2,7 +2,6 @@ package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
-import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.pgclient.PgPool;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;

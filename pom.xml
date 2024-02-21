@@ -19,7 +19,7 @@
         <micrometer.version>1.6.3</micrometer.version>
         <testcontainers.version>1.15.1</testcontainers.version>
 
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <jacoco-plugin.version>0.8.6</jacoco-plugin.version>
@@ -301,7 +301,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <release>11</release>
+                    <source>17</source> <!-- 源代码使用的JDK版本 -->
+                    <target>17</target> <!-- 需要生成的目标class文件的编译版本 -->
+
                 </configuration>
             </plugin>
 
