@@ -43,6 +43,7 @@ public class MainVerticle extends AbstractVerticle {
     private Future<String> deployApiVerticle(Vertx vertx) {
         return vertx.deployVerticle(ApiVerticle.class.getName(),new
                 DeploymentOptions().setWorker(false).setInstances( Runtime.getRuntime().availableProcessors()));
+        //.setThreadingModel(ThreadingModel.VIRTUAL_THREAD))
 
     }
     private Future<String> deployTcpVerticle(Vertx vertx) {
