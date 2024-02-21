@@ -3,6 +3,7 @@ package org.limadelrey.vertx4.reactive.rest.api.api.service;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.mysqlclient.MySQLPool;
+import io.vertx.pgclient.PgPool;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
@@ -21,7 +22,7 @@ public class BookService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
 
-    private final MySQLPool dbClient= DbUtils.getInstance();
+    private final PgPool dbClient= DbUtils.getInstance();
     private final BookRepository bookRepository= GuiceUtil.getGuice().getInstance(BookRepository.class);
 
 

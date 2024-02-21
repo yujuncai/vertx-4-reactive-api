@@ -4,6 +4,8 @@ import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
+import io.vertx.pgclient.PgConnectOptions;
+import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
 import org.flywaydb.core.api.configuration.Configuration;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
@@ -22,8 +24,8 @@ public class DbUtils {
 
     }
     private static final DbUtils instance = new DbUtils();
-    private volatile  static MySQLPool pool ;
-    public static MySQLPool getInstance() {
+    private volatile  static PgPool pool ;
+    public static PgPool getInstance() {
 
         if (pool == null) {
             synchronized (DbUtils.class) {
@@ -44,7 +46,25 @@ public class DbUtils {
      *
      * @return PostgreSQL pool
      */
+
     @Singleton
+    public static PgPool buildDbClient() {
+        final Properties properties = ConfigUtils.getInstance().getProperties();
+
+        final PgConnectOptions connectOptions = new PgConnectOptions()
+                .setPort(Integer.parseInt(properties.getProperty(PORT_CONFIG)))
+                .setHost(properties.getProperty(HOST_CONFIG))
+                .setDatabase(properties.getProperty(DATABASE_CONFIG))
+                .setUser(properties.getProperty(USERNAME_CONFIG))
+                .setPassword(properties.getProperty(PASSWORD_CONFIG));
+
+        final PoolOptions poolOptions = new PoolOptions().setMaxSize(25);
+        return PgPool.pool(Vertx.currentContext().owner(), connectOptions, poolOptions);
+    }
+
+
+
+  /*  @Singleton
     private   MySQLPool buildDbClient() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
         MySQLConnectOptions connectOptions = new MySQLConnectOptions()
@@ -58,7 +78,7 @@ public class DbUtils {
         Vertx owner = Vertx.currentContext().owner();
         MySQLPool client = MySQLPool.pool(owner, connectOptions, poolOptions);
         return client;
-    }
+    }*/
 
     /**
      * Build Flyway configuration that is used to run migrations
@@ -68,8 +88,8 @@ public class DbUtils {
     public static Configuration buildMigrationsConfiguration() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
         //jdbc:mysql://localhost:3306/xxx?useUnicode=true&characterEncoding=utf8&useSSL=true";
-        final String url = "jdbc:mysql://" + properties.getProperty(HOST_CONFIG) + ":" + properties.getProperty(PORT_CONFIG) + "/" + properties.getProperty(DATABASE_CONFIG)+"?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false";
-
+      //  final String url = "jdbc:mysql://" + properties.getProperty(HOST_CONFIG) + ":" + properties.getProperty(PORT_CONFIG) + "/" + properties.getProperty(DATABASE_CONFIG)+"?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false";
+        final String url = "jdbc:postgresql://" + properties.getProperty(HOST_CONFIG) + ":" + properties.getProperty(PORT_CONFIG) + "/" + properties.getProperty(DATABASE_CONFIG);
         return new FluentConfiguration().dataSource(url, properties.getProperty(USERNAME_CONFIG), properties.getProperty(PASSWORD_CONFIG));
     }
 

@@ -15,7 +15,7 @@
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <jackson.version>2.12.0</jackson.version>
         <flyway.version>7.5.0</flyway.version>
-       <!-- <postgresql.version>42.3.3</postgresql.version>-->
+      <postgresql.version>42.7.1</postgresql.version>
         <micrometer.version>1.6.3</micrometer.version>
         <testcontainers.version>1.15.1</testcontainers.version>
 
@@ -79,15 +79,15 @@
             <artifactId>vertx-web-validation</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/io.vertx/vertx-pg-client
+        <!-- https://mvnrepository.com/artifact/io.vertx/vertx-pg-client-->
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-pg-client</artifactId>
-        </dependency>-->
-        <dependency>
+        </dependency>
+       <!-- <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-mysql-client</artifactId>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>io.vertx</groupId>
@@ -106,17 +106,17 @@
             <version>${flyway.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
-        </dependency>-->
-        <dependency>
+        </dependency>
+       <!-- <dependency>
              <groupId>mysql</groupId>
              <artifactId>mysql-connector-java</artifactId>
              <version>8.0.13</version>
-        </dependency>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/io.vertx/vertx-config -->
         <dependency>
             <groupId>io.vertx</groupId>
@@ -216,13 +216,13 @@
             <version>${testcontainers.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.testcontainers/postgresql
+        <!-- https://mvnrepository.com/artifact/org.testcontainers/postgresql-->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
-        </dependency>-->
+        </dependency>
 
 
 
