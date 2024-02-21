@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.utils;
 
+import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
@@ -17,17 +18,34 @@ public class DbUtils {
     private static final String USERNAME_CONFIG = "datasource.username";
     private static final String PASSWORD_CONFIG = "datasource.password";
 
-    private DbUtils() {
+    public DbUtils() {
 
     }
+    private static final DbUtils instance = new DbUtils();
+    private volatile  static MySQLPool pool ;
+    public static MySQLPool getInstance() {
+
+        if (pool == null) {
+            synchronized (DbUtils.class) {
+                if (pool == null) {
+                    pool = instance.buildDbClient();
+                }
+            }
+        }
+        return pool;
+    }
+
+
+
 
     /**
      * Build DB client that is used to manage a pool of connections
      *
-     * @param vertx Vertx context
+     *
      * @return PostgreSQL pool
      */
-    public static MySQLPool buildDbClient(Vertx vertx) {
+    @Singleton
+    private   MySQLPool buildDbClient() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
         MySQLConnectOptions connectOptions = new MySQLConnectOptions()
                 .setPort(Integer.parseInt(properties.getProperty(PORT_CONFIG)))
@@ -37,8 +55,8 @@ public class DbUtils {
                 .setPassword(properties.getProperty(PASSWORD_CONFIG));
         PoolOptions poolOptions = new PoolOptions()
                 .setMaxSize(15);
-
-        MySQLPool client = MySQLPool.pool(vertx, connectOptions, poolOptions);
+        Vertx owner = Vertx.currentContext().owner();
+        MySQLPool client = MySQLPool.pool(owner, connectOptions, poolOptions);
         return client;
     }
 

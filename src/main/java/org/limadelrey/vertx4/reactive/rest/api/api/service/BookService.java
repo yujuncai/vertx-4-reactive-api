@@ -1,7 +1,10 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
+import com.google.inject.Guice;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
+import org.limadelrey.vertx4.reactive.rest.api.guice.MainModule;
+import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.vertx.mysqlclient.MySQLPool;
@@ -19,14 +22,13 @@ public class BookService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
 
-    private final MySQLPool dbClient;
-    private final BookRepository bookRepository;
+    private final MySQLPool dbClient= DbUtils.getInstance();
+    private final BookRepository bookRepository=Guice.createInjector(new MainModule()).getInstance(BookRepository.class);
 
-    public BookService(MySQLPool dbClient,
-                       BookRepository bookRepository) {
-        this.dbClient = dbClient;
 
-        this.bookRepository = bookRepository;
+
+    public BookService() {
+
     }
 
     /**
@@ -38,6 +40,11 @@ public class BookService {
      */
     public Future<BookGetAllResponse> readAll(String p,
                                               String l) {
+
+
+        System.out.println(DbUtils.getInstance());
+        System.out.println(DbUtils.getInstance());
+
         return dbClient.withTransaction(
                 connection -> {
                     final int page = QueryUtils.getPage(p);

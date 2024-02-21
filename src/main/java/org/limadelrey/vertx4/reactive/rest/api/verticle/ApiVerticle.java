@@ -34,11 +34,12 @@ public class ApiVerticle extends AbstractVerticle {
     private static final String HTTP_PORT = "http.port";
     @Override
     public void start(Promise<Void> promise) {
-        final MySQLPool dbClient = DbUtils.buildDbClient(vertx);
-        final BookRepository bookRepository = new BookRepository();
-        final BookService bookService = new BookService(dbClient, bookRepository);
+       // final MySQLPool dbClient = DbUtils.buildDbClient();
+      //  final BookRepository bookRepository = new BookRepository();
+
+        final BookService bookService = new BookService();
         final BookHandler bookHandler = new BookHandler(bookService);
-        final BookValidationHandler bookValidationHandler = new BookValidationHandler(vertx);
+        final BookValidationHandler bookValidationHandler = new BookValidationHandler();
         final BookRouter bookRouter = new BookRouter(vertx, bookHandler, bookValidationHandler);
 
         final Router router = Router.router(vertx);
@@ -50,7 +51,7 @@ public class ApiVerticle extends AbstractVerticle {
                );
         router.route().handler(TimeoutHandler.create(5000));
         ErrorHandler.buildHandler(router);
-        HealthCheckRouter.setRouter(vertx, router, dbClient);
+        //HealthCheckRouter.setRouter(vertx, router, dbClient);
         MetricsRouter.setRouter(router);
         bookRouter.setRouter(router);
 

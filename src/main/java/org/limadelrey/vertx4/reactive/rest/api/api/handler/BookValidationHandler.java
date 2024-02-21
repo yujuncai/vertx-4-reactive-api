@@ -19,10 +19,10 @@ import static io.vertx.json.schema.draft7.dsl.Keywords.maximum;
 @Singleton
 public class BookValidationHandler {
 
-    private final Vertx vertx;
+    private final Vertx vertx=  Vertx.currentContext().owner();;
 
-    public BookValidationHandler(Vertx vertx) {
-        this.vertx = vertx;
+    public BookValidationHandler() {
+
     }
 
     /**

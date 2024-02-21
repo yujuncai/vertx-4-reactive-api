@@ -7,6 +7,6 @@ import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 public class MainModule extends AbstractModule {
     @Override
     protected void configure() {
-
+       // bind(BookRepository.class).to(BookService.class);
     }
 }
