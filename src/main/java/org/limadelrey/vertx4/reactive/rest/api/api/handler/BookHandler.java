@@ -1,6 +1,5 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
-import com.google.inject.Guice;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;
@@ -8,10 +7,8 @@ import org.limadelrey.vertx4.reactive.rest.api.R.Result;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
-import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
-import org.limadelrey.vertx4.reactive.rest.api.guice.MainModule;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
 @Singleton
 public class BookHandler {

@@ -1,20 +1,18 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
-import com.google.inject.Guice;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
-import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
-import org.limadelrey.vertx4.reactive.rest.api.guice.MainModule;
-import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.vertx.mysqlclient.MySQLPool;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
+import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
+import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.QueryUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,13 +74,10 @@ public class BookService {
 
 
         return dbClient.withTransaction(
-                connection -> {
-
-                    return bookRepository.selectById(connection, id)
-                            .map(BookGetByIdResponse::new);
-                })
+                connection -> bookRepository.selectById(connection, id)
+                        .map(BookGetByIdResponse::new))
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read one book", success)))
-                .onFailure(throwable -> throwable.printStackTrace());
+                .onFailure(Throwable::printStackTrace);
     }
  //LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read one book", throwable.getMessage()))
     /**
@@ -93,10 +88,8 @@ public class BookService {
      */
     public Future<BookGetByIdResponse> create(Book book) {
         return dbClient.withTransaction(
-                connection -> {
-                    return bookRepository.insert(connection, book)
-                            .map(BookGetByIdResponse::new);
-                })
+                connection -> bookRepository.insert(connection, book)
+                        .map(BookGetByIdResponse::new))
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Create one book", success)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Create one book", throwable.getMessage())));
     }
@@ -113,10 +106,8 @@ public class BookService {
         book.setId(id);
 
         return dbClient.withTransaction(
-                connection -> {
-                    return bookRepository.update(connection, book)
-                            .map(BookGetByIdResponse::new);
-                })
+                connection -> bookRepository.update(connection, book)
+                        .map(BookGetByIdResponse::new))
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Update one book", success)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Update one book", throwable.getMessage())));
     }
@@ -129,9 +120,7 @@ public class BookService {
      */
     public Future<Void> delete(Integer id) {
         return dbClient.withTransaction(
-                connection -> {
-                    return bookRepository.delete(connection, id);
-                })
+                connection -> bookRepository.delete(connection, id))
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Delete one book", id)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete one book", throwable.getMessage())));
     }

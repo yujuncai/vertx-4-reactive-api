@@ -1,27 +1,16 @@
 package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
-
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
-import io.vertx.mysqlclient.MySQLPool;
-
-import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
-import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.ErrorHandler;
-import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.BookRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.HealthCheckRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.MetricsRouter;
-import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
-import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +52,7 @@ public class ApiVerticle extends AbstractVerticle {
                                  Router router) {
 
         final Properties properties = ConfigUtils.getInstance().getProperties();
-        final   Integer port=  Integer.parseInt(properties.getProperty(HTTP_PORT));
+        final   int port=  Integer.parseInt(properties.getProperty(HTTP_PORT));
         vertx.createHttpServer()
                 .requestHandler(router)
                 .listen(port, http -> {
