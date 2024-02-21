@@ -6,7 +6,7 @@
 [3] https://www.techempower.com/benchmarks/
 
 Eclipse Vert.x ™ JVM 上的反应式应用程序
-基于vertx4 + mysql 写的一个 crud 的demo
+基于vertx4 + mysql/postgresql 写的一个 crud 的demo
 附带一个简单的长连接demo
 
 
