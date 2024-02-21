@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
+import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.validation.RequestPredicate;
 import io.vertx.ext.web.validation.ValidationHandler;
@@ -15,7 +16,7 @@ import static io.vertx.json.schema.common.dsl.Keywords.maxLength;
 import static io.vertx.json.schema.common.dsl.Keywords.minLength;
 import static io.vertx.json.schema.common.dsl.Schemas.*;
 import static io.vertx.json.schema.draft7.dsl.Keywords.maximum;
-
+@Singleton
 public class BookValidationHandler {
 
     private final Vertx vertx;

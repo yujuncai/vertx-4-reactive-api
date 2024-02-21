@@ -36,7 +36,7 @@ public class DbUtils {
                 .setUser(properties.getProperty(USERNAME_CONFIG))
                 .setPassword(properties.getProperty(PASSWORD_CONFIG));
         PoolOptions poolOptions = new PoolOptions()
-                .setMaxSize(5);
+                .setMaxSize(15);
 
         MySQLPool client = MySQLPool.pool(vertx, connectOptions, poolOptions);
         return client;

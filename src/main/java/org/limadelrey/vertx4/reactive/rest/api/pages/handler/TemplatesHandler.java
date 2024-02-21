@@ -24,7 +24,6 @@ public class TemplatesHandler {
     }
 
 
-
     public Future<Void> basicPage(RoutingContext ctx) {
         ctx.put("name", "HAHAHAHAH");
         ctx.next();

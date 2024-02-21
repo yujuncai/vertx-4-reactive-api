@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
+import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
@@ -7,7 +8,7 @@ import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
-
+@Singleton
 public class BookHandler {
 
     private static final String ID_PARAMETER = "id";

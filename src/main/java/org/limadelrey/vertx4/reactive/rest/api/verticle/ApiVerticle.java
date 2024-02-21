@@ -1,5 +1,7 @@
 package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -33,7 +35,6 @@ public class ApiVerticle extends AbstractVerticle {
     @Override
     public void start(Promise<Void> promise) {
         final MySQLPool dbClient = DbUtils.buildDbClient(vertx);
-
         final BookRepository bookRepository = new BookRepository();
         final BookService bookService = new BookService(dbClient, bookRepository);
         final BookHandler bookHandler = new BookHandler(bookService);
@@ -50,7 +51,6 @@ public class ApiVerticle extends AbstractVerticle {
         router.route().handler(TimeoutHandler.create(5000));
         ErrorHandler.buildHandler(router);
         HealthCheckRouter.setRouter(vertx, router, dbClient);
-
         MetricsRouter.setRouter(router);
         bookRouter.setRouter(router);
 

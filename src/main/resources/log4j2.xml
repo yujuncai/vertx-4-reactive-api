@@ -2,13 +2,13 @@
 <configuration status="info" packages="org.ysten.gdog.log4j2">
     <Properties>
         <!--日志文件保存路径-->
-        <Property name="LOG_PATH">D:\\LOG\\vertx\\</Property>
+        <Property name="LOG_PATH">./logs/vertx</Property>
         <!--应用名称-->
         <Property name="APP_NAME">vertx-log</Property>
         <!--日志文件最大容量， 超过最大容量后日志文件分割-->
         <Property name="MAX_FILE_SIZE">50MB</Property>
         <!--分割日志的最大次数-->
-        <Property name="I_MAX">40</Property>
+        <Property name="I_MAX">50</Property>
         <!--日志输出模版-->
         <Property name="PATTERN_LAYOUT">%d [%X{traceId}] [%t] %level (%F %M %L) - %msg%n</Property>
 

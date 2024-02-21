@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.repository;
 
+import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.core.impl.logging.Logger;
 import io.vertx.core.impl.logging.LoggerFactory;
@@ -11,7 +12,7 @@ import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 
 import java.util.*;
-
+@Singleton
 public class BookRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookRepository.class);

@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
+import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import org.limadelrey.vertx4.reactive.rest.api.utils.QueryUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Singleton
 public class BookService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
@@ -24,6 +25,7 @@ public class BookService {
     public BookService(MySQLPool dbClient,
                        BookRepository bookRepository) {
         this.dbClient = dbClient;
+
         this.bookRepository = bookRepository;
     }
 
