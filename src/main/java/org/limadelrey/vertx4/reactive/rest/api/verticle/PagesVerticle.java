@@ -38,17 +38,16 @@ public class PagesVerticle extends AbstractVerticle {
         templatesRouter.setRouter(router);
         router.route(PAGES_PATH.concat("/*")).handler(TemplateHandler.create(RockerTemplateEngine.create()));
 
-        buildHttpServer(vertx, promise, router);
+        buildHttpServer( promise, router);
     }
 
     /**
      * Run HTTP pages server on port 8889 with specified routes
      *
-     * @param vertx   Vertx context
      * @param promise Callback
      * @param router  Router
      */
-    private void buildHttpServer(Vertx vertx,
+    private void buildHttpServer(
                                  Promise<Void> promise,
                                  Router router) {
 

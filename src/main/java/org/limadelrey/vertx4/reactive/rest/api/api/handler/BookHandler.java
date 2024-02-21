@@ -1,12 +1,15 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
+import com.google.inject.Guice;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
+import org.limadelrey.vertx4.reactive.rest.api.guice.MainModule;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
 @Singleton
 public class BookHandler {
@@ -15,10 +18,11 @@ public class BookHandler {
     private static final String PAGE_PARAMETER = "page";
     private static final String LIMIT_PARAMETER = "limit";
 
-    private final BookService bookService;
+    private final BookService bookService= Guice.createInjector(new MainModule()).getInstance(BookService.class);
 
-    public BookHandler(BookService bookService) {
-        this.bookService = bookService;
+
+    public BookHandler() {
+
     }
 
     /**

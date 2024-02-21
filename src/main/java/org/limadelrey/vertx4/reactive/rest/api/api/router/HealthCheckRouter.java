@@ -5,6 +5,7 @@ import io.vertx.ext.healthchecks.HealthCheckHandler;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.ext.web.Router;
 import io.vertx.mysqlclient.MySQLPool;
+import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 
 public class HealthCheckRouter {
 
@@ -15,15 +16,12 @@ public class HealthCheckRouter {
     /**
      * Set health check routes
      *
-     * @param vertx    Vertx context
      * @param router   Router
-     * @param dbClient PostgreSQL pool
      */
-    public static void setRouter(Vertx vertx,
-                                 Router router,
-                                 MySQLPool dbClient) {
+    public static void setRouter(Router router) {
+        Vertx vertx=Vertx.currentContext().owner();
         final HealthCheckHandler healthCheckHandler = HealthCheckHandler.create(vertx);
-
+        MySQLPool dbClient = DbUtils.getInstance();
         healthCheckHandler.register("database",
                 promise ->
                         dbClient.getConnection(connection -> {

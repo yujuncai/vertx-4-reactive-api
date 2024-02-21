@@ -41,10 +41,6 @@ public class BookService {
     public Future<BookGetAllResponse> readAll(String p,
                                               String l) {
 
-
-        System.out.println(DbUtils.getInstance());
-        System.out.println(DbUtils.getInstance());
-
         return dbClient.withTransaction(
                 connection -> {
                     final int page = QueryUtils.getPage(p);
