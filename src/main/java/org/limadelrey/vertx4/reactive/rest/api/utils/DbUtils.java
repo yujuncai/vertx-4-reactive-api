@@ -30,6 +30,7 @@ public class DbUtils {
         if (pool == null) {
             synchronized (DbUtils.class) {
                 if (pool == null) {
+                    System.out.println("pool == null");
                     pool = instance.buildDbClient();
                 }
             }
@@ -48,7 +49,7 @@ public class DbUtils {
      */
 
     @Singleton
-    public static PgPool buildDbClient() {
+    public  PgPool buildDbClient() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
 
         final PgConnectOptions connectOptions = new PgConnectOptions()
@@ -58,7 +59,7 @@ public class DbUtils {
                 .setUser(properties.getProperty(USERNAME_CONFIG))
                 .setPassword(properties.getProperty(PASSWORD_CONFIG));
 
-        final PoolOptions poolOptions = new PoolOptions().setMaxSize(25);
+        final PoolOptions poolOptions = new PoolOptions().setMaxSize(35);
         return PgPool.pool(Vertx.currentContext().owner(), connectOptions, poolOptions);
     }
 
@@ -87,7 +88,7 @@ public class DbUtils {
      */
     public static Configuration buildMigrationsConfiguration() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
-        //jdbc:mysql://localhost:3306/xxx?useUnicode=true&characterEncoding=utf8&useSSL=true";
+
       //  final String url = "jdbc:mysql://" + properties.getProperty(HOST_CONFIG) + ":" + properties.getProperty(PORT_CONFIG) + "/" + properties.getProperty(DATABASE_CONFIG)+"?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false";
         final String url = "jdbc:postgresql://" + properties.getProperty(HOST_CONFIG) + ":" + properties.getProperty(PORT_CONFIG) + "/" + properties.getProperty(DATABASE_CONFIG);
         return new FluentConfiguration().dataSource(url, properties.getProperty(USERNAME_CONFIG), properties.getProperty(PASSWORD_CONFIG));
