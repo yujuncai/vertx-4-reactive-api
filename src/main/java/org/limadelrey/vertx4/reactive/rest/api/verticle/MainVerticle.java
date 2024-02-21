@@ -42,7 +42,7 @@ public class MainVerticle extends AbstractVerticle {
 
     private Future<String> deployApiVerticle(Vertx vertx) {
         return vertx.deployVerticle(ApiVerticle.class.getName(),new
-                DeploymentOptions().setWorker(false).setInstances(1));
+                DeploymentOptions().setWorker(false).setInstances( Runtime.getRuntime().availableProcessors()));
 
     }
     private Future<String> deployTcpVerticle(Vertx vertx) {
@@ -54,7 +54,7 @@ public class MainVerticle extends AbstractVerticle {
     private Future<String> deployPagesVerticle(Vertx vertx) {
         RockerRuntime.getInstance().setReloading(true);
         return vertx.deployVerticle(PagesVerticle.class.getName(),new
-                DeploymentOptions().setWorker(false).setInstances(1));
+                DeploymentOptions().setWorker(false).setInstances(Runtime.getRuntime().availableProcessors()/2));
 
     }
 
