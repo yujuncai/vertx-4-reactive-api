@@ -21,6 +21,8 @@ public class MainVerticle extends AbstractVerticle {
                         deployApiVerticle(vertx)
                 ).flatMap( x ->
                         deployTcpVerticle(vertx))
+                .flatMap( x ->
+                        deployPagesVerticle(vertx))
                 .onSuccess(success -> LOGGER.info(LogUtils.RUN_APP_SUCCESSFULLY_MESSAGE.buildMessage(System.currentTimeMillis() - start)))
                 .onFailure(throwable -> LOGGER.error(throwable.getMessage()));
     }
@@ -46,4 +48,14 @@ public class MainVerticle extends AbstractVerticle {
                 DeploymentOptions().setWorker(false).setInstances(1));
 
     }
+
+    private Future<String> deployPagesVerticle(Vertx vertx) {
+        return vertx.deployVerticle(PagesVerticle.class.getName(),new
+                DeploymentOptions().setWorker(false).setInstances(1));
+
+    }
+
+
+
+
 }
