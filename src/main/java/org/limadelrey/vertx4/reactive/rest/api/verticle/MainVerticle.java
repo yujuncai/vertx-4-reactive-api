@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
+import com.fizzed.rocker.runtime.RockerRuntime;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
@@ -18,12 +19,13 @@ public class MainVerticle extends AbstractVerticle {
 
         deployMigrationVerticle(vertx)
                 .flatMap(x ->
+                        deployPagesVerticle(vertx)
+                )
+                .flatMap(x ->
                         deployApiVerticle(vertx)
                 ).flatMap( x ->
-                        deployTcpVerticle(vertx))
-                .flatMap( x ->
-                        deployPagesVerticle(vertx))
-                .onSuccess(success -> LOGGER.info(LogUtils.RUN_APP_SUCCESSFULLY_MESSAGE.buildMessage(System.currentTimeMillis() - start)))
+                        deployTcpVerticle(vertx)
+                ).onSuccess(success -> LOGGER.info(LogUtils.RUN_APP_SUCCESSFULLY_MESSAGE.buildMessage(System.currentTimeMillis() - start)))
                 .onFailure(throwable -> LOGGER.error(throwable.getMessage()));
     }
 
@@ -50,6 +52,7 @@ public class MainVerticle extends AbstractVerticle {
     }
 
     private Future<String> deployPagesVerticle(Vertx vertx) {
+        RockerRuntime.getInstance().setReloading(true);
         return vertx.deployVerticle(PagesVerticle.class.getName(),new
                 DeploymentOptions().setWorker(false).setInstances(1));
 

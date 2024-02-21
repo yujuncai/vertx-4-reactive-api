@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.router;
 
+import com.fizzed.rocker.runtime.RockerRuntime;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -8,10 +9,15 @@ import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.TemplateHandler;
 import io.vertx.ext.web.templ.rocker.RockerTemplateEngine;
 import io.vertx.micrometer.PrometheusScrapingHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.handler.TemplatesHandler;
+import org.limadelrey.vertx4.reactive.rest.api.verticle.PagesVerticle;
 
 public class TemplatesRouter {
     private final Vertx vertx;
-    public TemplatesRouter(Vertx vertx) {
+    private TemplatesHandler templatesHandler;
+    public TemplatesRouter(Vertx vertx,TemplatesHandler templatesHandler) {
+
+        this.templatesHandler = templatesHandler;
         this.vertx = vertx;
     }
 
@@ -21,25 +27,17 @@ public class TemplatesRouter {
      * @param router Router
      */
     public  void setRouter(Router router) {
-        router.mountSubRouter("/templates/v1", buildTemplateRouter());
+        router.mountSubRouter(PagesVerticle.PAGES_PATH, buildTemplateRouter());
 
 
 }
 
     private Router buildTemplateRouter() {
-        final Router router = Router.router(vertx);
-        router.route("/index").handler(ctx -> {
-            ctx.put("title", "Vert.x Web Example Using Rocker");
-            ctx.put("name", "Rocker");
-            ctx.put("path", ctx.request().path());
-            ctx.next();
-        });
 
-        router.route("/main").handler(ctx -> {
-            ctx.put("title", "Vert.x Web Example Using Rocker");
-            ctx.put("content", "Rocker");
-            ctx.next();
-        });
+        final Router router = Router.router(vertx);
+        router.route(PagesVerticle.PAGES_PATH.concat("/*")).handler(LoggerHandler.create(LoggerFormat.DEFAULT));
+        router.get("/index").handler(s -> templatesHandler.indexPage(s));
+        router.get("/basic").handler(s -> templatesHandler.basicPage(s));
         return router;
     }
 

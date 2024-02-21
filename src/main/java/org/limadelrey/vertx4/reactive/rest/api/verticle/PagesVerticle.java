@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
+import com.fizzed.rocker.runtime.RockerRuntime;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -14,6 +15,7 @@ import io.vertx.mysqlclient.MySQLPool;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.ErrorHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.handler.TemplatesHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.BookRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.HealthCheckRouter;
@@ -32,19 +34,21 @@ public class PagesVerticle extends AbstractVerticle {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PagesVerticle.class);
     private static final String HTTP_PAGES_PORT = "http.pages.port";
+
+    public static final String PAGES_PATH = "/pages/v1";
     @Override
     public void start(Promise<Void> promise) {
 
-        final TemplatesRouter templatesRouter = new TemplatesRouter(vertx);
+
+        final TemplatesHandler templatesHandler = new TemplatesHandler();
+        final TemplatesRouter templatesRouter = new TemplatesRouter(vertx,templatesHandler);
 
         final Router router = Router.router(vertx);
         router.route("/static/*").handler(StaticHandler.create());
         router.route().handler(TimeoutHandler.create(5000));
         ErrorHandler.buildHandler(router);
         templatesRouter.setRouter(router);
-
-        router.route("/templates/v1/*").handler(TemplateHandler.create(RockerTemplateEngine.create()));
-
+        router.route(PAGES_PATH.concat("/*")).handler(TemplateHandler.create(RockerTemplateEngine.create()));
 
         buildHttpServer(vertx, promise, router);
     }
