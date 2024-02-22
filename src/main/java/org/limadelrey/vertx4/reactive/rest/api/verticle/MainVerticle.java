@@ -1,10 +1,7 @@
 package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
 import com.fizzed.rocker.runtime.RockerRuntime;
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Future;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
@@ -41,9 +38,11 @@ public class MainVerticle extends AbstractVerticle {
     }
 
     private Future<String> deployApiVerticle(Vertx vertx) {
-        return vertx.deployVerticle(ApiVerticle.class.getName(),new
-                DeploymentOptions().setWorker(false).setInstances( Runtime.getRuntime().availableProcessors()));
-        //.setThreadingModel(ThreadingModel.VIRTUAL_THREAD))
+        return vertx.deployVerticle(ApiVerticle.class.getName(),
+                new DeploymentOptions().setWorker(false)
+                        .setInstances( Runtime.getRuntime().availableProcessors())
+                        );
+//.setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
 
     }
     private Future<String> deployTcpVerticle(Vertx vertx) {
@@ -58,8 +57,5 @@ public class MainVerticle extends AbstractVerticle {
                 DeploymentOptions().setWorker(false).setInstances(Runtime.getRuntime().availableProcessors()/2));
 
     }
-
-
-
 
 }
