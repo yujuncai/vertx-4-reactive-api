@@ -2,13 +2,13 @@ package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
 import com.fizzed.rocker.runtime.RockerRuntime;
 import io.vertx.core.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 
 public class MainVerticle extends AbstractVerticle {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainVerticle.class);
+    private static final Logger LOGGER = LogManager.getLogger(MainVerticle.class);
 
     @Override
     public void start() {

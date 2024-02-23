@@ -11,15 +11,15 @@ import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.QueryUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
 @Singleton
 public class BookService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
+    private static final Logger LOGGER = LogManager.getLogger(BookService.class);
 
     private final PgPool dbClient= DbUtils.getInstance();
     private final BookRepository bookRepository= GuiceUtil.getGuice().getInstance(BookRepository.class);

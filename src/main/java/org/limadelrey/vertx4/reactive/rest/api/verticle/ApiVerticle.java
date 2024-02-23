@@ -12,14 +12,14 @@ import org.limadelrey.vertx4.reactive.rest.api.api.router.HealthCheckRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.MetricsRouter;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Properties;
 
 public class ApiVerticle extends AbstractVerticle {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiVerticle.class);
+    private static final Logger LOGGER = LogManager.getLogger(ApiVerticle.class);
     private static final String HTTP_PORT = "http.port";
     @Override
     public void start(Promise<Void> promise) {
@@ -27,7 +27,7 @@ public class ApiVerticle extends AbstractVerticle {
         final BookRouter bookRouter = new BookRouter();
 
         final Router router = Router.router(vertx);
-        router.route().handler(CorsHandler.create()
+        router.route().handler(CorsHandler.create("*")
                 .allowedMethod(HttpMethod.GET)
                 .allowedMethod(HttpMethod.POST)
                 .allowedMethod(HttpMethod.PUT)

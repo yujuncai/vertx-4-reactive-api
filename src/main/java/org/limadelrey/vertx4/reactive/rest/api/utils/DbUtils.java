@@ -7,7 +7,6 @@ import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.PoolOptions;
 import org.flywaydb.core.api.configuration.Configuration;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
-import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +52,9 @@ public class DbUtils {
     public  PgPool buildDbClient() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
 
+        Vertx vertx = Vertx.currentContext().owner();
+
+
         final PgConnectOptions connectOptions = new PgConnectOptions()
                 .setPort(Integer.parseInt(properties.getProperty(PORT_CONFIG)))
                 .setHost(properties.getProperty(HOST_CONFIG))
@@ -61,7 +63,14 @@ public class DbUtils {
                 .setPassword(properties.getProperty(PASSWORD_CONFIG));
 
         final PoolOptions poolOptions = new PoolOptions().setMaxSize(50);
-        return PgPool.pool(Vertx.currentContext().owner(), connectOptions, poolOptions);
+
+       /* Pool build = PgBuilder
+                .pool()
+                .with(poolOptions)
+                .connectingTo(connectOptions)
+                .using(vertx)
+                .build();*/
+        return PgPool.pool(vertx, connectOptions, poolOptions);
     }
 
 

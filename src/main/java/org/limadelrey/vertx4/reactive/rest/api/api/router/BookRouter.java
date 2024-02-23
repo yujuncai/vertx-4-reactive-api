@@ -36,7 +36,9 @@ public class BookRouter {
     private Router buildBookRouter() {
         final Router bookRouter = Router.router(vertx);
 
-        bookRouter.route("/books*").handler(BodyHandler.create()).handler(LoggerHandler.create(LoggerFormat.DEFAULT));
+        bookRouter.route("/books*")
+                .handler(LoggerHandler.create(LoggerFormat.DEFAULT))
+                .handler(BodyHandler.create().setBodyLimit(40000000).setDeleteUploadedFilesOnEnd(true).setHandleFileUploads(true));
         bookRouter.get("/books").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
         bookRouter.get("/books/:id").handler(bookValidationHandler.readOne()).handler(bookHandler::readOne);
         bookRouter.post("/books").handler(bookValidationHandler.create()).handler(bookHandler::create);
