@@ -17,7 +17,7 @@ public class PreVerticle extends AbstractVerticle {
         SharedData sharedData = vertx.sharedData();
         sharedData.getAsyncMap("PgPool", result -> {
             if (result.succeeded()) {
-                result.result().put("pool", "111111", putResult -> {
+                result.result().put("pool", "succeeded", putResult -> {
                     if (putResult.succeeded()) {
                         LOGGER.info("PgPool  shared successfully");
                     } else {
