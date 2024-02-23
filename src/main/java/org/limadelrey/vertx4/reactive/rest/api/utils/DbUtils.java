@@ -62,9 +62,16 @@ public class DbUtils {
                 .setHost(properties.getProperty(HOST_CONFIG))
                 .setDatabase(properties.getProperty(DATABASE_CONFIG))
                 .setUser(properties.getProperty(USERNAME_CONFIG))
-                .setPassword(properties.getProperty(PASSWORD_CONFIG));
+                .setPassword(properties.getProperty(PASSWORD_CONFIG))
+                .setReconnectAttempts(10)
+                .setReconnectInterval(1000);
 
-        final PoolOptions poolOptions = new PoolOptions().setMaxSize(50);
+
+        final PoolOptions poolOptions = new PoolOptions()
+                .setMaxSize(50).setShared(true)
+                .setName("DB-pool")
+                .setEventLoopSize(Runtime.getRuntime().availableProcessors());
+
 
         Pool build = PgBuilder
                 .pool()
