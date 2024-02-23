@@ -2,8 +2,8 @@ package org.limadelrey.vertx4.reactive.rest.api.api.repository;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
-import io.vertx.core.impl.logging.Logger;
-import io.vertx.core.impl.logging.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import io.vertx.sqlclient.RowIterator;
 import io.vertx.sqlclient.SqlConnection;
 import io.vertx.sqlclient.templates.RowMapper;
@@ -15,7 +15,7 @@ import java.util.*;
 @Singleton
 public class BookRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BookRepository.class);
+    private static final Logger LOGGER = LogManager.getLogger(BookRepository.class);
 
     private static final String SQL_SELECT_ALL = "SELECT * FROM books LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM books WHERE id = #{id}";

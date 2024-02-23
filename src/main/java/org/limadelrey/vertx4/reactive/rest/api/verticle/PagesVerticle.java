@@ -13,14 +13,14 @@ import org.limadelrey.vertx4.reactive.rest.api.pages.handler.TemplatesHandler;
 import org.limadelrey.vertx4.reactive.rest.api.pages.router.TemplatesRouter;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Properties;
 
 public class PagesVerticle extends AbstractVerticle {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PagesVerticle.class);
+    private static final Logger LOGGER = LogManager.getLogger(PagesVerticle.class);
     private static final String HTTP_PAGES_PORT = "http.pages.port";
 
     public static final String PAGES_PATH = "/pages/v1";

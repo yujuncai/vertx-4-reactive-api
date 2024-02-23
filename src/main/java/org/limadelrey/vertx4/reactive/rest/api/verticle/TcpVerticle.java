@@ -14,13 +14,13 @@ import org.limadelrey.vertx4.reactive.rest.api.protocol.vo.ProtocolHeader;
 import org.limadelrey.vertx4.reactive.rest.api.protocol.vo.R;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.RUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Properties;
 
 public class TcpVerticle extends AbstractVerticle {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TcpVerticle.class);
+    private static final Logger LOGGER = LogManager.getLogger(TcpVerticle.class);
     private static final String TCP_PORT = "tcp.port";
 
     @Override
