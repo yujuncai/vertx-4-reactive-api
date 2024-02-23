@@ -2,8 +2,10 @@ package org.limadelrey.vertx4.reactive.rest.api.utils;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
+import io.vertx.pgclient.PgBuilder;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
 import org.flywaydb.core.api.configuration.Configuration;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
@@ -64,13 +66,13 @@ public class DbUtils {
 
         final PoolOptions poolOptions = new PoolOptions().setMaxSize(50);
 
-       /* Pool build = PgBuilder
+        Pool build = PgBuilder
                 .pool()
                 .with(poolOptions)
                 .connectingTo(connectOptions)
                 .using(vertx)
-                .build();*/
-        return PgPool.pool(vertx, connectOptions, poolOptions);
+                .build();
+        return (PgPool) build;
     }
 
 
