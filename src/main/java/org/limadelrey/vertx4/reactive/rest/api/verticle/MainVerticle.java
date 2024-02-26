@@ -14,7 +14,7 @@ public class MainVerticle extends AbstractVerticle {
     public void start() {
         final long start = System.currentTimeMillis();
 
-            deployDbVerticle(vertx);
+           // deployPreVerticle(vertx);   // 消息总线
             deployMigrationVerticle(vertx)
                     .flatMap(x ->
                             deployPagesVerticle(vertx)
@@ -30,7 +30,7 @@ public class MainVerticle extends AbstractVerticle {
 
     private Future<Void> deployMigrationVerticle(Vertx vertx) {
         final DeploymentOptions options = new DeploymentOptions()
-                .setWorker(true)
+               // .setWorker(true)
                 .setWorkerPoolName("migrations-worker-pool")
                 .setInstances(1)
                 .setWorkerPoolSize(1);
@@ -41,7 +41,7 @@ public class MainVerticle extends AbstractVerticle {
 
     private Future<String> deployApiVerticle(Vertx vertx) {
         return vertx.deployVerticle(ApiVerticle.class.getName(),
-                new DeploymentOptions().setWorker(false)
+                new DeploymentOptions()//.setWorker(false)
                         .setInstances( Runtime.getRuntime().availableProcessors()).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
                         );
 
@@ -49,14 +49,16 @@ public class MainVerticle extends AbstractVerticle {
     }
     private Future<String> deployTcpVerticle(Vertx vertx) {
         return vertx.deployVerticle(TcpVerticle.class.getName(),new
-                DeploymentOptions().setWorker(false).setInstances(1));
+                DeploymentOptions()//.setWorker(false)
+                .setInstances(1));
 
     }
 
 
-    private Future<String> deployDbVerticle(Vertx vertx) {
+    private Future<String> deployPreVerticle(Vertx vertx) {
         return vertx.deployVerticle(PreVerticle.class.getName(),new
-                DeploymentOptions().setWorker(false).setInstances(1));
+                DeploymentOptions()//.setWorker(false)
+                .setInstances(1));
 
     }
 
@@ -64,7 +66,8 @@ public class MainVerticle extends AbstractVerticle {
     private Future<String> deployPagesVerticle(Vertx vertx) {
         RockerRuntime.getInstance().setReloading(true);
         return vertx.deployVerticle(PagesVerticle.class.getName(),new
-                DeploymentOptions().setWorker(false).setInstances(Runtime.getRuntime().availableProcessors()/2).setThreadingModel(ThreadingModel.VIRTUAL_THREAD));
+                DeploymentOptions()//.setWorker(false)
+                .setInstances(Runtime.getRuntime().availableProcessors()/2).setThreadingModel(ThreadingModel.VIRTUAL_THREAD));
 
     }
 
