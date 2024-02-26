@@ -45,6 +45,9 @@ public class BookRouter {
         bookRouter.put("/books/:id").handler(bookValidationHandler.update()).handler(bookHandler::update);
         bookRouter.delete("/books/:id").handler(bookValidationHandler.delete()).handler(bookHandler::delete);
 
+        bookRouter.get("/*").handler(rc -> {
+            rc.response().setStatusCode(404).end("Custom 404 message");
+        });
         return bookRouter;
     }
 
