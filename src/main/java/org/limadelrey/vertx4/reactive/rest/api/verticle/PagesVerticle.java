@@ -34,7 +34,7 @@ public class PagesVerticle extends AbstractVerticle {
         final TemplatesRouter templatesRouter = new TemplatesRouter(vertx,templatesHandler);
 
         final Router router = Router.router(vertx);
-        router.route("/static/*").handler(StaticHandler.create());
+        router.route("/static/*").handler(StaticHandler.create().setWebRoot("webroot"));
         router.route().handler(TimeoutHandler.create(5000));
         ErrorHandler.buildHandler(router);
         templatesRouter.setRouter(router);
