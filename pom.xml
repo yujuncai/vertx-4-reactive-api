@@ -80,7 +80,10 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web</artifactId>
         </dependency>
-
+        <!--<dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-sse</artifactId>
+        </dependency>-->
         <!-- https://mvnrepository.com/artifact/io.vertx/vertx-web-validation -->
         <dependency>
             <groupId>io.vertx</groupId>

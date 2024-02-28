@@ -41,13 +41,13 @@ public class TemplatesHandler {
             rc.put("path", rc.request().path());
             rc.next();
         }
-        return null;
+        return Future.succeededFuture();
     }
 
 
     public Future<Void> basicPage(RoutingContext rc) {
         rc.put("name", "HAHAHAHAH");
         rc.next();
-        return null;
+        return Future.succeededFuture();
     }
 }

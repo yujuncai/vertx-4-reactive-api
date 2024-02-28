@@ -48,23 +48,19 @@ public class TemplatesRouter {
         router.route(PagesVerticle.PAGES_PATH.concat("/*")).handler(LoggerHandler.create(LoggerFormat.DEFAULT));
 
 
-
+        router.get("/basic").handler(s -> templatesHandler.basicPage(s)).handler(rc -> {
+            // 渲染模板
+            RockerOutput index=   templates.basic.template(rc.get("name")).render();
+            rc.response().end( index.toString());
+        });;
 
         router.get("/index/:id").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
             // 渲染模板
-
-            System.out.println((String) rc.get("title"));
-            System.out.println((String)rc.get("name"));
-            System.out.println((String) rc.get("path"));
-
          RockerOutput index=   templates.index.template(rc.get("title"),rc.get("name"),rc.get("path")).render();
          rc.response().end( index.toString());
         });
 
 
-
-
-        router.get("/basic").handler(s -> templatesHandler.basicPage(s));
 
         router.get("/*").handler(rc -> {
             rc.response().setStatusCode(404).end("Custom 404 message");

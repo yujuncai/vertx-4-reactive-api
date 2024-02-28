@@ -24,6 +24,8 @@ public class PagesVerticle extends AbstractVerticle {
     private static final String HTTP_PAGES_PORT = "http.pages.port";
 
     public static final String PAGES_PATH = "/pages/v1";
+
+
     @Override
     public void start(Promise<Void> promise) {
 

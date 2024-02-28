@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
+import io.netty.handler.codec.spdy.SpdySessionHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
@@ -26,6 +27,8 @@ public class ApiVerticle extends AbstractVerticle {
 
         final BookRouter bookRouter = new BookRouter();
 
+
+
         final Router router = Router.router(vertx);
         router.route().handler(CorsHandler.create("*")
                 .allowedMethod(HttpMethod.GET)
@@ -37,7 +40,10 @@ public class ApiVerticle extends AbstractVerticle {
         ErrorHandler.buildHandler(router);
         HealthCheckRouter.setRouter( router);
         MetricsRouter.setRouter(router);
+
         bookRouter.setRouter(router);
+
+
         buildHttpServer( promise, router);
     }
 
