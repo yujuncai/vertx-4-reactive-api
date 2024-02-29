@@ -21,8 +21,8 @@ public class PreVerticle extends AbstractVerticle {
     @Override
     public void start(Promise<Void> promise) {
 
-        final String appID = "wx441b43b87703bafb";
-        final String appsecret = "670229025cfa1aed29d89be6189f5b3b";
+        final String appID = "xxxxx";
+        final String appsecret = "xxxxx";
         String wechat_token_url="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appID+"&secret="+appsecret;
 
             HttpRequest request = HttpRequest.newBuilder()
