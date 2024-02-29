@@ -14,7 +14,7 @@ public class MainVerticle extends AbstractVerticle {
     public void start() {
         final long start = System.currentTimeMillis();
 
-           // deployPreVerticle(vertx);   // 消息总线
+            deployPreVerticle(vertx);   // 消息总线
             deployMigrationVerticle(vertx)
                     .flatMap(x ->
                             deployPagesVerticle(vertx)
