@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONObject;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
@@ -16,6 +17,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Singleton
 public class PushHandler {
@@ -35,7 +37,6 @@ public class PushHandler {
               .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 
-
     private Future<Void> toWeChat(RoutingContext rc) {
 
             String title = rc.queryParams().get("title");
@@ -43,12 +44,20 @@ public class PushHandler {
             Vertx vertx = Vertx.currentContext().owner();
             final String templateId = "CTbywqtbXji9rVEkJMvSYG7IXUyy1XHtsEzJiB8pfVI";
 
-        vertx.sharedData().getAsyncMap("preMap", result -> {
+            AtomicBoolean isok= new AtomicBoolean(true);
+           vertx.sharedData().getAsyncMap("preMap", result -> {
                 if (result.succeeded()) {
                     AsyncMap<Object, Object> asyncMap = result.result();
                     asyncMap.get("accessToken", getResult -> {
                         if (getResult.succeeded()) {
                             LOGGER.info("succeeded {}",getResult);
+
+                            if(ObjectUtil.isNull(getResult.result()))
+                            {
+                                isok.set(false);
+                                LOGGER.error("获取accessToken 失败");
+                              return;
+                            }
                             JSONObject data = getEntries(templateId, title, content);
                             String url="https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+getResult.result();
                             HttpRequest request = HttpRequest.newBuilder()
@@ -75,7 +84,16 @@ public class PushHandler {
                     LOGGER.error("Failed to get async map");
                 }
             });
-        return Future.succeededFuture();
+
+
+           if(isok.get()){
+               return Future.succeededFuture();
+           }else {
+               return Future.failedFuture("获取Token失败!");
+           }
+
+
+
     }
 
 
