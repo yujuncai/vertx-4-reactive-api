@@ -11,6 +11,7 @@ import org.limadelrey.vertx4.reactive.rest.api.api.handler.ErrorHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.BookRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.HealthCheckRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.router.MetricsRouter;
+import org.limadelrey.vertx4.reactive.rest.api.api.router.PushRouter;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +27,7 @@ public class ApiVerticle extends AbstractVerticle {
     public void start(Promise<Void> promise) {
 
         final BookRouter bookRouter = new BookRouter();
-
+        final PushRouter pushRouter = new PushRouter();
 
 
         final Router router = Router.router(vertx);
@@ -42,7 +43,7 @@ public class ApiVerticle extends AbstractVerticle {
         MetricsRouter.setRouter(router);
 
         bookRouter.setRouter(router);
-
+        pushRouter.setRouter(router);
 
         buildHttpServer( promise, router);
     }
