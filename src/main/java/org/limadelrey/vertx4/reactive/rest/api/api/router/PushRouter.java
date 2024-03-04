@@ -18,10 +18,7 @@ import io.vertx.ext.web.handler.LoggerFormat;
 import io.vertx.ext.web.handler.LoggerHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
-import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
-import org.limadelrey.vertx4.reactive.rest.api.api.handler.PushHandler;
-import org.limadelrey.vertx4.reactive.rest.api.api.handler.PushValidationHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.handler.*;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.JwtUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
@@ -40,6 +37,7 @@ public class PushRouter {
 
     private final PushHandler pushHandler= GuiceUtil.getGuice().getInstance(PushHandler.class);
 
+    private final JwtAuthHandler jwtHandler= GuiceUtil.getGuice().getInstance(JwtAuthHandler.class);
     private final PushValidationHandler pushValidationHandler=GuiceUtil.getGuice().getInstance(PushValidationHandler.class);
     public PushRouter() {
 
@@ -54,26 +52,16 @@ public class PushRouter {
 
     private Router buildPushRouter() {
         final Router pushRouter = Router.router(vertx);
-        JWTAuth instance = JwtUtils.getInstance();
 
-
-
+    /*    Credentials test =new UsernamePasswordCredentials("username","password");
+        String s = instance.generateToken(test.toJson());
+        System.out.println("token:" + s);*/
 
         pushRouter.route("/pushTo*")
                 .handler(LoggerHandler.create(LoggerFormat.DEFAULT))
                 .handler(BodyHandler.create().setBodyLimit(1000).setDeleteUploadedFilesOnEnd(false).setHandleFileUploads(false));
 
-        pushRouter.get("/pushToWeChat").handler(pushValidationHandler.templateMessage1()).handler(rc ->  {
-
-            String token = rc.request().getHeader("token");
-            Credentials credentials =new TokenCredentials( token);
-            Future<User> userFuture = instance.authenticate(credentials)
-                    .onSuccess(user -> {
-                        System.out.println("user:" + user.principal());
-                    }).onFailure(err -> {
-                        ResponseUtils.buildErrorResponse(rc,err);
-                    });
-        }).handler(pushHandler::pushToWeChat);
+        pushRouter.get("/pushToWeChat").handler(pushValidationHandler.templateMessage1()).handler(jwtHandler::TokenAuth).handler(pushHandler::pushToWeChat);
 
 
         return pushRouter;
