@@ -7,6 +7,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.impl.JsonUtil;
 import io.vertx.core.shareddata.AsyncMap;
 import io.vertx.core.shareddata.SharedData;
+import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.LoggerFormat;
@@ -68,9 +69,7 @@ public class BookRouter {
 
 
 
-        bookRouter.get("/*").handler(rc -> {
-            rc.response().setStatusCode(404).end("Custom 404 message");
-        });
+
         return bookRouter;
     }
 

@@ -92,7 +92,10 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web-validation</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-jwt</artifactId>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/io.vertx/vertx-pg-client-->
         <dependency>
             <groupId>io.vertx</groupId>
