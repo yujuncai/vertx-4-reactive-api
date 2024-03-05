@@ -52,6 +52,19 @@ public class JwtAuthHandler {
     }
 
 
-
+    public Future<Void> PageTokenAuth(RoutingContext rc) {
+        JWTAuth instance = JwtUtils.getInstance();
+        String token = rc.request().getHeader("token");
+        Credentials credentials =new TokenCredentials( token);
+        Future<User> userFuture = instance.authenticate(credentials)
+                .onSuccess(user -> {
+                    System.out.println("user:" + user.principal());
+                    rc.put("user", user.principal());
+                    rc.next();
+                }).onFailure(err -> {
+                    ResponseUtils.buildRedirectResponse(rc);
+                });
+        return  Future.succeededFuture();
+    }
 
 }

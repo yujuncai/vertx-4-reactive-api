@@ -55,6 +55,15 @@ public class ResponseUtils {
                 .end();
     }
 
+
+
+    public static void buildRedirectResponse(RoutingContext rc) {
+        rc.response()
+                .setStatusCode(302)
+                .end("/login");
+    }
+
+
     /**
      * Build error response using 400 Bad Request, 404 Not Found or 500 Internal Server Error
      * as its status code and throwable as its body
