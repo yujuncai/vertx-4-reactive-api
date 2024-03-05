@@ -3,6 +3,7 @@ package org.limadelrey.vertx4.reactive.rest.api.utils;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
+import org.limadelrey.vertx4.reactive.rest.api.R.Result;
 
 import java.util.NoSuchElementException;
 
@@ -83,7 +84,10 @@ public class ResponseUtils {
         rc.response()
                 .setStatusCode(status)
                 .putHeader(CONTENT_TYPE_HEADER, APPLICATION_JSON)
-                .end(new JsonObject().put("error", message).encodePrettily());
+                .end( Json.encodePrettily(new Result<>().error(status,message)));
+
+
+
     }
 
 }
