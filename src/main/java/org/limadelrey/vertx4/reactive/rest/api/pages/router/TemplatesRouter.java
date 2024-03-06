@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.pages.router;
 
+import cn.hutool.core.util.URLUtil;
 import com.fizzed.rocker.Rocker;
 import com.fizzed.rocker.RockerOutput;
 import io.vertx.core.AsyncResult;
@@ -16,6 +17,7 @@ import org.limadelrey.vertx4.reactive.rest.api.pages.handler.TemplatesHandler;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.PagesVerticle;
 import templates.index;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,13 +54,24 @@ public class TemplatesRouter {
             // 渲染模板
             RockerOutput index=   templates.basic.template(rc.get("name")).render();
             rc.response().end( index.toString());
-        });;
+        });
 
         router.get("/index/:id").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
-            // 渲染模板
          RockerOutput index=   templates.index.template(rc.get("title"),rc.get("name"),rc.get("path")).render();
          rc.response().end( index.toString());
         });
+
+        router.get("/index").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+            RockerOutput index=   templates.index.template(rc.get("title"),rc.get("name"),rc.get("path")).render();
+            rc.response().end( index.toString());
+        });
+
+
+        router.get("/blog").handler(s -> templatesHandler.basicPage(s)).handler(rc -> {
+            // 渲染模板
+            RockerOutput index=   templates.blog.template(rc.get("name")).render();
+            rc.response().end( index.toString());
+        });;
 
 
 

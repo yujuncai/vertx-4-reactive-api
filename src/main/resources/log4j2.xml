@@ -44,7 +44,7 @@
         </RollingFile>
     </appenders>
     <loggers>
-        <Root level="DEBUG" includeLocation="true">
+        <Root level="INFO" includeLocation="true">
             <appender-ref ref="CONSOLE" />
             <appender-ref ref="ERROR-FILE" />
             <appender-ref ref="INFO-FILE" />

@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.pages.handler;
 
+import cn.hutool.core.util.URLUtil;
 import com.fizzed.rocker.Rocker;
 import com.fizzed.rocker.RockerOutput;
 import io.vertx.core.Future;
@@ -15,6 +16,7 @@ import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
 import templates.index;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +40,7 @@ public class TemplatesHandler {
         }else{
             rc.put("title", "11");
             rc.put("name", "22");
-            rc.put("path", rc.request().path());
+            rc.put("path","1" );
             rc.next();
         }
         return Future.succeededFuture();
