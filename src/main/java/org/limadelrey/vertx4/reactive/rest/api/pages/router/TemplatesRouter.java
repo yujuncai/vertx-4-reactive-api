@@ -67,11 +67,23 @@ public class TemplatesRouter {
         });
 
 
-        router.get("/blog").handler(s -> templatesHandler.basicPage(s)).handler(rc -> {
+        router.get("/blog").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
             // 渲染模板
-            RockerOutput index=   templates.blog.template(rc.get("name")).render();
+            RockerOutput index=   templates.blog.template(rc.get("title")).render();
             rc.response().end( index.toString());
-        });;
+        });
+        router.get("/blog-details/:id").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+            // 渲染模板
+            RockerOutput index=   templates.blog_details.template(rc.get("title")).render();
+            rc.response().end( index.toString());
+        });
+
+
+        router.get("/portfolio-details/:id").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+            // 渲染模板
+            RockerOutput index=   templates.portfolio_details.template(rc.get("title")).render();
+            rc.response().end( index.toString());
+        });
 
 
 

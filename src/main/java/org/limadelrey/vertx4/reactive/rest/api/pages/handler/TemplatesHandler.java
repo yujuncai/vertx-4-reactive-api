@@ -38,7 +38,7 @@ public class TemplatesHandler {
                 rc.next();
             });
         }else{
-            rc.put("title", "11");
+            rc.put("title", "Impact");
             rc.put("name", "22");
             rc.put("path","1" );
             rc.next();
