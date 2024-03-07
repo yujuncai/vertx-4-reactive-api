@@ -67,7 +67,7 @@ public class TemplatesRouter {
 
         router.get("/blog").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
             // 渲染模板
-            RockerOutput index=   templates.blog.template(rc.get("title")).render();
+            var index=   templates.blog.template(rc.get("title")).render();
             rc.response().end( index.toString());
         });
         router.get("/blog-details/:id").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
