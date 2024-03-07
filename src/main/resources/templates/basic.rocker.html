@@ -45,10 +45,10 @@
                         </div>
 
                         <div class="col-lg-8 ">
-                            <form action="1" method="post" role="form" class="php-email-form " >
+                            <form action="http://localhost:8888/user/v1/userToLogin" method="post" role="form" class="php-email-form " >
 
                                     <div class="col-md-6 form-group ">
-                                        <input type="text" name="name" class="form-control text-center" id="name" placeholder="Your Name" required >
+                                        <input type="text" name="user_name" class="form-control text-center" id="user_name" placeholder="Your Name" required >
                                     </div>
 
 
@@ -75,19 +75,6 @@
 
 </main><!-- End #main -->
 <script>
-    $(document).ready(function() {
-        $("form").submit(function(e) {
-            e.preventDefault();
-            var name = $("input[name='name']").val();
-            var password = $("input[name='password']").val();
-            $.post("http://localhost:8888/api/v1/login", {
-                userName: name,
-                password: password,
-            }, function(data) {
-                // 处理服务器返回的数据
-                console.log(data);
-            });
-        });
-    });
+
 </script>
 }

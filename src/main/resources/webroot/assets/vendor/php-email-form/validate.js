@@ -50,10 +50,13 @@
   });
 
   function php_email_form_submit(thisForm, action, formData) {
+    let  name= document.getElementById("user_name").value;
+    let password= document.getElementById("password").value;
+
     fetch(action, {
       method: 'POST',
-      body: formData,
-      headers: {'X-Requested-With': 'XMLHttpRequest'}
+      body: JSON.stringify({ user_name: name, password: password }),
+      headers: {'Content-Type': 'application/json'}
     })
     .then(response => {
       if( response.ok ) {

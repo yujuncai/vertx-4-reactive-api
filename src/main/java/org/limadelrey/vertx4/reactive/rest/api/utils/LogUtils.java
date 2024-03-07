@@ -4,8 +4,12 @@ public enum LogUtils {
 
     REGULAR_CALL_SUCCESS_MESSAGE("%s called  success - %s"),
     REGULAR_CALL_ERROR_MESSAGE("%s called  error - %s"),
-    NO_BOOK_WITH_ID_MESSAGE("No book with id %d"),
-    CANNOT_CREATE_BOOK_MESSAGE("Cannot create a new book"),
+    NO_ENTITY_WITH_ID_MESSAGE("No entity with id %d"),
+
+
+    NO_ENTITY_WITH_ATTR_MESSAGE("No entity with attr %s"),
+
+    CANNOT_CREATE_ENTITY_MESSAGE("Cannot create a new entity"),
     RUN_HTTP_SERVER_SUCCESS_MESSAGE("HTTP server running on port %s"),
 
     RUN_HTTP_PAGES_SERVER_SUCCESS_MESSAGE("HTTP pages server running on port %s"),

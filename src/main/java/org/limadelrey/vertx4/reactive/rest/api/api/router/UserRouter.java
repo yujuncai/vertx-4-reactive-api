@@ -33,15 +33,12 @@ public class UserRouter {
     private Router buildPushRouter() {
         final Router pushRouter = Router.router(vertx);
 
-    /*    Credentials test =new UsernamePasswordCredentials("username","password");
-        String s = instance.generateToken(test.toJson());
-        System.out.println("token:" + s);*/
 
-        pushRouter.route("/user*")
+        pushRouter.route("/userTo*")
                 .handler(LoggerHandler.create(LoggerFormat.DEFAULT))
                 .handler(BodyHandler.create().setBodyLimit(1000).setDeleteUploadedFilesOnEnd(false).setHandleFileUploads(false));
 
-        pushRouter.post("/userLogin").handler(userValidationHandler.LoginMessage()).handler(userHandler::login);
+        pushRouter.post("/userToLogin").handler(userValidationHandler.LoginMessage()).handler(userHandler::login);
 
 
         return pushRouter;

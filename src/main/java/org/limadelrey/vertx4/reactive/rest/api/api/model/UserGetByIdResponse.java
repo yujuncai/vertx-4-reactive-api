@@ -26,12 +26,11 @@ public class UserGetByIdResponse implements Serializable {
     private Integer userStatus;
 
     public UserGetByIdResponse(User user) {
-        this.id = user.getId();
-        this.userName = user.getUserName();
-        this.password = user.getPassword();
-        this.createTime = user.getCreateTime();
-        this.userStatus = user.getUserStatus();
-
+            this.id = user.getId();
+            this.userName = user.getUserName();
+            this.password = user.getPassword();
+            this.createTime = user.getCreateTime();
+            this.userStatus = user.getUserStatus();
     }
 
     public Long getId() {

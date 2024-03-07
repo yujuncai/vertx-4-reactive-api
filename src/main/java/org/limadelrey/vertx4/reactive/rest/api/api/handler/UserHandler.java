@@ -84,16 +84,22 @@ public class UserHandler {
 
         return    userService.login(u.getUserName()).onSuccess(success -> {
                      String sha1Hex = SecureUtil.sha1(u.getPassword());
-                    if( success.getPassword().equals(sha1Hex)){
 
-                        JsonObject json=new JsonObject().put("userName", u.getUserName());
-                         Credentials credentials =new UsernamePasswordCredentials(json);
-                         String token =  JwtUtils.getInstance().generateToken(credentials.toJson());
-                        ResponseUtils.buildCreatedResponse(rc, new Result<String>().ok(token));
-                    }else{
-                        ResponseUtils.buildErrResponse(rc, "密码错误!");
-                    }
 
+                     if(success.getId()==null){
+                         ResponseUtils.buildErrResponse(rc, "无此用户!");
+                     }else {
+
+                         if (success.getPassword().equals(sha1Hex)) {
+
+                             JsonObject json = new JsonObject().put("userName", u.getUserName());
+                             Credentials credentials = new UsernamePasswordCredentials(json);
+                             String token = JwtUtils.getInstance().generateToken(credentials.toJson());
+                             ResponseUtils.buildCreatedResponse(rc, new Result<String>().ok(token));
+                         } else {
+                             ResponseUtils.buildErrResponse(rc, "密码错误!");
+                         }
+                     }
          })
          .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
 

@@ -74,7 +74,7 @@ public class BookRepository {
                     if (iterator.hasNext()) {
                         return iterator.next();
                     } else {
-                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(id));
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(id));
                     }
                 })
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read book by id", SQL_SELECT_BY_ID)))
@@ -99,7 +99,7 @@ public class BookRepository {
                     if (rowSet .rowCount()> 0){
                         return book;
                     } else {
-                        throw new IllegalStateException(LogUtils.CANNOT_CREATE_BOOK_MESSAGE.buildMessage());
+                        throw new IllegalStateException(LogUtils.CANNOT_CREATE_ENTITY_MESSAGE.buildMessage());
                     }
                 })
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Insert book", SQL_INSERT)))
@@ -123,7 +123,7 @@ public class BookRepository {
                     if (rowSet.rowCount() > 0) {
                         return Future.succeededFuture(book);
                     } else {
-                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(book.getId()));
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(book.getId()));
                     }
                 })
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Update book", SQL_UPDATE)))
@@ -147,8 +147,8 @@ public class BookRepository {
                         LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Delete book", SQL_DELETE));
                         return Future.succeededFuture();
                     } else {
-                        LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete book", LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(id)));
-                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(id));
+                        LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete book", LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(id)));
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(id));
                     }
                 });
     }

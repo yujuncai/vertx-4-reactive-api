@@ -19,10 +19,7 @@ import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.JWTAuthHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.ErrorHandler;
-import org.limadelrey.vertx4.reactive.rest.api.api.router.BookRouter;
-import org.limadelrey.vertx4.reactive.rest.api.api.router.HealthCheckRouter;
-import org.limadelrey.vertx4.reactive.rest.api.api.router.MetricsRouter;
-import org.limadelrey.vertx4.reactive.rest.api.api.router.PushRouter;
+import org.limadelrey.vertx4.reactive.rest.api.api.router.*;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +41,7 @@ public class ApiVerticle extends AbstractVerticle {
 
         final BookRouter bookRouter = new BookRouter();
         final PushRouter pushRouter = new PushRouter();
-
+        final UserRouter userRouter = new UserRouter();
 
         final Router router = Router.router(vertx);
         router.route().handler(CorsHandler.create("*")
@@ -67,6 +64,7 @@ public class ApiVerticle extends AbstractVerticle {
 
         bookRouter.setRouter(router);
         pushRouter.setRouter(router);
+        userRouter.setRouter(router);
         router.get("/*").handler(rc -> {
             rc.response().setStatusCode(404).end("Custom 404 message");
         });

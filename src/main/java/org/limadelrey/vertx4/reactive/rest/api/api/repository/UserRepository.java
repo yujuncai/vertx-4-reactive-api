@@ -66,7 +66,7 @@ public class UserRepository {
                     if (iterator.hasNext()) {
                         return iterator.next();
                     } else {
-                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(id));
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(id));
                     }
                 })
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read User by id", SQL_SELECT_BY_ID)))
@@ -85,7 +85,7 @@ public class UserRepository {
                     if (rowSet .rowCount()> 0){
                         return user;
                     } else {
-                        throw new IllegalStateException(LogUtils.CANNOT_CREATE_BOOK_MESSAGE.buildMessage());
+                        throw new IllegalStateException(LogUtils.CANNOT_CREATE_ENTITY_MESSAGE.buildMessage());
                     }
                 })
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Insert user", SQL_INSERT)))
@@ -103,7 +103,7 @@ public class UserRepository {
                     if (rowSet.rowCount() > 0) {
                         return Future.succeededFuture(user);
                     } else {
-                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(user.getId()));
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(user.getId()));
                     }
                 })
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Update User", SQL_UPDATE)))
@@ -121,8 +121,8 @@ public class UserRepository {
                         LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Delete User", SQL_DELETE));
                         return Future.succeededFuture();
                     } else {
-                        LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete User", LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(id)));
-                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(id));
+                        LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete User", LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(id)));
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(id));
                     }
                 });
     }
@@ -153,10 +153,10 @@ public class UserRepository {
                     if (iterator.hasNext()) {
                         return iterator.next();
                     } else {
-                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(name));
+                        return new User();
                     }
                 })
-                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read User by name", SQL_SELECT_BY_ID)))
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read User by name", SQL_SELECT_BY_NAME)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read User by name", throwable.getMessage())));
     }
 

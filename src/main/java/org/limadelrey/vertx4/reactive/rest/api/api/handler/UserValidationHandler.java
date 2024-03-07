@@ -39,7 +39,7 @@ public class UserValidationHandler {
 
     private ObjectSchemaBuilder buildBodySchemaBuilder() {
         return objectSchema()
-                .requiredProperty("username", stringSchema().with(minLength(1)).with(maxLength(255)))
+                .requiredProperty("user_name", stringSchema().with(minLength(1)).with(maxLength(255)))
                 .requiredProperty("password", stringSchema().with(minLength(1)).with(maxLength(255)));
     }
 
