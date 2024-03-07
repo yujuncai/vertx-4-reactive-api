@@ -58,7 +58,7 @@ public class UserHandler {
         u.setUserName(u.getUserName());
         String sha1Hex = SecureUtil.sha1(u.getPassword());
         u.setPassword(sha1Hex);
-        u.setCreateTime(DateUtil.current());
+        u.setCreateTime(DateUtil.currentSeconds());
         u.setUserStatus(0);
 
         return userService.create(u)
