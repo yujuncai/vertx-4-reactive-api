@@ -100,4 +100,18 @@ public class UserService {
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete one user", throwable.getMessage())));
     }
 
+
+
+
+    public Future<UserGetByIdResponse> login(String name) {
+
+        return dbClient.withTransaction(
+                        connection -> userRepository.selectByName(connection, name)
+                                .map(UserGetByIdResponse::new))
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read one user", success)))
+                .onFailure(Throwable::printStackTrace);
+    }
+
+
+
 }

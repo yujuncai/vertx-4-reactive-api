@@ -21,6 +21,9 @@ public class UserRepository {
 
     private static final String SQL_SELECT_ALL = "SELECT * FROM users LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM users WHERE id = #{id}";
+
+    private static final String SQL_SELECT_BY_NAME = "SELECT * FROM users WHERE user_name = #{userName}";
+
     private static final String SQL_INSERT = "INSERT INTO users (user_name, password, create_time, user_status) " +
             "VALUES (#{userName}, #{password}, #{createTime}, #{userStatus}) ";
     private static final String SQL_UPDATE = "UPDATE users SET user_name = #{userName}, password = #{password}, create_time = #{createTime}, " +
@@ -136,5 +139,29 @@ public class UserRepository {
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Count Users", SQL_COUNT)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Count Users", throwable.getMessage())));
     }
+
+    public Future<User>  selectByName(SqlConnection connection,
+                                    String name) {
+
+        return SqlTemplate
+                .forQuery(connection, SQL_SELECT_BY_NAME)
+                .mapTo(User.class)
+                .execute(Collections.singletonMap("userName", name))
+                .map(rowSet -> {
+                    final RowIterator<User> iterator = rowSet.iterator();
+
+                    if (iterator.hasNext()) {
+                        return iterator.next();
+                    } else {
+                        throw new NoSuchElementException(LogUtils.NO_BOOK_WITH_ID_MESSAGE.buildMessage(name));
+                    }
+                })
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read User by name", SQL_SELECT_BY_ID)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read User by name", throwable.getMessage())));
+    }
+
+
+
+
 
 }

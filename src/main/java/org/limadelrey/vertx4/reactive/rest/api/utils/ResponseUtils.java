@@ -99,4 +99,14 @@ public class ResponseUtils {
 
     }
 
+
+    public static void buildErrResponse(RoutingContext rc,
+                                       String response) {
+        rc.response()
+                .setStatusCode(200)
+                .putHeader(CONTENT_TYPE_HEADER, APPLICATION_JSON)
+                .end( Json.encodePrettily(new Result<>().error(505,response)));
+    }
+
+
 }

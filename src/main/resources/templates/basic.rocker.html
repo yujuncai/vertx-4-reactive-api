@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="col-lg-8 ">
-                            <form action="" method="post" role="form" class="php-email-form ">
+                            <form action="1" method="post" role="form" class="php-email-form " >
 
                                     <div class="col-md-6 form-group ">
                                         <input type="text" name="name" class="form-control text-center" id="name" placeholder="Your Name" required >
@@ -53,7 +53,7 @@
 
 
                                 <div class="col-md-6 form-group ">
-                                    <input type="password" class="form-control text-center" name="subject" id="password" placeholder="password" required>
+                                    <input type="password" class="form-control text-center" name="password" id="password" placeholder="password" required>
                                 </div>
 
                                 <div class="my-3">
@@ -61,7 +61,7 @@
                                     <div class="error-message"></div>
                                     <div class="sent-message">Your message has been sent. Thank you!</div>
                                 </div>
-                                <div class=""><button type="submit">Send</button></div>
+                                <div class=""><button  type="submit">Send</button></div>
                             </form>
                         </div><!-- End Contact Form -->
 
@@ -74,5 +74,20 @@
     </section>
 
 </main><!-- End #main -->
-
+<script>
+    $(document).ready(function() {
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var name = $("input[name='name']").val();
+            var password = $("input[name='password']").val();
+            $.post("http://localhost:8888/api/v1/login", {
+                userName: name,
+                password: password,
+            }, function(data) {
+                // 处理服务器返回的数据
+                console.log(data);
+            });
+        });
+    });
+</script>
 }

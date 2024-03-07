@@ -53,9 +53,7 @@ public class PushRouter {
     private Router buildPushRouter() {
         final Router pushRouter = Router.router(vertx);
 
-    /*    Credentials test =new UsernamePasswordCredentials("username","password");
-        String s = instance.generateToken(test.toJson());
-        System.out.println("token:" + s);*/
+
 
         pushRouter.route("/pushTo*")
                 .handler(LoggerHandler.create(LoggerFormat.DEFAULT))

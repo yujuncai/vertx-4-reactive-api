@@ -87,7 +87,7 @@ public class TemplatesRouter {
 
 
 
-        router.get("/*").handler(rc -> {
+        router.route("/*").handler(rc -> {
             rc.response().setStatusCode(404).end("Custom 404 message");
         });
 
