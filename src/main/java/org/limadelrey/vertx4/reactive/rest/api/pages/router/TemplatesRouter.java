@@ -47,39 +47,37 @@ public class TemplatesRouter {
 
 
         final Router router = Router.router(vertx);
-        router.route(PagesVerticle.PAGES_PATH.concat("/*")).handler(LoggerHandler.create(LoggerFormat.DEFAULT));
 
-
-        router.get("/basic").handler(s -> templatesHandler.basicPage(s)).handler(rc -> {
+        router.get("/basic").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.basicPage(s)).handler(rc -> {
             // 渲染模板
             RockerOutput index=   templates.basic.template(rc.get("name")).render();
             rc.response().end( index.toString());
         });
 
-        router.get("/index/:id").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+        router.get("/index/:id").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
          RockerOutput index=   templates.index.template(rc.get("title"),rc.get("name"),rc.get("path")).render();
          rc.response().end( index.toString());
         });
 
-        router.get("/index").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+        router.get("/index").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
             RockerOutput index=   templates.index.template(rc.get("title"),rc.get("name"),rc.get("path")).render();
             rc.response().end( index.toString());
         });
 
 
-        router.get("/blog").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+        router.get("/blog").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
             // 渲染模板
             RockerOutput index=   templates.blog.template(rc.get("title")).render();
             rc.response().end( index.toString());
         });
-        router.get("/blog-details/:id").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+        router.get("/blog-details/:id").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
             // 渲染模板
             RockerOutput index=   templates.blog_details.template(rc.get("title")).render();
             rc.response().end( index.toString());
         });
 
 
-        router.get("/portfolio-details/:id").handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
+        router.get("/portfolio-details/:id").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(s -> templatesHandler.indexPage(s)).handler(rc -> {
             // 渲染模板
             RockerOutput index=   templates.portfolio_details.template(rc.get("title")).render();
             rc.response().end( index.toString());
@@ -87,7 +85,7 @@ public class TemplatesRouter {
 
 
 
-        router.route("/*").handler(rc -> {
+        router.route("/*").handler(LoggerHandler.create(LoggerFormat.DEFAULT)).handler(rc -> {
             rc.response().setStatusCode(404).end("Custom 404 message");
         });
 
