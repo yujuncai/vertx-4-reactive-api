@@ -62,7 +62,7 @@ public class UserHandler {
         u.setUserStatus(0);
 
         return userService.create(u)
-                .onSuccess(success -> ResponseUtils.buildCreatedResponse(rc, new Result<UserGetByIdResponse>().ok(success)))
+                .onSuccess(success -> ResponseUtils.buildCreatedResponse(rc, new Result<Long>().ok(success.getId())))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 
@@ -100,8 +100,7 @@ public class UserHandler {
                      }else {
 
                          if (success.getPassword().equals(sha1Hex)) {
-
-                             JsonObject json = new JsonObject().put("userName", u.getUserName());
+                             JsonObject json = new JsonObject().put("userName", success.getUserName()).put("id", success.getId());
                              Credentials credentials = new UsernamePasswordCredentials(json);
                              String token = JwtUtils.getInstance().generateToken(credentials.toJson());
                              ResponseUtils.buildOkResponse(rc, new Result<String>().ok(token));
