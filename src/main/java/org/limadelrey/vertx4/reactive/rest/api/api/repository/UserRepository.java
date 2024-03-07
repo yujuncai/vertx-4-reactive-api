@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.repository;
 
+import cn.hutool.json.JSONUtil;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.RowIterator;
@@ -25,9 +26,9 @@ public class UserRepository {
     private static final String SQL_SELECT_BY_NAME = "SELECT * FROM users WHERE user_name = #{userName}";
 
     private static final String SQL_INSERT = "INSERT INTO users (user_name, password, create_time, user_status) " +
-            "VALUES (#{userName}, #{password}, #{createTime}, #{userStatus}) ";
-    private static final String SQL_UPDATE = "UPDATE users SET user_name = #{userName}, password = #{password}, create_time = #{createTime}, " +
-            "user_status = #{userStatus} WHERE id = #{id}";
+            "VALUES (#{user_name}, #{password}, #{create_time}, #{user_status}) ";
+    private static final String SQL_UPDATE = "UPDATE users SET user_name = #{user_name}, password = #{password}, create_time = #{create_time}, " +
+            "user_status = #{user_status} WHERE id = #{id}";
     private static final String SQL_DELETE = "DELETE FROM users WHERE id = #{id}";
     private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM users";
 
@@ -76,6 +77,7 @@ public class UserRepository {
 
     public Future<User> insert(SqlConnection connection,
                                User user) {
+
         return SqlTemplate
                 .forUpdate(connection, SQL_INSERT)
                 .mapFrom(User.class)

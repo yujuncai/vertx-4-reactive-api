@@ -40,6 +40,8 @@ public class UserRouter {
 
         pushRouter.post("/userToLogin").handler(userValidationHandler.LoginMessage()).handler(userHandler::login);
 
+        pushRouter.post("/userToRegister").handler(userValidationHandler.LoginMessage()).handler(userHandler::register);
+
 
         return pushRouter;
     }

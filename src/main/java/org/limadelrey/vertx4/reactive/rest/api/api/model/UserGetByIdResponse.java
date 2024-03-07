@@ -21,6 +21,11 @@ public class UserGetByIdResponse implements Serializable {
     private String password;
 
 
+    @JsonProperty(value = "create_time")
+    private Long createTime;
+
+
+
 
     @JsonProperty(value = "user_status")
     private Integer userStatus;
@@ -30,8 +35,12 @@ public class UserGetByIdResponse implements Serializable {
             this.userName = user.getUserName();
             this.password = user.getPassword();
             this.userStatus = user.getUserStatus();
+        this.createTime=user.getCreateTime();
     }
 
+    public Long getCreateTime() {
+        return createTime;
+    }
     public Long getId() {
         return id;
     }

@@ -23,13 +23,19 @@ public class User implements Serializable {
     private String password;
 
 
-/*    @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonProperty(value = "create_time")
-    private Date createTime;*/
+    private Long createTime;
 
     @JsonProperty(value = "user_status")
     private Integer userStatus;
 
+    public Long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
+    }
 
     public Long getId() {
         return id;

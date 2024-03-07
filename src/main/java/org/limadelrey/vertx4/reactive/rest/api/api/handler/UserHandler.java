@@ -1,6 +1,8 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONUtil;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
@@ -49,8 +51,15 @@ public class UserHandler {
     }
 
 
-    public Future<UserGetByIdResponse> create(RoutingContext rc) {
+    public Future<UserGetByIdResponse> register(RoutingContext rc) {
         final User u = rc.getBodyAsJson().mapTo(User.class);
+
+
+        u.setUserName(u.getUserName());
+        String sha1Hex = SecureUtil.sha1(u.getPassword());
+        u.setPassword(sha1Hex);
+        u.setCreateTime(DateUtil.current());
+        u.setUserStatus(0);
 
         return userService.create(u)
                 .onSuccess(success -> ResponseUtils.buildCreatedResponse(rc, new Result<UserGetByIdResponse>().ok(success)))
