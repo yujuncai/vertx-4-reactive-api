@@ -59,6 +59,7 @@
       headers: {'Content-Type': 'application/json'}
     })
     .then(response => {
+      console.log( response.ok)
       if( response.ok ) {
         return response.text();
       } else {
@@ -67,7 +68,9 @@
     })
     .then(data => {
       thisForm.querySelector('.loading').classList.remove('d-block');
-      if (data.trim() == 'OK') {
+
+     let json=JSON.parse(data);
+      if (json.code == 0) {
         thisForm.querySelector('.sent-message').classList.add('d-block');
         thisForm.reset(); 
       } else {

@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -19,8 +20,7 @@ public class UserGetByIdResponse implements Serializable {
     @JsonProperty(value = "password")
     private String password;
 
-    @JsonProperty(value = "create_time")
-    private Date createTime;
+
 
     @JsonProperty(value = "user_status")
     private Integer userStatus;
@@ -29,7 +29,6 @@ public class UserGetByIdResponse implements Serializable {
             this.id = user.getId();
             this.userName = user.getUserName();
             this.password = user.getPassword();
-            this.createTime = user.getCreateTime();
             this.userStatus = user.getUserStatus();
     }
 
@@ -45,9 +44,6 @@ public class UserGetByIdResponse implements Serializable {
         return password;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
 
     public Integer getUserStatus() {
         return userStatus;

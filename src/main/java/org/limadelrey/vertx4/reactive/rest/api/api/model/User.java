@@ -1,5 +1,8 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -19,8 +22,10 @@ public class User implements Serializable {
     @JsonProperty(value = "password")
     private String password;
 
+
+/*    @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonProperty(value = "create_time")
-    private Date createTime;
+    private Date createTime;*/
 
     @JsonProperty(value = "user_status")
     private Integer userStatus;
@@ -50,13 +55,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 
     public Integer getUserStatus() {
         return userStatus;

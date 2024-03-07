@@ -95,7 +95,7 @@ public class UserHandler {
                              JsonObject json = new JsonObject().put("userName", u.getUserName());
                              Credentials credentials = new UsernamePasswordCredentials(json);
                              String token = JwtUtils.getInstance().generateToken(credentials.toJson());
-                             ResponseUtils.buildCreatedResponse(rc, new Result<String>().ok(token));
+                             ResponseUtils.buildOkResponse(rc, new Result<String>().ok(token));
                          } else {
                              ResponseUtils.buildErrResponse(rc, "密码错误!");
                          }

@@ -122,7 +122,10 @@
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql-->
         <dependency>
             <groupId>org.postgresql</groupId>

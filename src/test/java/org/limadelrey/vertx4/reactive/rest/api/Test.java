@@ -1,6 +1,7 @@
 package org.limadelrey.vertx4.reactive.rest.api;
 
 import cn.hutool.core.util.URLUtil;
+import cn.hutool.crypto.SecureUtil;
 
 import java.net.URL;
 
@@ -18,5 +19,8 @@ public class Test {
         System.out.println(url.getHost());
         System.out.println(url.getPort());
 
+
+        String sha1Hex = SecureUtil.sha1("aaaaaa");
+        System.out.println(sha1Hex);
     }
 }
