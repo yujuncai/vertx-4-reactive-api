@@ -15,6 +15,11 @@ vertx-4-reactive-rest-api.postman_collection.json
 直接导入postman即可
 
 
+整合了 guice rocker jwt-auth
+
+Jmeter  在400线程 1秒 200轮 设置下
+8C16G 的机器 单表查询接口 2000-2500 TPS   页面渲染 接近4000TPS
+
 
 
 https://gitee.com/ParkJun/vertx4-reactive-template 
