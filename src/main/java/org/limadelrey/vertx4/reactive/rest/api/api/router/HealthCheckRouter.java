@@ -4,6 +4,7 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.healthchecks.HealthCheckHandler;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.ext.web.Router;
+import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.pgclient.PgPool;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 
@@ -21,7 +22,7 @@ public class HealthCheckRouter {
     public static void setRouter(Router router) {
         Vertx vertx=Vertx.currentContext().owner();
         final HealthCheckHandler healthCheckHandler = HealthCheckHandler.create(vertx);
-        PgPool dbClient = DbUtils.getInstance();
+        MySQLPool dbClient = DbUtils.getInstance();
         healthCheckHandler.register("database",
                 promise ->
                         dbClient.getConnection(connection -> {

@@ -7,7 +7,6 @@ public class GuiceUtil {
 
   public static final   Injector instance = Guice.createInjector();
     public static Injector getGuice(){
-
        return instance;
     }
 }

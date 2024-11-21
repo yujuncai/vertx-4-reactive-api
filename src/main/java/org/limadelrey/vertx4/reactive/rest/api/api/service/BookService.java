@@ -6,6 +6,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.shareddata.AsyncMap;
 import io.vertx.core.shareddata.SharedData;
+import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.Pool;
 import org.apache.logging.log4j.core.async.AsyncLoggerContextSelector;
@@ -27,7 +28,7 @@ public class BookService {
 
     private static final Logger LOGGER = LogManager.getLogger(BookService.class);
 
-    private  PgPool dbClient ;
+    private MySQLPool dbClient ;
     private final BookRepository bookRepository= GuiceUtil.getGuice().getInstance(BookRepository.class);
 
     public BookService() {

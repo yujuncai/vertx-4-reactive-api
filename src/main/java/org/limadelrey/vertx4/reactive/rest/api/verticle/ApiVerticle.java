@@ -47,6 +47,8 @@ public class ApiVerticle extends AbstractVerticle {
         final PushRouter pushRouter = new PushRouter();
         final UserRouter userRouter = new UserRouter();
 
+        final RedisScanRouter redisRouter = new RedisScanRouter();
+
         final Router router = Router.router(vertx);
         router.route().handler(CorsHandler.create("*")
                 .allowedMethod(HttpMethod.GET)
@@ -69,6 +71,7 @@ public class ApiVerticle extends AbstractVerticle {
         bookRouter.setRouter(router);
         pushRouter.setRouter(router);
         userRouter.setRouter(router);
+        redisRouter.setRouter(router);
         router.get("/*").handler(rc -> {
             rc.response().setStatusCode(404).end("Custom 404 message");
         });

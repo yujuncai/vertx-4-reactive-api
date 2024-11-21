@@ -2,6 +2,10 @@ package org.limadelrey.vertx4.reactive.rest.api.utils;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
+import io.vertx.ext.jdbc.JDBCClient;
+import io.vertx.mysqlclient.MySQLBuilder;
+import io.vertx.mysqlclient.MySQLConnectOptions;
+import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.pgclient.PgBuilder;
 import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
@@ -12,6 +16,8 @@ import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class DbUtils {
@@ -26,8 +32,8 @@ public class DbUtils {
 
     }
     private static final DbUtils instance = new DbUtils();
-    private volatile  static PgPool pool ;
-    public static PgPool getInstance() {
+    private volatile  static MySQLPool pool ;
+    public static MySQLPool getInstance() {
 
         if (pool == null) {
             synchronized (DbUtils.class) {
@@ -50,8 +56,8 @@ public class DbUtils {
      * @return PostgreSQL pool
      */
 
-    @Singleton
-    public  PgPool buildDbClient() {
+  //  @Singleton
+  /* public  PgPool buildDbClient() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
 
         Vertx vertx = Vertx.currentContext().owner();
@@ -80,11 +86,11 @@ public class DbUtils {
                 .using(vertx)
                 .build();
         return (PgPool) build;
-    }
+    }*/
 
 
 
-  /*  @Singleton
+    @Singleton
     private   MySQLPool buildDbClient() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
         MySQLConnectOptions connectOptions = new MySQLConnectOptions()
@@ -92,13 +98,23 @@ public class DbUtils {
                 .setHost(properties.getProperty(HOST_CONFIG))
                 .setDatabase(properties.getProperty(DATABASE_CONFIG))
                 .setUser(properties.getProperty(USERNAME_CONFIG))
-                .setPassword(properties.getProperty(PASSWORD_CONFIG));
+                .setPassword(properties.getProperty(PASSWORD_CONFIG))
+                .setReconnectAttempts(10)
+                .setReconnectInterval(1000);
         PoolOptions poolOptions = new PoolOptions()
+                .setMaxSize(50).setShared(true)
+                .setName("DB-pool")
                 .setMaxSize(15);
         Vertx owner = Vertx.currentContext().owner();
-        MySQLPool client = MySQLPool.pool(owner, connectOptions, poolOptions);
-        return client;
-    }*/
+
+        Pool pool = MySQLBuilder
+                .pool()
+                .with(poolOptions)
+                .connectingTo(connectOptions)
+                .using(owner)
+                .build();
+        return (MySQLPool) pool;
+    }
 
     /**
      * Build Flyway configuration that is used to run migrations

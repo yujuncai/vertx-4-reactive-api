@@ -101,10 +101,10 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-pg-client</artifactId>
         </dependency>
-        <!-- <dependency>
+         <dependency>
              <groupId>io.vertx</groupId>
              <artifactId>vertx-mysql-client</artifactId>
-         </dependency>-->
+         </dependency>
 
         <dependency>
             <groupId>io.vertx</groupId>
@@ -132,11 +132,11 @@
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
         </dependency>
-        <!-- <dependency>
+         <dependency>
               <groupId>mysql</groupId>
               <artifactId>mysql-connector-java</artifactId>
               <version>8.0.13</version>
-         </dependency>-->
+         </dependency>
         <!-- https://mvnrepository.com/artifact/io.vertx/vertx-config -->
         <dependency>
             <groupId>io.vertx</groupId>
@@ -162,7 +162,10 @@
             <version>${jackson.version}</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-redis-client</artifactId>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.vertx/vertx-junit5 -->
         <dependency>

@@ -2,6 +2,7 @@ package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
+import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.pgclient.PgPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +22,7 @@ public class UserService {
 
     private static final Logger LOGGER = LogManager.getLogger(UserService.class);
 
-    private  PgPool dbClient ;
+    private MySQLPool dbClient ;
     private final UserRepository userRepository= GuiceUtil.getGuice().getInstance(UserRepository.class);
 
     public UserService() {

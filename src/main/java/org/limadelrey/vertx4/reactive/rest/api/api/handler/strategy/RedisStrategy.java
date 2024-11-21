@@ -1,0 +1,11 @@
+package org.limadelrey.vertx4.reactive.rest.api.api.handler.strategy;
+
+import io.vertx.core.Future;
+
+import java.io.IOException;
+
+public interface RedisStrategy {
+
+
+    public Future handler(Integer dbSize) ;
+}
