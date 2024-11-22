@@ -11,14 +11,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.router.UserRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
+import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
+import org.limadelrey.vertx4.reactive.rest.api.verticle.ApiVerticle;
+import org.limadelrey.vertx4.reactive.rest.api.verticle.PagesVerticle;
 import templates.index;
 
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class TemplatesHandler {
 
@@ -33,7 +40,7 @@ public class TemplatesHandler {
             Future<BookGetByIdResponse> bookGetByIdResponseFuture = bookService.readOne(Integer.parseInt(id));
             bookGetByIdResponseFuture.onSuccess(bookGetByIdResponse -> {
                 rc.put("title", "Vert.x Web Example Using Rocker");
-                rc.put("name", bookGetByIdResponse.getAuthor());
+                rc.put("name", bookGetByIdResponse.getUrl());
                 rc.put("path", rc.request().path());
                 rc.next();
             });
@@ -48,7 +55,11 @@ public class TemplatesHandler {
 
 
     public Future<Void> basicPage(RoutingContext rc) {
-        rc.put("name", "HAHAHAHAH");
+
+
+        final Properties properties = ConfigUtils.getInstance().getProperties();
+        final   Integer port=  Integer.parseInt(properties.getProperty(ApiVerticle.HTTP_PORT));
+        rc.put("host", ":"+port+ UserRouter.USER_PATH);
         rc.next();
         return Future.succeededFuture();
     }

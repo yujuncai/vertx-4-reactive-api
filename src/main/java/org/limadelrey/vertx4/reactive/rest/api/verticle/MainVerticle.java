@@ -74,7 +74,7 @@ public class MainVerticle extends AbstractVerticle {
         RockerRuntime.getInstance().setReloading(true);
         return vertx.deployVerticle(PagesVerticle.class.getName(),new
                 DeploymentOptions()
-                .setInstances(1).setThreadingModel(ThreadingModel.VIRTUAL_THREAD));
+                .setInstances(2).setThreadingModel(ThreadingModel.VIRTUAL_THREAD));
 
     }
 

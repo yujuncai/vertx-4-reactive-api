@@ -31,8 +31,11 @@ public class RedisScanHandler {
 
     }
 
-
+    private static final String ID_PARAMETER = "id";
     public Future<Response> scanRedis(RoutingContext rc) {
+        final String id = rc.pathParam(ID_PARAMETER);
+    // todo
+
         RedisAPI instance = RedisUtils.getInstance();
         Future serverVersion = redisService.getServerVersion(instance);
         Future dbSize = redisService.getDbSize(instance);

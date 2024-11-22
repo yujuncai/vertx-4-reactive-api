@@ -2,6 +2,7 @@ package org.limadelrey.vertx4.reactive.rest.api.api.repository;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
+import io.vertx.sqlclient.Row;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.sqlclient.RowIterator;
@@ -19,13 +20,13 @@ public class BookRepository {
 
     private static final String SQL_SELECT_ALL = "SELECT * FROM books LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM books WHERE id = #{id}";
-    private static final String SQL_INSERT = "INSERT INTO books (author, country, image_link, language, link, pages, title, year) " +
-            "VALUES (#{author}, #{country}, #{image_link}, #{language}, #{link}, #{pages}, #{title}, #{year}) ";
-    private static final String SQL_UPDATE = "UPDATE books SET author = #{author}, country = #{country}, image_link = #{image_link}, " +
-            "language = #{language}, link = #{link}, pages = #{pages}, title = #{title}, year = #{year} WHERE id = #{id}";
+    private static final String SQL_INSERT = "INSERT INTO books (url, username, password, des) " +
+            "VALUES (#{url}, #{username}, #{password},#{des}) ";
+    private static final String SQL_UPDATE = "UPDATE books SET url = #{url}, username = #{username}, password = #{password}, " +
+            "des = #{des} WHERE id = #{id}";
     private static final String SQL_DELETE = "DELETE FROM books WHERE id = #{id}";
     private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM books";
-
+    private static  String SQL_LAST_INSERT_ID = "SELECT LAST_INSERT_ID() AS generated_id";
     public BookRepository() {
     }
 
@@ -81,6 +82,27 @@ public class BookRepository {
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read book by id", throwable.getMessage())));
     }
 
+
+
+
+
+    public Future<Integer> getLastId(SqlConnection connection
+                              ) {
+
+        final RowMapper<Integer> ROW_MAPPER = row -> row.getInteger("generated_id");
+
+        return SqlTemplate
+                .forQuery(connection, SQL_LAST_INSERT_ID)
+                .mapTo(ROW_MAPPER)
+                .execute(Collections.emptyMap())
+                .map(rowSet -> rowSet.iterator().next())
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Count books", SQL_LAST_INSERT_ID)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Count book", throwable.getMessage())));
+    }
+
+
+
+
     /**
      * Create one book
      *
@@ -90,6 +112,7 @@ public class BookRepository {
      */
     public Future<Book> insert(SqlConnection connection,
                                Book book) {
+
         return SqlTemplate
                 .forUpdate(connection, SQL_INSERT)
                 .mapFrom(Book.class)

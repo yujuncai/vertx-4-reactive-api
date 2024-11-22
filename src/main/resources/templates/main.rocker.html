@@ -1,248 +1,248 @@
-@args (String title, RockerBody content)
-
-
-<html lang="en">
-
+@args (String host, RockerBody content)
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-    <title>@title</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
-
-    <!-- Favicons -->
-    <link href="/static/assets/img/favicon.png" rel="icon">
-    <link href="/static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Montserrat:ital,wght@@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Raleway:ital,wght@@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-
-
-    <!-- Vendor CSS Files -->
-    <link href="/static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="/static/assets/vendor/aos/aos.css" rel="stylesheet">
-    <link href="/static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-    <link href="/static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
-    <link href="/static/assets/css/main.css" rel="stylesheet">
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>列表管理</title>
+    <!-- 引入Bootstrap CSS -->
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .action-buttons button {
+            margin-right: 5px;
+        }
+    </style>
 </head>
-
 <body>
-<!-- ======= Header ======= -->
-<section id="topbar" class="topbar d-flex align-items-center">
-    <div class="container d-flex justify-content-center justify-content-md-between">
-        <div class="contact-info d-flex align-items-center">
-            <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact126.com">contact126.com</a></i>
-            <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
+
+<div class="container">
+    <h2 class="text-center">列表管理</h2>
+    <form id="addForm" class="mb-4">
+        <div class="form-group">
+            <label for="itemName">redis-url</label>
+            <input type="text" class="form-control" id="itemUrl" placeholder="url" required>
         </div>
-        <div class="social-links d-none d-md-flex align-items-center">
-            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
+        <div class="form-group">
+            <label for="itemDesc">登录名</label>
+            <input type="text" class="form-control" id="itemName" placeholder="登录名" required>
         </div>
-    </div>
-</section><!-- End Top Bar -->
-<header id="header" class="header d-flex align-items-center">
 
-    <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-        <a href="/pages/v1/index" class="logo d-flex align-items-center">
-            <!-- Uncomment the line below if you also wish to use an image logo -->
-            <!-- <img src="/static//img/logo.png" alt=""> -->
-            <h1>Impact<span>.</span></h1>
-        </a>
-        <nav id="navbar" class="navbar">
-            <ul>
-                <li><a href="/pages/v1/index#hero">Home</a></li>
-                <li><a href="/pages/v1/index#about">About</a></li>
-                <li><a href="/pages/v1/index#services">Services</a></li>
-                <li><a href="/pages/v1/index#portfolio">Portfolio</a></li>
-                <li><a href="/pages/v1/index#team">Team</a></li>
-                <li><a href="/pages/v1/blog">Blog</a></li>
-                <!-- <li class="dropdown"><a href="#"><span>Drop Down</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-                     <ul>
-                         <li><a href="#">Drop Down 1</a></li>
-                         <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-down dropdown-indicator"></i></a>
-                             <ul>
-                                 <li><a href="#">Deep Drop Down 1</a></li>
-                                 <li><a href="#">Deep Drop Down 2</a></li>
-                                 <li><a href="#">Deep Drop Down 3</a></li>
-                                 <li><a href="#">Deep Drop Down 4</a></li>
-                                 <li><a href="#">Deep Drop Down 5</a></li>
-                             </ul>
-                         </li>
-                         <li><a href="#">Drop Down 2</a></li>
-                         <li><a href="#">Drop Down 3</a></li>
-                         <li><a href="#">Drop Down 4</a></li>
-                     </ul>
-                 </li>-->
-                <li><a href="/pages/v1/index#contact">Contact</a></li>
-                <li><a href="/pages/v1/basic">Login</a></li>
-            </ul>
-        </nav><!-- .navbar -->
-
-        <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-        <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
-
-    </div>
-</header><!-- End Header -->
-<!-- End Header -->
-
-<!-- ======= Hero Section ======= -->
-<section id="hero" class="hero">
-    <div class="container position-relative">
-        <div class="row gy-5" data-aos="fade-in">
-            <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start">
-                <h2>Welcome to <span>Impact</span></h2>
-                <p>Sed autem laudantium dolores. Voluptatem itaque ea consequatur eveniet. Eum quas beatae cumque eum quaerat.</p>
-                <div class="d-flex justify-content-center justify-content-lg-start">
-                    <a href="#about" class="btn-get-started">Get Started</a>
-                    <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
-                </div>
-            </div>
-            <div class="col-lg-6 order-1 order-lg-2">
-                <img src="/static/assets/img/hero-img.svg" class="img-fluid" alt="" data-aos="zoom-out" data-aos-delay="100">
-            </div>
+        <div class="form-group">
+            <label for="itemDesc">登录密码</label>
+            <input type="text" class="form-control" id="itemPass" placeholder="密码" required>
         </div>
-    </div>
 
-    <div class="icon-boxes position-relative">
-        <div class="container position-relative">
-            <div class="row gy-4 mt-5">
-
-                <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="icon-box">
-                        <div class="icon"><i class="bi bi-easel"></i></div>
-                        <h4 class="title"><a href="" class="stretched-link">Lorem Ipsum</a></h4>
-                    </div>
-                </div><!--End Icon Box -->
-
-                <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="icon-box">
-                        <div class="icon"><i class="bi bi-gem"></i></div>
-                        <h4 class="title"><a href="" class="stretched-link">Sed ut perspiciatis</a></h4>
-                    </div>
-                </div><!--End Icon Box -->
-
-                <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="icon-box">
-                        <div class="icon"><i class="bi bi-geo-alt"></i></div>
-                        <h4 class="title"><a href="" class="stretched-link">Magni Dolores</a></h4>
-                    </div>
-                </div><!--End Icon Box -->
-
-                <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="500">
-                    <div class="icon-box">
-                        <div class="icon"><i class="bi bi-command"></i></div>
-                        <h4 class="title"><a href="" class="stretched-link">Nemo Enim</a></h4>
-                    </div>
-                </div><!--End Icon Box -->
-
-            </div>
+        <div class="form-group">
+            <label for="itemDesc">备注</label>
+            <input type="text" class="form-control" id="itemDesc" placeholder="备注" required>
         </div>
-    </div>
 
-    </div>
-</section>
-<!-- End Hero Section -->
+        <button type="submit" class="btn btn-primary">添加</button>
+    </form>
 
-@content
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>登录名</th>
+            <th>密码</th>
+            <th>备注</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="listBody">
+        <!-- 列表数据将在这里动态生成 -->
+        </tbody>
+    </table>
+</div>
+<script src="/static/js/jq.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/const.js"></script>
+<script>
+
+    let items = []; // 假设的数据源
+    $(function(){
+      if(!localStorage.getItem("token")) {
+          alert(localStorage.getItem("token"));
+          location.href="login";
+      }
+        fetch(getAll, {
+            method: 'GET',
+            headers: {
+                'token': localStorage.getItem("token")
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code==0) {
+                    items=data.data.books;
+                    // 初始化渲染列表
+                    renderList();
+                } else {
+                    alert(data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('请求出错:', error);
+            });
+    });
 
 
 
 
+    document.getElementById('addForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const url = document.getElementById('itemUrl').value;
+        const name = document.getElementById('itemName').value;
+        const pass = document.getElementById('itemPass').value;
+        const desc = document.getElementById('itemDesc').value;
+        addItem(url,name,pass, desc);
+        this.reset(); // 清空表单
+    });
+
+    function addItem(url,username,password, des) {
+
+        if(!localStorage.getItem("token")) {
+            alert(localStorage.getItem("token"));
+            location.href="login";
+        }
+        fetch(postBook, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': localStorage.getItem("token")
+            },
+            body: JSON.stringify({ url,username,password ,des})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code==0) {
+                    const newItem = data.data;
+                    items.push(newItem);
+                    renderList();
+                } else {
+                    alert(data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('请求出错:', error);
+            });
 
 
 
-<!-- ======= Footer ======= -->
-<footer id="footer" class="footer">
 
-    <div class="container">
-        <div class="row gy-4">
-            <div class="col-lg-5 col-md-12 footer-info">
-                <a href="index.html" class="logo d-flex align-items-center">
-                    <span>Impact</span>
-                </a>
-                <p>Cras fermentum odio eu feugiat lide par naso tierra. Justo eget nada terra videa magna derita valies darta donna mare fermentum iaculis eu non diam phasellus.</p>
-                <div class="social-links d-flex mt-4">
-                    <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-                </div>
-            </div>
+    }
 
-            <div class="col-lg-2 col-6 footer-links">
-                <h4>Useful Links</h4>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Terms of service</a></li>
-                    <li><a href="#">Privacy policy</a></li>
-                </ul>
-            </div>
+    function renderList() {
 
-            <div class="col-lg-2 col-6 footer-links">
-                <h4>Our Services</h4>
-                <ul>
-                    <li><a href="#">Web Design</a></li>
-                    <li><a href="#">Web Development</a></li>
-                    <li><a href="#">Product Management</a></li>
-                    <li><a href="#">Marketing</a></li>
-                    <li><a href="#">Graphic Design</a></li>
-                </ul>
-            </div>
+        const tbody = document.getElementById('listBody');
+        tbody.innerHTML = '';
+        items.forEach(item => {
+            const row = `
+            <tr>
+                <td>${item.id}</td>
+                 <td>${item.url}</td>
+                <td>${item.username}</td>
+                 <td>${item.password}</td>
+                <td>${item.des}</td>
+                <td class="action-buttons">
+                     <button class="btn btn-success" onclick="Run(${item.id})">启动扫描</button>
+                    <button class="btn btn-danger" onclick="deleteItem(${item.id})">删除</button>
+                </td>
+            </tr>`;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+    }
 
-            <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
-                <h4>Contact Us</h4>
-                <p>
-                    A108 Adam Street <br>
-                    New York, NY 535022<br>
-                    United States <br><br>
-                    <strong>Phone:</strong> +1 5589 55488 55<br>
-                    <strong>Email:</strong> info126.com<br>
-                </p>
+    function editItem(id) {
+        const item = items.find(i => i.id === id);
+        if (item) {
+            const newUrl = prompt("请输入新的url:", item.url);
+            const newName = prompt("请输入新的登录名:", item.name);
+            const newPass = prompt("请输入新的密码:", item.pass);
+            const newDesc = prompt("请输入新的描述:", item.desc);
+            if (newName && newDesc) {
+                item.name = newName;
+                item.desc = newDesc;
+                item.url = newUrl;
+                item.pass = newPass;
+                renderList();
+            }
+        }
+    }
 
-            </div>
 
-        </div>
-    </div>
 
-    <div class="container mt-4">
-        <div class="copyright">
-            &copy; Copyright <strong><span>Impact</span></strong>. All Rights Reserved
-        </div>
-        <div class="credits">
-            <!-- All the links in the footer should remain intact. -->
-            <!-- You can delete the links only if you purchased the pro version. -->
-            <!-- Licensing information: https://bootstrapmade.com/license/ -->
-            <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/impact-bootstrap-business-website-template/ -->
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-        </div>
-    </div>
+    function Run(id) {
 
-</footer><!-- End Footer -->
+        if(!localStorage.getItem("token")) {
+            alert(localStorage.getItem("token"));
+            location.href="login";
+        }
+        fetch(scanToRedis+id, {
+            method: 'GET',
+            headers: {
 
-<!-- Vendor JS Files -->
-<script src="/static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="/static/assets/vendor/aos/aos.js"></script>
-<script src="/static/assets/vendor/glightbox/js/glightbox.min.js"></script>
-<script src="/static/assets/vendor/purecounter/purecounter_vanilla.js"></script>
-<script src="/static/assets/vendor/swiper/swiper-bundle.min.js"></script>
-<script src="/static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-<script src="/static/assets/vendor/php-email-form/validate.js"></script>
+                'token': localStorage.getItem("token")
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code==0) {
+                    items = items.filter(item => item.id !== id);
+                    renderList();
+                } else {
+                    alert(data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('请求出错:', error);
+            });
 
-<!-- Template Main JS File -->
-<script src="/static/assets/js/main.js"></script>
+
+
+
+    }
+
+
+
+
+    function deleteItem(id) {
+
+        if(!localStorage.getItem("token")) {
+            alert(localStorage.getItem("token"));
+            location.href="login";
+        }
+        fetch(delBook+id, {
+            method: 'DELETE',
+            headers: {
+
+                'token': localStorage.getItem("token")
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code==0) {
+                    items = items.filter(item => item.id !== id);
+                    renderList();
+                } else {
+                    alert(data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('请求出错:', error);
+            });
+
+    }
+
+
+</script>
 
 </body>
-
 </html>

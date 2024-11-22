@@ -34,7 +34,7 @@ import java.util.Properties;
 public class ApiVerticle extends AbstractVerticle {
 
     private static final Logger LOGGER = LogManager.getLogger(ApiVerticle.class);
-    private static final String HTTP_PORT = "http.port";
+    public static final String HTTP_PORT = "http.port";
     @Override
     public void start(Promise<Void> promise) {
 
@@ -55,6 +55,10 @@ public class ApiVerticle extends AbstractVerticle {
                 .allowedMethod(HttpMethod.POST)
                 .allowedMethod(HttpMethod.PUT)
                 .allowedMethod(HttpMethod.DELETE)
+                .allowedHeader("Content-Type")
+                .allowedHeader("Authorization")
+                .allowedHeader("token")
+                .allowCredentials(true)
                );
         router.route().handler(TimeoutHandler.create(5000));
 

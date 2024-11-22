@@ -16,7 +16,7 @@ public class UserRouter {
 
     private final UserValidationHandler userValidationHandler=GuiceUtil.getGuice().getInstance(UserValidationHandler.class);
 
-
+    public static final String USER_PATH ="/user/v1";
 
     private final UserHandler userHandler=GuiceUtil.getGuice().getInstance(UserHandler.class);
     public UserRouter() {
@@ -26,7 +26,7 @@ public class UserRouter {
 
     public void setRouter(Router router) {
 
-        router.mountSubRouter("/user/v1", buildPushRouter());
+        router.mountSubRouter(USER_PATH, buildPushRouter());
     }
 
 

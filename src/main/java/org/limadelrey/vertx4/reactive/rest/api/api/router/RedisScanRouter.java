@@ -16,7 +16,7 @@ public class RedisScanRouter {
     private final Vertx vertx=Vertx.currentContext().owner();
 
     private final RedisScanHandler redisScanHandler= GuiceUtil.getGuice().getInstance(RedisScanHandler.class);
-
+    private final JwtAuthHandler jwtHandler= GuiceUtil.getGuice().getInstance(JwtAuthHandler.class);
 
     public RedisScanRouter() {
 
@@ -38,12 +38,12 @@ public class RedisScanRouter {
                 .handler(LoggerHandler.create(LoggerFormat.DEFAULT))
                 .handler(BodyHandler.create().setBodyLimit(1000).setDeleteUploadedFilesOnEnd(false).setHandleFileUploads(false));
 
-        scanRouter.get("/scanToRedis").handler(redisScanHandler::scanRedis);
+        scanRouter.get("/scanToRedis/:id").handler(jwtHandler::TokenAuth).handler(redisScanHandler::scanRedis);
 
-        scanRouter.get("/setToRedis").handler(redisScanHandler::setRedis);
+        scanRouter.get("/setToRedis").handler(jwtHandler::TokenAuth).handler(redisScanHandler::setRedis);
 
 
-        scanRouter.get("/getToRedis").handler(redisScanHandler::getRedis);
+        scanRouter.get("/getToRedis").handler(jwtHandler::TokenAuth).handler(redisScanHandler::getRedis);
         return scanRouter;
     }
 

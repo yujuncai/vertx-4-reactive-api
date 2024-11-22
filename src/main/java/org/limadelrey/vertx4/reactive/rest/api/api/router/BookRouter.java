@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.handler.JwtAuthHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.PushHandler;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.PreVerticle;
@@ -34,7 +35,7 @@ public class BookRouter {
 
     private final BookValidationHandler bookValidationHandler=GuiceUtil.getGuice().getInstance(BookValidationHandler.class);
 
-
+    private final JwtAuthHandler jwtHandler= GuiceUtil.getGuice().getInstance(JwtAuthHandler.class);
 
 
     public BookRouter() {
@@ -59,14 +60,12 @@ public class BookRouter {
 
         bookRouter.route("/books*")
                 .handler(LoggerHandler.create(LoggerFormat.DEFAULT))
-                .handler(BodyHandler.create().setBodyLimit(40000000).setDeleteUploadedFilesOnEnd(true).setHandleFileUploads(true));
-        bookRouter.get("/books").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
-        bookRouter.get("/books/:id").handler(bookValidationHandler.readOne()).handler(bookHandler::readOne);
-        bookRouter.post("/books").handler(bookValidationHandler.create()).handler(bookHandler::create);
-        bookRouter.put("/books/:id").handler(bookValidationHandler.update()).handler(bookHandler::update);
-        bookRouter.delete("/books/:id").handler(bookValidationHandler.delete()).handler(bookHandler::delete);
-
-
+                .handler(BodyHandler.create().setBodyLimit(400000).setDeleteUploadedFilesOnEnd(true).setHandleFileUploads(true));
+        bookRouter.get("/books").handler(bookValidationHandler.readAll()).handler(jwtHandler::TokenAuth).handler(bookHandler::readAll);
+        bookRouter.get("/books/:id").handler(bookValidationHandler.readOne()).handler(jwtHandler::TokenAuth).handler(bookHandler::readOne);
+        bookRouter.post("/books").handler(bookValidationHandler.create()).handler(jwtHandler::TokenAuth).handler(bookHandler::create);
+        bookRouter.put("/books/:id").handler(bookValidationHandler.update()).handler(jwtHandler::TokenAuth).handler(bookHandler::update);
+        bookRouter.delete("/books/:id").handler(bookValidationHandler.delete()).handler(jwtHandler::TokenAuth).handler(bookHandler::delete);
 
 
 

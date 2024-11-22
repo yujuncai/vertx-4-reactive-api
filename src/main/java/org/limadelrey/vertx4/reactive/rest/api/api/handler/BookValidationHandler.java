@@ -107,14 +107,10 @@ public class BookValidationHandler {
 
     private ObjectSchemaBuilder buildBodySchemaBuilder() {
         return objectSchema()
-                .requiredProperty("author", stringSchema().with(minLength(1)).with(maxLength(255)))
-                .requiredProperty("country", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
-                .requiredProperty("image_link", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
-                .requiredProperty("language", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
-                .requiredProperty("link", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
-                .requiredProperty("pages", intSchema().with(maximum(10000)).nullable())
-                .requiredProperty("title", stringSchema().with(minLength(1)).with(maxLength(255)))
-                .requiredProperty("year", intSchema().with(maximum(10000)).nullable());
+                .requiredProperty("url", stringSchema().with(minLength(1)).with(maxLength(255)))
+                .requiredProperty("username", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
+                .requiredProperty("password", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
+                .requiredProperty("des", stringSchema().with(minLength(1)).with(maxLength(255)).nullable());
     }
 
     private ParameterProcessorFactory buildIdPathParameter() {

@@ -103,7 +103,7 @@ public class BookHandler {
 
 
         return bookService.delete(Integer.parseInt(id))
-                .onSuccess(success -> ResponseUtils.buildNoContentResponse(rc))
+                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<String>().ok("success")))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 

@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.JWTOptions;
 import io.vertx.ext.auth.authentication.Credentials;
 import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;
 import io.vertx.ext.web.RoutingContext;
@@ -101,8 +102,8 @@ public class UserHandler {
 
                          if (success.getPassword().equals(sha1Hex)) {
                              JsonObject json = new JsonObject().put("userName", success.getUserName()).put("id", success.getId());
-                             Credentials credentials = new UsernamePasswordCredentials(json);
-                             String token = JwtUtils.getInstance().generateToken(credentials.toJson());
+                           //  Credentials credentials = new UsernamePasswordCredentials(json);
+                             String token = JwtUtils.getInstance().generateToken(json,new JWTOptions().setExpiresInMinutes(60));
                              ResponseUtils.buildOkResponse(rc, new Result<String>().ok(token));
                          } else {
                              ResponseUtils.buildErrResponse(rc, "密码错误!");

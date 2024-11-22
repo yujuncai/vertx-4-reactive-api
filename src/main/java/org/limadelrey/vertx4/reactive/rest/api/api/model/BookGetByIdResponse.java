@@ -10,78 +10,66 @@ public class BookGetByIdResponse implements Serializable {
     private static final long serialVersionUID = 7621071075786169611L;
 
     @JsonProperty(value = "id")
-    private final int id;
+    private int id;
 
-    @JsonProperty(value = "author")
-    private final String author;
+    @JsonProperty(value = "url")
+    private String url;
 
-    @JsonProperty(value = "country")
-    private final String country;
+    @JsonProperty(value = "username")
+    private String username;
 
-    @JsonProperty(value = "image_link")
-    private final String imageLink;
+    @JsonProperty(value = "password")
+    private String password;
 
-    @JsonProperty(value = "language")
-    private final String language;
-
-    @JsonProperty(value = "link")
-    private final String link;
-
-    @JsonProperty(value = "pages")
-    private final Integer pages;
-
-    @JsonProperty(value = "title")
-    private final String title;
-
-    @JsonProperty(value = "year")
-    private final Integer year;
+    @JsonProperty(value = "des")
+    private String des;
 
     public BookGetByIdResponse(Book book) {
         this.id = book.getId();
-        this.author = book.getAuthor();
-        this.country = book.getCountry();
-        this.imageLink = book.getImageLink();
-        this.language = book.getLanguage();
-        this.link = book.getLink();
-        this.pages = book.getPages();
-        this.title = book.getTitle();
-        this.year = book.getYear();
+        this.url = book.getUrl();
+        this.username = book.getUsername();
+        this.password = book.getPassword();
+        this.des = book.getDes();
     }
 
     public int getId() {
         return id;
     }
 
-    public String getAuthor() {
-        return author;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getCountry() {
-        return country;
+    public String getUrl() {
+        return url;
     }
 
-    public String getImageLink() {
-        return imageLink;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getUsername() {
+        return username;
     }
 
-    public String getLink() {
-        return link;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public Integer getPages() {
-        return pages;
+    public String getPassword() {
+        return password;
     }
 
-    public String getTitle() {
-        return title;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public Integer getYear() {
-        return year;
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
     }
 
     @Override
@@ -97,19 +85,6 @@ public class BookGetByIdResponse implements Serializable {
         return Objects.hash(id);
     }
 
-    @Override
-    public String toString() {
-        return "BookGetByIdResponse{" +
-                "id=" + id +
-                ", author='" + author + '\'' +
-                ", country='" + country + '\'' +
-                ", imageLink='" + imageLink + '\'' +
-                ", language='" + language + '\'' +
-                ", link='" + link + '\'' +
-                ", pages=" + pages +
-                ", title='" + title + '\'' +
-                ", year=" + year +
-                '}';
-    }
+
 
 }
