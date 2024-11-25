@@ -1,6 +1,8 @@
 package org.limadelrey.vertx4.reactive.rest.api.utils;
 
 import com.google.inject.Singleton;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgBuilder;
 import io.vertx.pgclient.PgConnectOptions;
@@ -15,9 +17,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.flywaydb.core.api.configuration.Configuration;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class RedisUtils {
     private static final Logger LOGGER = LogManager.getLogger(RedisUtils.class);
@@ -29,7 +36,7 @@ public class RedisUtils {
     }
     private static final RedisUtils instance = new RedisUtils();
     private volatile  static RedisAPI redis ;
-    public static RedisAPI getInstance() {
+    public static RedisAPI getInstance1() {
 
         if (redis == null) {
             synchronized (RedisUtils.class) {
@@ -43,7 +50,12 @@ public class RedisUtils {
     }
 
 
+    public static Future<RedisAPI> getDymicInstance( Future<BookGetByIdResponse> bookGetByIdResponseFuture)  {
 
+
+                    Future<RedisAPI> future = instance.buildRedisClient(bookGetByIdResponseFuture);
+           return future;
+    }
 
 
 
@@ -70,6 +82,24 @@ public class RedisUtils {
 
 
 
+    public  Future<RedisAPI> buildRedisClient(Future<BookGetByIdResponse> bookGetByIdResponseFuture) {
+        Promise<RedisAPI> promise = Promise.promise();
+        bookGetByIdResponseFuture.onSuccess(bookGetByIdResponse -> {
+            RedisOptions options = new RedisOptions()
+                    .setConnectionString(bookGetByIdResponse.getUrl())
+                    .setMaxPoolSize(100).setMaxPoolWaiting(200000).setMaxWaitingHandlers(10000);
+            if(StringUtils.isNotEmpty(bookGetByIdResponse.getPassword())){
+                options.setPassword(bookGetByIdResponse.getPassword());
+            }
+            Vertx vertx = Vertx.currentContext().owner();
+            Redis redis = Redis.createClient(vertx, options);
+
+            RedisAPI redisAPI = RedisAPI.api(redis);
+            promise.complete(redisAPI);
+        }).onFailure(promise::fail);;
+
+        return promise.future();
+    }
 
 
 }

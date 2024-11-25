@@ -20,6 +20,7 @@ import org.limadelrey.vertx4.reactive.rest.api.utils.HeapSortUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RedisVerticle extends AbstractVerticle {
@@ -27,8 +28,8 @@ public class RedisVerticle extends AbstractVerticle {
     private static final Logger LOGGER = LogManager.getLogger(RedisVerticle.class);
     public static  final  String CONSUMER_ADDRESS="com.redis";
 
+    private static ConcurrentHashMap <String,List<KeyVo>> redisMap=new ConcurrentHashMap<>();
 
-      private static List<KeyVo> all=new CopyOnWriteArrayList<>();
     final static Properties properties = ConfigUtils.getInstance().getProperties();
     static  Integer N = Integer.valueOf(properties.getProperty("heapSort.topn"));
     @Override
@@ -46,11 +47,20 @@ public class RedisVerticle extends AbstractVerticle {
                 if(list!=null&&list.size()>0) {
                     LOGGER.info("收到eventBus pingid{} szie {}",pingId,list.size());
                     ArrayList<KeyVo> keyVos = getTopArray(list,N);
-                    all.addAll(keyVos);
-                    if(all.size()>(5*N)){
-                        ArrayList<KeyVo> all_keyVos=  getTopArray(all,N);
-                        all.clear();
-                        all.addAll(all_keyVos);
+
+
+                    if(redisMap.contains(pingId)){
+                        redisMap.get(pingId).addAll(keyVos);
+                    }else{
+                        redisMap.put(pingId,keyVos);
+                    }
+
+
+
+                    if( redisMap.get(pingId).size()>(5*N)){
+                        ArrayList<KeyVo> all_keyVos=  getTopArray(redisMap.get(pingId),N);
+                        redisMap.get(pingId).clear();
+                        redisMap.get(pingId).addAll(all_keyVos);
                     }
                     LOGGER.info("收到eventBus 排序完成 ");
                 }
@@ -75,13 +85,13 @@ public class RedisVerticle extends AbstractVerticle {
     }
 
     
-    public static Future<List<KeyVo>> getRedisTopN(){
-        return Future.succeededFuture(all);
+    public static Future<List<KeyVo>> getRedisTopN(String pingId){
+        return Future.succeededFuture(redisMap.get(pingId));
     }
 
 
-    public static Future<List<KeyVo>> clearRedisTopN(){
-        all.clear();
+    public static Future<List<KeyVo>> clearRedisTopN(String pingId){
+        redisMap.get(pingId).clear();
         return    Future.succeededFuture();
     }
 

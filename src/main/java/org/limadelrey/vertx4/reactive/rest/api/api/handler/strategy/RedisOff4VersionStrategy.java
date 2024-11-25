@@ -38,20 +38,20 @@ public class RedisOff4VersionStrategy implements  RedisStrategy{
 
     private  static  final String START="0";
     @Override
-    public Future handler(Integer dbSize)  {
+    public Future handler(Integer dbSize, RedisAPI instance )  {
 
         final Properties properties = ConfigUtils.getInstance().getProperties();
         String threshold = properties.getProperty("scan.threshold.length");
 
-        RedisAPI instance = RedisUtils.getInstance();
+
         String uuid = UUID.randomUUID().toString();
         loadScripts(instance).onSuccess(s ->
         {
             scanKeys(instance,s,threshold,START,uuid);
         });
+        //todo 更新pindid
 
-
-        return Future.succeededFuture();
+        return Future.succeededFuture(uuid);
     }
 
 
@@ -72,6 +72,7 @@ public class RedisOff4VersionStrategy implements  RedisStrategy{
                             scanKeys(instance,sha,threshold,newCur,uuid);
                         }else {
                             LOGGER.info("结束SCAN CUR "+newCur);
+                            instance.close();
                         }
                     }else{
                         String[] split = string.split(":->");

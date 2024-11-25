@@ -25,16 +25,16 @@
     <form id="addForm" class="mb-4">
         <div class="form-group">
             <label for="itemName">redis-url</label>
-            <input type="text" class="form-control" id="itemUrl" placeholder="url" required>
+            <input type="text" class="form-control" id="itemUrl" placeholder="格式如下：redis://localhost:6379/0" required>
         </div>
         <div class="form-group">
-            <label for="itemDesc">登录名</label>
-            <input type="text" class="form-control" id="itemName" placeholder="登录名" required>
+            <label for="itemDesc">操作人名</label>
+            <input type="text" class="form-control" id="itemName" placeholder="操作人姓名" required>
         </div>
 
         <div class="form-group">
             <label for="itemDesc">登录密码</label>
-            <input type="text" class="form-control" id="itemPass" placeholder="密码" required>
+            <input type="text" class="form-control" id="itemPass" placeholder="密码" >
         </div>
 
         <div class="form-group">
@@ -50,7 +50,7 @@
         <tr>
             <th>ID</th>
             <th>URL</th>
-            <th>登录名</th>
+            <th>操作人</th>
             <th>密码</th>
             <th>备注</th>
             <th>操作</th>
@@ -196,7 +196,7 @@
             .then(data => {
                 if (data.code==0) {
                     items = items.filter(item => item.id !== id);
-                    renderList();
+                    alert(data.data);
                 } else {
                     alert(data.msg);
                 }
@@ -206,7 +206,7 @@
             });
 
 
-
+       // renderList();
 
     }
 

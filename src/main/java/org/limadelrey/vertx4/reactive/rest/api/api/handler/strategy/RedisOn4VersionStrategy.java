@@ -28,12 +28,12 @@ public class RedisOn4VersionStrategy implements  RedisStrategy{
     private  static  final String TWO="2";
     private  static  final String START="0";
     @Override
-    public Future handler(Integer dbSize)  {
+    public Future handler(Integer dbSize, RedisAPI instance )  {
 
         final Properties properties = ConfigUtils.getInstance().getProperties();
         String threshold = properties.getProperty("scan.threshold.byte");
 
-        RedisAPI instance = RedisUtils.getInstance();
+
         String uuid = UUID.randomUUID().toString();
             loadScripts(instance).onSuccess(s ->
             {
@@ -42,7 +42,7 @@ public class RedisOn4VersionStrategy implements  RedisStrategy{
 
 
 
-        return Future.succeededFuture();
+        return Future.succeededFuture(uuid);
     }
 
 
@@ -64,8 +64,11 @@ public class RedisOn4VersionStrategy implements  RedisStrategy{
                         if(!newCur.equals("0")){
                             scanKeys(instance,sha,threshold,newCur,uuid);
                         }else {
-                            LOGGER.info("结束SCAN CUR "+newCur);
-
+                            LOGGER.info("结束SCAN CUR "+newCur+" 回收redis链接");
+                            //回收链接
+                            instance.close();
+                            //持久化结果
+                            //todo
                         }
                     }else{
                         String[] split = string.split(":->");

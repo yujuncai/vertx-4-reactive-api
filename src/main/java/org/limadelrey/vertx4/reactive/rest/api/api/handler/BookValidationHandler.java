@@ -109,7 +109,7 @@ public class BookValidationHandler {
         return objectSchema()
                 .requiredProperty("url", stringSchema().with(minLength(1)).with(maxLength(255)))
                 .requiredProperty("username", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
-                .requiredProperty("password", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
+               // .requiredProperty("password", stringSchema().with(minLength(1)).with(maxLength(255)).nullable())
                 .requiredProperty("des", stringSchema().with(minLength(1)).with(maxLength(255)).nullable());
     }
 

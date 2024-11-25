@@ -40,10 +40,10 @@ public class RedisScanRouter {
 
         scanRouter.get("/scanToRedis/:id").handler(jwtHandler::TokenAuth).handler(redisScanHandler::scanRedis);
 
-        scanRouter.get("/setToRedis").handler(jwtHandler::TokenAuth).handler(redisScanHandler::setRedis);
+       // scanRouter.get("/setToRedis").handler(jwtHandler::TokenAuth).handler(redisScanHandler::setRedis);
 
 
-        scanRouter.get("/getToRedis").handler(jwtHandler::TokenAuth).handler(redisScanHandler::getRedis);
+        scanRouter.get("/getToRedis/:id").handler(jwtHandler::TokenAuth).handler(redisScanHandler::getRedis);
         return scanRouter;
     }
 
