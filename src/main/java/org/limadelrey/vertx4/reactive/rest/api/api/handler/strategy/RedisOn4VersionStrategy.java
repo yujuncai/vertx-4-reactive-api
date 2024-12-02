@@ -9,6 +9,8 @@ import io.vertx.redis.client.RedisAPI;
 import io.vertx.redis.client.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
+import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.message.CorsorMessage;
 import org.limadelrey.vertx4.reactive.rest.api.message.KeyVo;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
@@ -27,14 +29,17 @@ public class RedisOn4VersionStrategy implements  RedisStrategy{
     private  static  final String ONE="1";
     private  static  final String TWO="2";
     private  static  final String START="0";
+
+
     @Override
-    public Future handler(Integer dbSize, RedisAPI instance )  {
+    public Future handler(Integer dbSize, RedisAPI instance,String uuid )  {
 
         final Properties properties = ConfigUtils.getInstance().getProperties();
         String threshold = properties.getProperty("scan.threshold.byte");
 
 
-        String uuid = UUID.randomUUID().toString();
+
+
             loadScripts(instance).onSuccess(s ->
             {
                 scanKeys(instance,s,threshold,START,uuid);

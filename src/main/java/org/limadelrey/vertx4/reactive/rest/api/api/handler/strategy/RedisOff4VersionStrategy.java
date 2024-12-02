@@ -38,13 +38,13 @@ public class RedisOff4VersionStrategy implements  RedisStrategy{
 
     private  static  final String START="0";
     @Override
-    public Future handler(Integer dbSize, RedisAPI instance )  {
+    public Future handler(Integer dbSize, RedisAPI instance, String uuid )  {
 
         final Properties properties = ConfigUtils.getInstance().getProperties();
         String threshold = properties.getProperty("scan.threshold.length");
 
 
-        String uuid = UUID.randomUUID().toString();
+
         loadScripts(instance).onSuccess(s ->
         {
             scanKeys(instance,s,threshold,START,uuid);

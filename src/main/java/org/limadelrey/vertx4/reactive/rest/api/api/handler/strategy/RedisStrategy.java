@@ -8,5 +8,5 @@ import java.io.IOException;
 public interface RedisStrategy {
 
 
-    public Future handler(Integer dbSize, RedisAPI instance) ;
+    public Future handler(Integer dbSize, RedisAPI instance,String uuid) ;
 }

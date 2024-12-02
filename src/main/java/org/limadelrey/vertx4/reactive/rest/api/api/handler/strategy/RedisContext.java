@@ -9,22 +9,26 @@ public class RedisContext {
 
     private RedisAPI instance;
     private Integer dbSize;
+
+
+    private String  pingId;
     /**
      * 构造函数，传入一个具体策略对象
      *
      * @param strategy 具体策略对象
      */
-    public RedisContext(RedisStrategy strategy,Integer dbSize, RedisAPI instance ){
+    public RedisContext(RedisStrategy strategy,Integer dbSize, RedisAPI instance ,String pingId){
         this.strategy = strategy;
         this.dbSize=dbSize;
        this.instance= instance;
+        this.pingId= pingId;
     }
     /**
      * 策略方法
      */
     public Future contextInterface(){
 
-       return strategy.handler(dbSize,instance);
+       return strategy.handler(dbSize,instance,pingId);
     }
 
 }

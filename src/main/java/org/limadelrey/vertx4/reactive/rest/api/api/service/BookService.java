@@ -139,4 +139,20 @@ public class BookService {
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete one book", throwable.getMessage())));
     }
 
+
+
+
+    public Future<BookGetByIdResponse> updatePingId(int id,
+                                              Book book) {
+        book.setId(id);
+
+        return dbClient.withTransaction(
+                        connection -> bookRepository.updatePingId(connection, book)
+                                .map(BookGetByIdResponse::new))
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Update one book", success)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Update one book", throwable.getMessage())));
+    }
+
+
+
 }

@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.Cookie;
 import io.vertx.core.shareddata.AsyncMap;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.auth.authentication.Credentials;
@@ -41,15 +42,25 @@ public class JwtAuthHandler {
     public Future<Void> TokenAuth(RoutingContext rc) {
         JWTAuth instance = JwtUtils.getInstance();
         String token = rc.request().getHeader("token");
-        System.out.println("token:" + token);
+        if(StringUtils.isBlank(token)){
+            token= rc.request().getParam("token");
+        }
+        if(StringUtils.isBlank(token)){
+            Cookie cookie = rc.request().getCookie("token");
+            if(cookie!=null) {
+             token = cookie.getValue();
+                }
+        }
         Credentials credentials =new TokenCredentials( token);
         Future<User> userFuture = instance.authenticate(credentials)
                 .onSuccess(user -> {
+                    System.out.println("user:" + user.principal());
                     rc.put("user", user.principal());
                     rc.next();
                 }).onFailure(err -> {
-
-                    ResponseUtils.buildErrorResponse(rc,err);
+                    System.out.println("错误");
+                    ResponseUtils.buildErrLoginResponse(rc,"login");
+                    Future.failedFuture("err");
                 });
       return  Future.succeededFuture();
     }
@@ -58,10 +69,15 @@ public class JwtAuthHandler {
     public Future<Void> PageTokenAuth(RoutingContext rc) {
         JWTAuth instance = JwtUtils.getInstance();
         String token = rc.request().getHeader("token");
-    if(StringUtils.isBlank(token)){
-                 token=  rc.request().getParam("token");
+        if(StringUtils.isBlank(token)){
+                 token= rc.request().getParam("token");
         }
-
+        if(StringUtils.isBlank(token)){
+            Cookie cookie = rc.request().getCookie("token");
+            if(cookie!=null) {
+                token = cookie.getValue();
+            }
+        }
         System.out.println("token:" + token);
         Credentials credentials =new TokenCredentials( token);
         Future<User> userFuture = instance.authenticate(credentials)
@@ -75,7 +91,7 @@ public class JwtAuthHandler {
                             .setStatusCode(302)
                             .putHeader("Location", PagesVerticle.PAGES_PATH+"/login")
                             .end();
-
+                    Future.failedFuture("err");
                 });
         return  Future.succeededFuture();
     }

@@ -42,6 +42,7 @@
             <input type="text" class="form-control" id="itemDesc" placeholder="备注" required>
         </div>
 
+
         <button type="submit" class="btn btn-primary">添加</button>
     </form>
 
@@ -53,6 +54,7 @@
             <th>操作人</th>
             <th>密码</th>
             <th>备注</th>
+            <th>运行批次</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -61,6 +63,7 @@
         </tbody>
     </table>
 </div>
+
 <script src="/static/js/jq.js"></script>
 <script src="/static/js/bootstrap.js"></script>
 <script src="/static/js/const.js"></script>
@@ -151,9 +154,11 @@
                 <td>${item.username}</td>
                  <td>${item.password}</td>
                 <td>${item.des}</td>
+                 <td>${item.pingid}</td>
                 <td class="action-buttons">
                      <button class="btn btn-success" onclick="Run(${item.id})">启动扫描</button>
                     <button class="btn btn-danger" onclick="deleteItem(${item.id})">删除</button>
+                    <button class="btn btn-warning" onclick="QueryR('${item.pingid}')">查询结果</button>
                 </td>
             </tr>`;
             tbody.insertAdjacentHTML('beforeend', row);
@@ -179,7 +184,66 @@
 
 
 
+
+    function QueryR(pingid) {
+
+        if(!pingid){
+            alert("没有运行批次！")
+            return;
+        }
+
+        if(pingid==null||pingid==""||pingid=="null" ){
+            alert("没有运行批次！")
+            return;
+        }
+
+        if(!localStorage.getItem("token")) {
+            alert(localStorage.getItem("token"));
+            location.href="login";
+        }
+        fetch(getToRedis+pingid, {
+            method: 'GET',
+            headers: {
+
+                'token': localStorage.getItem("token")
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code==0) {
+
+
+
+                    // 将 JSON 数据格式化为字符串
+                    var formattedJson = JSON.stringify(data.data);
+                    // 将格式化的 JSON 数据设置到模态对话框的内容区域
+                  alert(formattedJson);
+
+                } else {
+                    alert(data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('请求出错:', error);
+            });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     function Run(id) {
+
+
+        var userConfirmed = confirm("你确定开始扫描?");
+        if (userConfirmed) {
 
         if(!localStorage.getItem("token")) {
             alert(localStorage.getItem("token"));
@@ -196,7 +260,8 @@
             .then(data => {
                 if (data.code==0) {
                     items = items.filter(item => item.id !== id);
-                    alert(data.data);
+                    alert("当前运行批次号： "+data.data);
+                    location.reload();
                 } else {
                     alert(data.msg);
                 }
@@ -209,7 +274,7 @@
        // renderList();
 
     }
-
+    }
 
 
 

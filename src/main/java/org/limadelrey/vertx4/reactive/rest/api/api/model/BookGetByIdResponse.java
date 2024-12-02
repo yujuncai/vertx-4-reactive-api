@@ -24,12 +24,25 @@ public class BookGetByIdResponse implements Serializable {
     @JsonProperty(value = "des")
     private String des;
 
+
+    @JsonProperty(value = "pingid")
+    private String pingid;
+
+    public String getPingid() {
+        return pingid;
+    }
+
+    public void setPingid(String pingid) {
+        this.pingid = pingid;
+    }
+
     public BookGetByIdResponse(Book book) {
         this.id = book.getId();
         this.url = book.getUrl();
         this.username = book.getUsername();
         this.password = book.getPassword();
         this.des = book.getDes();
+        this.pingid=book.getPingid();
     }
 
     public int getId() {

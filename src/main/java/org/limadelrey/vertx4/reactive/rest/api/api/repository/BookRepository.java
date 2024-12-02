@@ -24,6 +24,10 @@ public class BookRepository {
             "VALUES (#{url}, #{username}, #{password},#{des}) ";
     private static final String SQL_UPDATE = "UPDATE books SET url = #{url}, username = #{username}, password = #{password}, " +
             "des = #{des} WHERE id = #{id}";
+
+
+    private static final String  SQL_UPDATE_PINGID = "UPDATE books SET pingid = #{pingid}  WHERE id = #{id}";
+
     private static final String SQL_DELETE = "DELETE FROM books WHERE id = #{id}";
     private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM books";
     private static  String SQL_LAST_INSERT_ID = "SELECT LAST_INSERT_ID() AS generated_id";
@@ -193,5 +197,27 @@ public class BookRepository {
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Count books", SQL_COUNT)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Count book", throwable.getMessage())));
     }
+
+
+
+
+    public Future<Book> updatePingId(SqlConnection connection,
+                               Book book) {
+        return SqlTemplate
+                .forUpdate(connection, SQL_UPDATE_PINGID)
+                .mapFrom(Book.class)
+                .execute(book)
+                .flatMap(rowSet -> {
+                    if (rowSet.rowCount() > 0) {
+                        return Future.succeededFuture(book);
+                    } else {
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(book.getId()));
+                    }
+                })
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Update book", SQL_UPDATE_PINGID)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Update book", throwable.getMessage())));
+    }
+
+
 
 }

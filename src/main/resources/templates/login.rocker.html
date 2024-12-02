@@ -83,8 +83,9 @@
                     if (data.code==0) {
 
                   localStorage.setItem("token",data.data);
+                  setCookie("token",data.data,1);
                       // 重定向到主页或其他页面
-                      location.href="main?token="+data.data;
+                      location.href="main";
                     } else {
                       alert(date.msg);
                     }
@@ -99,7 +100,15 @@
 
 
 
-
+      function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+      }
 
 
 

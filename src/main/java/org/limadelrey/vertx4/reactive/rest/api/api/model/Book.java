@@ -24,6 +24,17 @@ public class Book implements Serializable {
     @JsonProperty(value = "des")
     private String des;
 
+    @JsonProperty(value = "pingid")
+    private String pingid;
+
+    public String getPingid() {
+        return pingid;
+    }
+
+    public void setPingid(String pingid) {
+        this.pingid = pingid;
+    }
+
     public String getUrl() {
         return url;
     }

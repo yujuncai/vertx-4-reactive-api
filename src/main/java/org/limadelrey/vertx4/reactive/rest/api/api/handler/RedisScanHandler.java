@@ -12,6 +12,7 @@ import org.limadelrey.vertx4.reactive.rest.api.api.handler.strategy.RedisContext
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.strategy.RedisOff4VersionStrategy;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.strategy.RedisOn4VersionStrategy;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.strategy.RedisStrategy;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.RedisService;
@@ -22,6 +23,7 @@ import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.RedisVerticle;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -42,6 +44,12 @@ public class RedisScanHandler {
 
         Future<BookGetByIdResponse> bookGetByIdResponseFuture = bookService.readOne(Integer.parseInt(id));
         Future<RedisAPI> FutureApi =  RedisUtils.getDymicInstance(bookGetByIdResponseFuture);
+
+        String uuid = UUID.randomUUID().toString();
+        Book book = new Book();
+        book.setPingid(uuid);
+        bookService.updatePingId(Integer.parseInt(id), book);
+
         FutureApi.onSuccess(instance ->{
             Future serverVersion = redisService.getServerVersion(instance);
             Future dbSize = redisService.getDbSize(instance);
@@ -50,9 +58,9 @@ public class RedisScanHandler {
                     RedisContext context = null;
                     LOGGER.info("redis version {}",s);
                     if ( (Integer)s < 4) {
-                        context = new RedisContext(redisServiceOff4, (Integer) o,instance);
+                        context = new RedisContext(redisServiceOff4, (Integer) o,instance,uuid);
                     } else {
-                        context = new RedisContext(redisServiceOn4, (Integer) o,instance);
+                        context = new RedisContext(redisServiceOn4, (Integer) o,instance,uuid);
                     }
                     Future future = context.contextInterface();
                     future.onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<>().ok(success)))
