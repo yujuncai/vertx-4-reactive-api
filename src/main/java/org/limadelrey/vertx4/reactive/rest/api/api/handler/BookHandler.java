@@ -37,7 +37,9 @@ public class BookHandler {
         final String limit = rc.queryParams().get(LIMIT_PARAMETER);
 
         return bookService.readAll(page, limit)
-                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<BookGetAllResponse>().ok(success)))
+                .onSuccess(success -> {
+                    ResponseUtils.buildOkResponse(rc, new Result<BookGetAllResponse>().ok(success));
+                })
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 

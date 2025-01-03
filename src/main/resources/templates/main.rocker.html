@@ -18,9 +18,9 @@
         }
     </style>
 </head>
-<body>
+<body >
 
-<div class="container">
+<div class="container" >
     <h2 class="text-center">列表管理</h2>
     <form id="addForm" class="mb-4">
         <div class="form-group">
@@ -261,7 +261,7 @@
                 if (data.code==0) {
                     items = items.filter(item => item.id !== id);
                     alert("当前运行批次号： "+data.data);
-                    location.reload();
+                   // location.reload();
                 } else {
                     alert(data.msg);
                 }
@@ -306,7 +306,20 @@
 
     }
 
+function  init(){
 
+    const sse = new URL(sseUrl);
+    sse.searchParams.append('token', localStorage.getItem("token"));
+    const eventSource = new EventSource(sse.href);
+
+    eventSource.onmessage = function(event) {
+        console.log(event.data);
+    };
+    eventSource.onerror = function(error) {
+
+        console.error('EventSource failed:', error);
+    };
+}
 </script>
 
 </body>

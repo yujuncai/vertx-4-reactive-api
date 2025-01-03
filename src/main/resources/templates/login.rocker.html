@@ -8,9 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="robots" content="all,follow">
   <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <script type="text/javascript" src="/static/wasm/plugin.js"></script>
+  <!--  <script type="text/javascript" charset="utf-8" src="/static/wasm/plugin.wasm-runtime.js"></script>-->
+
     <link rel="stylesheet" href="/static/css/style.default.css" id="theme-stylesheet">
   </head>
-  <body>
+  <body onload=teavmTest() >
     <div class="page login-page">
       <div class="container d-flex align-items-center">
         <div class="form-holder has-shadow">
@@ -40,7 +43,7 @@
                     <button id="login" type="button" class="btn btn-primary">登录</button>
                     <div style="margin-top: -40px;"> 
 
-                    	<div class="custom-control custom-checkbox " style="float: right;">
+                      <div class="custom-control custom-checkbox " style="float: right;"></div>
 
                     </div>
                   </form>
@@ -60,7 +63,10 @@
     <!-- Main File-->
     <script src="/static/js/front.js"></script>
     <script src="/static/js/const.js"></script>
+
     <script>
+
+
 
 
 
@@ -163,6 +169,15 @@
     		
 
     	})
+
+
+      function  teavmTest(){
+
+       sayHello();
+
+      }
+
+
     </script>
   </body>
 </html>

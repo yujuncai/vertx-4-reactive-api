@@ -47,6 +47,22 @@ public class ResponseUtils {
                 .end(Json.encodePrettily(response));
     }
 
+
+
+    public static void buildSSEResponse(RoutingContext rc,
+                                            Object response) {
+        rc.response()
+                .setStatusCode(200)
+                .putHeader(CONTENT_TYPE_HEADER, "text/event-stream")
+                .putHeader("cache-control", "no-cache")
+                .putHeader("connection", "keep-alive")
+                .end(Json.encodePrettily(response));
+    }
+
+
+
+
+
     /**
      * Build success response using 204 No Content as its status code and no body
      *

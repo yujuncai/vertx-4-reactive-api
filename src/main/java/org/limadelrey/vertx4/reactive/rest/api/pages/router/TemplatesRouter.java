@@ -17,7 +17,6 @@ import org.limadelrey.vertx4.reactive.rest.api.api.handler.JwtAuthHandler;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.pages.handler.TemplatesHandler;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.PagesVerticle;
-import templates.index;
 
 import java.net.InetAddress;
 import java.net.URL;

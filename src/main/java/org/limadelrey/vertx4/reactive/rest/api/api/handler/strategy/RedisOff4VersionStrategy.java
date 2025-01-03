@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.R.Result;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.RedisScanHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.router.BookRouter;
 import org.limadelrey.vertx4.reactive.rest.api.codec.CustomizeMessageCodec;
 import org.limadelrey.vertx4.reactive.rest.api.message.CorsorMessage;
 import org.limadelrey.vertx4.reactive.rest.api.message.KeyVo;
@@ -73,6 +74,8 @@ public class RedisOff4VersionStrategy implements  RedisStrategy{
                         }else {
                             LOGGER.info("结束SCAN CUR "+newCur);
                             instance.close();
+                            EventBus eb = Vertx.currentContext().owner().eventBus();
+                            eb.send(BookRouter.CONSUMER_ADDRESS, uuid );
                         }
                     }else{
                         String[] split = string.split(":->");

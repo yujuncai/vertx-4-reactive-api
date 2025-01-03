@@ -18,7 +18,6 @@ import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.ApiVerticle;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.PagesVerticle;
-import templates.index;
 
 import java.net.InetAddress;
 import java.net.URL;

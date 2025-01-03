@@ -9,12 +9,16 @@ import io.vertx.redis.client.RedisAPI;
 import io.vertx.redis.client.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.limadelrey.vertx4.reactive.rest.api.R.Result;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.router.BookRouter;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.message.CorsorMessage;
 import org.limadelrey.vertx4.reactive.rest.api.message.KeyVo;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ConfigUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.RedisUtils;
+import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.RedisVerticle;
 
 import java.io.BufferedReader;
@@ -74,6 +78,12 @@ public class RedisOn4VersionStrategy implements  RedisStrategy{
                             instance.close();
                             //持久化结果
                             //todo
+
+                            //通知完成
+                            LOGGER.info("发送 "+uuid+" 到事件");
+                            EventBus eb = Vertx.currentContext().owner().eventBus();
+                            eb.send(BookRouter.CONSUMER_ADDRESS, uuid );
+
                         }
                     }else{
                         String[] split = string.split(":->");

@@ -292,6 +292,18 @@
             <version>32.1.1-jre</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.teavm/teavm-core -->
+        <dependency>
+            <groupId>org.teavm</groupId>
+            <artifactId>teavm-core</artifactId>
+            <version>0.10.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.teavm</groupId>
+            <artifactId>teavm-jso-apis</artifactId>
+            <version>0.10.2</version>
+        </dependency>
 
     </dependencies>
 
@@ -420,6 +432,40 @@
                     </execution>
                 </executions>
             </plugin>-->
+            <plugin>
+                <groupId>org.teavm</groupId>
+                <artifactId>teavm-maven-plugin</artifactId>
+                <version>0.10.2</version>
+                <dependencies>
+                    <!-- This dependency is required by TeaVM to emulate subset of Java class library -->
+                    <dependency>
+                        <groupId>org.teavm</groupId>
+                        <artifactId>teavm-classlib</artifactId>
+                        <version>0.10.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <mainClass>org.limadelrey.vertx4.reactive.rest.api.plugins.SecretPlugin</mainClass>
+                            <debugInformationGenerated>true</debugInformationGenerated>
+                            <sourceMapsGenerated>true</sourceMapsGenerated>
+                           <!-- JAVASCRIPT
+                            WEBASSEMBLY
+                            WEBASSEMBLY_WASI
+                            C-->
+                            <targetType>JAVASCRIPT</targetType>
+                            <targetDirectory>${project.basedir}/src/main/resources/webroot/wasm</targetDirectory>
+                            <targetFileName>plugin.js</targetFileName>
+                            <jsModuleType>NONE</jsModuleType>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

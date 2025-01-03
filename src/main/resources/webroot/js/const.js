@@ -5,3 +5,4 @@ var postBook="http://localhost:8888/api/v1/books";
 var delBook="http://localhost:8888/api/v1/books/";
 var scanToRedis="http://localhost:8888/scan/v1/scanToRedis/";
 var getToRedis="http://localhost:8888/scan/v1/getToRedis/";
+var sseUrl="http://localhost:8888/api/v1/sse";
