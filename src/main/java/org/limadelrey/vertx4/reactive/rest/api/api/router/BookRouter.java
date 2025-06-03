@@ -1,8 +1,5 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.router;
 
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.impl.JsonUtil;
 import io.vertx.core.shareddata.AsyncMap;
@@ -16,16 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
-import org.limadelrey.vertx4.reactive.rest.api.api.handler.PushHandler;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
-import org.limadelrey.vertx4.reactive.rest.api.verticle.PreVerticle;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 
 public class BookRouter {
     private static final Logger LOGGER = LogManager.getLogger(BookRouter.class);

@@ -8,8 +8,6 @@ import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.limadelrey.vertx4.reactive.rest.api.verticle.ApiVerticle;
-import org.limadelrey.vertx4.reactive.rest.api.verticle.MigrationVerticle;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,13 +19,7 @@ import java.util.stream.Collectors;
 @ExtendWith(VertxExtension.class)
 public class ComponentTests extends AbstractContainerBaseTest {
 
-   // @BeforeAll
-    static void setup(Vertx vertx,
-                      VertxTestContext testContext) {
-        vertx.deployVerticle(new MigrationVerticle(), testContext.succeeding(migrationVerticleId ->
-                vertx.deployVerticle(new ApiVerticle(), testContext.succeeding(apiVerticleId ->
-                        testContext.completeNow()))));
-    }
+
 
     //@Test
     @Order(1)

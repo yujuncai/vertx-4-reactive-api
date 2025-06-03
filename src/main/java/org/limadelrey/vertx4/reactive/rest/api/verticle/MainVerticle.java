@@ -14,30 +14,17 @@ public class MainVerticle extends AbstractVerticle {
     public void start() {
         final long start = System.currentTimeMillis();
 
-            deployPreVerticle(vertx);   // 消息总线
-            deployMigrationVerticle(vertx)
-                    .flatMap(x ->
+
                             deployPagesVerticle(vertx)
-                    )
+
                     .flatMap(x ->
                             deployApiVerticle(vertx)
-                    ).flatMap( x ->
-                            deployTcpVerticle(vertx)
                     ).onSuccess(success -> LOGGER.info(LogUtils.RUN_APP_SUCCESSFULLY_MESSAGE.buildMessage(System.currentTimeMillis() - start)))
                     .onFailure(throwable -> LOGGER.error(throwable.getMessage()));
 
     }
 
-    private Future<Void> deployMigrationVerticle(Vertx vertx) {
-        final DeploymentOptions options = new DeploymentOptions()
-                .setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
-                .setWorkerPoolName("migrations-worker-pool")
-                .setInstances(1)
-                .setWorkerPoolSize(1);
 
-        return vertx.deployVerticle(MigrationVerticle.class.getName(), options)
-                .flatMap(vertx::undeploy);
-    }
 
     private Future<String> deployApiVerticle(Vertx vertx) {
         return vertx.deployVerticle(ApiVerticle.class.getName(),
@@ -47,20 +34,7 @@ public class MainVerticle extends AbstractVerticle {
 
 
     }
-    private Future<String> deployTcpVerticle(Vertx vertx) {
-        return vertx.deployVerticle(TcpVerticle.class.getName(),new
-                DeploymentOptions().setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
-                .setInstances(1));
 
-    }
-
-
-    private Future<String> deployPreVerticle(Vertx vertx) {
-        return vertx.deployVerticle(PreVerticle.class.getName(),new
-                DeploymentOptions().setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
-                .setInstances(1));
-
-    }
 
 
     private Future<String> deployPagesVerticle(Vertx vertx) {

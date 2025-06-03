@@ -44,7 +44,6 @@ public class ApiVerticle extends AbstractVerticle {
 
 
         final BookRouter bookRouter = new BookRouter();
-        final PushRouter pushRouter = new PushRouter();
         final UserRouter userRouter = new UserRouter();
 
         final Router router = Router.router(vertx);
@@ -67,7 +66,6 @@ public class ApiVerticle extends AbstractVerticle {
         MetricsRouter.setRouter(router);
 
         bookRouter.setRouter(router);
-        pushRouter.setRouter(router);
         userRouter.setRouter(router);
         router.get("/*").handler(rc -> {
             rc.response().setStatusCode(404).end("Custom 404 message");
