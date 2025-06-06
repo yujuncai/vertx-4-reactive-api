@@ -4,7 +4,6 @@ import com.google.inject.Singleton;
 import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgBuilder;
 import io.vertx.pgclient.PgConnectOptions;
-import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.Pool;
 import io.vertx.sqlclient.PoolOptions;
 import org.apache.logging.log4j.LogManager;
@@ -24,8 +23,8 @@ public class DbUtils {
 
     }
     private static final DbUtils instance = new DbUtils();
-    private volatile  static PgPool pool ;
-    public static PgPool getInstance() {
+    private volatile  static Pool pool ;
+    public static Pool getInstance() {
 
         if (pool == null) {
             synchronized (DbUtils.class) {
@@ -49,7 +48,7 @@ public class DbUtils {
      */
 
     @Singleton
-    public  PgPool buildDbClient() {
+    public  Pool buildDbClient() {
         final Properties properties = ConfigUtils.getInstance().getProperties();
 
         Vertx vertx = Vertx.currentContext().owner();
@@ -71,13 +70,12 @@ public class DbUtils {
                 .setEventLoopSize(Runtime.getRuntime().availableProcessors());
 
 
-        Pool build = PgBuilder
+        return PgBuilder
                 .pool()
                 .with(poolOptions)
                 .connectingTo(connectOptions)
                 .using(vertx)
                 .build();
-        return (PgPool) build;
     }
 
 

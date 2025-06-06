@@ -14,8 +14,8 @@
         <vertx.version>4.5.3</vertx.version>
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <jackson.version>2.12.0</jackson.version>
-        <flyway.version>7.5.0</flyway.version>
-        <postgresql.version>42.7.1</postgresql.version>
+
+        <postgresql.version>42.7.6</postgresql.version>
         <micrometer.version>1.6.3</micrometer.version>
         <testcontainers.version>1.15.1</testcontainers.version>
 
@@ -44,7 +44,11 @@
     </dependencyManagement>
 
     <dependencies>
-
+        <dependency>
+            <groupId>com.ongres.scram</groupId>
+            <artifactId>client</artifactId>
+            <version>2.1</version>
+        </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web-templ-rocker</artifactId>
@@ -116,12 +120,7 @@
             <artifactId>vertx-sql-client-templates</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>${flyway.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -175,7 +174,7 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web-client</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
@@ -287,6 +286,12 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>32.1.1-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <scope>provided</scope>
         </dependency>
 
 

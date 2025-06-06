@@ -15,34 +15,44 @@ public class MainVerticle extends AbstractVerticle {
         final long start = System.currentTimeMillis();
 
 
-                            deployPagesVerticle(vertx)
+        deployPagesVerticle(vertx)
 
-                    .flatMap(x ->
-                            deployApiVerticle(vertx)
-                    ).onSuccess(success -> LOGGER.info(LogUtils.RUN_APP_SUCCESSFULLY_MESSAGE.buildMessage(System.currentTimeMillis() - start)))
-                    .onFailure(throwable -> LOGGER.error(throwable.getMessage()));
+                .flatMap(x ->
+                        deployApiVerticle(vertx)
+                )
+                .flatMap(x -> deployDifyVerticle(vertx))
+                .onSuccess(success -> LOGGER.info(LogUtils.RUN_APP_SUCCESSFULLY_MESSAGE.buildMessage(System.currentTimeMillis() - start)))
+                .onFailure(throwable -> LOGGER.error(throwable.getMessage()));
 
     }
-
 
 
     private Future<String> deployApiVerticle(Vertx vertx) {
         return vertx.deployVerticle(ApiVerticle.class.getName(),
                 new DeploymentOptions()
-                        .setInstances( Runtime.getRuntime().availableProcessors()/2).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
-                        );
+                        .setInstances(Runtime.getRuntime().availableProcessors() / 4).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
+        );
 
 
     }
 
+    private Future<String> deployDifyVerticle(Vertx vertx) {
+        return vertx.deployVerticle(DifyVerticle.class.getName(),
+                new DeploymentOptions()
+                        .setInstances(Runtime.getRuntime().availableProcessors() / 4).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
+        );
+
+
+    }
 
 
     private Future<String> deployPagesVerticle(Vertx vertx) {
         RockerRuntime.getInstance().setReloading(true);
-        return vertx.deployVerticle(PagesVerticle.class.getName(),new
+        return vertx.deployVerticle(PagesVerticle.class.getName(), new
                 DeploymentOptions()
-                .setInstances(Runtime.getRuntime().availableProcessors()/2).setThreadingModel(ThreadingModel.VIRTUAL_THREAD));
+                .setInstances(Runtime.getRuntime().availableProcessors() / 4).setThreadingModel(ThreadingModel.VIRTUAL_THREAD));
 
     }
+
 
 }

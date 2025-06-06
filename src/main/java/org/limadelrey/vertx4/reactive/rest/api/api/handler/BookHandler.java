@@ -70,10 +70,11 @@ public class BookHandler {
 
         return bookService.create(book)
                 .onSuccess(success -> ResponseUtils.buildCreatedResponse(rc, new Result<BookGetByIdResponse>().ok(success)))
-                .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
+                .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable))
+        ;
     }
 
-    /**
+    /**R
      * Update one book
      * It should return 200 OK in case of success
      * It should return 400 Bad Request, 404 Not Found or 500 Internal Server Error in case of failure

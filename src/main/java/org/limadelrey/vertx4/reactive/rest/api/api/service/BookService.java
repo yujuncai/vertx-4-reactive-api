@@ -1,14 +1,10 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
-import cn.hutool.core.lang.Assert;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
-import io.vertx.core.shareddata.AsyncMap;
-import io.vertx.core.shareddata.SharedData;
-import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.Pool;
-import org.apache.logging.log4j.core.async.AsyncLoggerContextSelector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
@@ -17,8 +13,6 @@ import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 import org.limadelrey.vertx4.reactive.rest.api.utils.QueryUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +21,7 @@ public class BookService {
 
     private static final Logger LOGGER = LogManager.getLogger(BookService.class);
 
-    private  PgPool dbClient ;
+    private final Pool dbClient ;
     private final BookRepository bookRepository= GuiceUtil.getGuice().getInstance(BookRepository.class);
 
     public BookService() {

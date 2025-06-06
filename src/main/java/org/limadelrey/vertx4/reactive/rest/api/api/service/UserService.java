@@ -2,11 +2,12 @@ package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
-import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.Pool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.*;
-import org.limadelrey.vertx4.reactive.rest.api.api.repository.BookRepository;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.User;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.UserGetAllResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.UserGetByIdResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.repository.UserRepository;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
@@ -21,7 +22,7 @@ public class UserService {
 
     private static final Logger LOGGER = LogManager.getLogger(UserService.class);
 
-    private  PgPool dbClient ;
+    private final Pool dbClient ;
     private final UserRepository userRepository= GuiceUtil.getGuice().getInstance(UserRepository.class);
 
     public UserService() {

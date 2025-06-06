@@ -1,6 +1,5 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.repository;
 
-import cn.hutool.json.JSONUtil;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.RowIterator;
@@ -9,7 +8,6 @@ import io.vertx.sqlclient.templates.RowMapper;
 import io.vertx.sqlclient.templates.SqlTemplate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.User;
 import org.limadelrey.vertx4.reactive.rest.api.utils.LogUtils;
 
