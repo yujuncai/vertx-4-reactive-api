@@ -21,7 +21,7 @@ public class AgentInfosRepository {
     private static final String SQL_SELECT_ALL = "SELECT * FROM agent_infos LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM agent_infos WHERE id = #{id}";
 
-    private static final String SQL_SELECT_BY_TYPE = "SELECT * FROM agent_infos WHERE type = #{type}";
+    private static final String SQL_SELECT_BY_TYPE = "SELECT * FROM agent_infos WHERE type = #{type} and action = #{action}";
 
     private static final String SQL_INSERT = "INSERT INTO agent_infos (id, hosts, port, uri,type,apikey) " +
             "VALUES (#{id}, #{hosts}, #{port}, #{uri},#{type},#{apikey}) ";
@@ -36,12 +36,12 @@ public class AgentInfosRepository {
 
 
 
-    public Future<List<AgentInfos>> selectByType(SqlConnection connection,String type
+    public Future<List<AgentInfos>> selectByType(SqlConnection connection,String type,String action
                                               ) {
         return SqlTemplate
                 .forQuery(connection, SQL_SELECT_BY_TYPE)
                 .mapTo(AgentInfos.class)
-                .execute(Collections.singletonMap("type", type))
+                .execute(Map.of("type", type, "action", action))
                 .map(rowSet -> {
                     final List<AgentInfos> agent_infos = new ArrayList<>();
                     rowSet.forEach(agent_infos::add);

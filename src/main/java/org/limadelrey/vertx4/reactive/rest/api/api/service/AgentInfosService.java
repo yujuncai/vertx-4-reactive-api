@@ -79,11 +79,11 @@ public class AgentInfosService {
 
 
 
-    public Future<List<AgentInosGetByIdResponse>> selectByType(String type) {
+    public Future<List<AgentInosGetByIdResponse>> selectByType(String type,String action) {
 
         return dbClient.withTransaction(
                         connection -> {
-                            return  agentInfosRepository.selectByType(connection,type)
+                            return  agentInfosRepository.selectByType(connection,type,action)
                                                     .map(result -> {
                                                         final List<AgentInosGetByIdResponse> list = result.stream()
                                                                 .map(AgentInosGetByIdResponse::new)

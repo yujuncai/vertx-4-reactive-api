@@ -19,10 +19,10 @@ public class BookRepository {
 
     private static final String SQL_SELECT_ALL = "SELECT * FROM books LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM books WHERE id = #{id}";
-    private static final String SQL_INSERT = "INSERT INTO books (author, country, image_link, language, link, pages, title, year) " +
-            "VALUES (#{author}, #{country}, #{image_link}, #{language}, #{link}, #{pages}, #{title}, #{year}) ";
-    private static final String SQL_UPDATE = "UPDATE books SET author = #{author}, country = #{country}, image_link = #{image_link}, " +
-            "language = #{language}, link = #{link}, pages = #{pages}, title = #{title}, year = #{year} WHERE id = #{id}";
+    private static final String SQL_INSERT = "INSERT INTO books (querys, answer, agent_id, type, create_time,ping_id) " +
+            "VALUES (#{querys}, #{answer}, #{agent_id}, #{type}, NOW(),#{ping_id} ) ";
+    private static final String SQL_UPDATE = "UPDATE books SET querys = #{querys}, answer = #{answer}, agent_id = #{agent_id}, " +
+            "type = #{type}, create_time = #{create_time} WHERE id = #{id}";
     private static final String SQL_DELETE = "DELETE FROM books WHERE id = #{id}";
     private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM books";
 

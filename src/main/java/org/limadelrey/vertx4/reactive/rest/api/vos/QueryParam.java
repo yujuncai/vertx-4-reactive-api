@@ -16,5 +16,6 @@ public class QueryParam implements Serializable {
     private  String querys;
 
 
-
+    @JsonProperty(value = "action")
+    private  String action;
 }

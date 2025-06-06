@@ -68,14 +68,14 @@ public class AagentInfosHandler {
 
     public CompositeFuture chatToAgent(RoutingContext rc) {
         final QueryParam param  = rc.body().asJsonObject().mapTo(QueryParam.class);
-        Future<JsonObject> sourceuture = service.selectByType("0").map(m -> buildJson(m,param));
-        Future<JsonObject> targetFuture = service.selectByType("1").map(m -> buildJson(m,param));
+        Future<JsonObject> sourceFuture = service.selectByType("0",param.getAction()).map(m -> buildJson(m,param));
+        Future<JsonObject> targetFuture = service.selectByType("1",param.getAction()).map(m -> buildJson(m,param));
 
 
 
 
 
-        return     CompositeFuture.all(sourceuture, targetFuture).onComplete(ar -> {
+        return     CompositeFuture.all(sourceFuture, targetFuture).onComplete(ar -> {
             if (ar.succeeded()) {
                 // 所有的Future都成功完成
                 JsonObject result1 = ar.result().resultAt(0);
