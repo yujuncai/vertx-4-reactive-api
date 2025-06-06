@@ -29,4 +29,6 @@ public class AgentInfos implements Serializable {
     @JsonProperty(value = "apikey")
     private String apikey;
 
+    @JsonProperty(value = "action")
+    private String action;
 }

@@ -17,5 +17,6 @@ public class AnswerParam implements Serializable {
     private  String answer;
 
 
-
+    @JsonProperty(value = "coverId")
+    private  String coverId;
 }

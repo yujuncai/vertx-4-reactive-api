@@ -47,8 +47,10 @@ public class EventBusHandler {
             book.setPingId(pingId);
             bookService.create(book);
 
+            sourceJson.getJsonObject("body").put("conversation_id",answerParam.getCoverId());
             //回答替换为输入
             targetJson.getJsonObject("body").put("query",answerParam.getAnswer());
+
             vertx.eventBus().send("chat_to_1", body);
 
         }).onFailure(throwable -> {
@@ -77,8 +79,8 @@ public class EventBusHandler {
             book.setCreateTime(DateUtil.date());
             book.setPingId(sourceJson.getString("pingId"));
             bookService.create(book);
-
-
+            //设置cover
+            sourceJson.getJsonObject("body").put("conversation_id",answerParam.getCoverId());
 
             JsonObject targetJson = body.getJsonObject("target");
             targetJson.getJsonObject("body").put("query",answerParam.getAnswer());
@@ -109,6 +111,22 @@ public class EventBusHandler {
             book.setPingId(targetJson.getString("pingId"));
             bookService.create(book);
 
+            targetJson.getJsonObject("body").put("conversation_id",answerParam.getCoverId());
+
+            if(answerParam.getAnswer().contains("请点击立即转账")){
+                LOGGER.info("INFO 1 {}", "转账流程以是最后一步，结束测试！");
+                return;
+            }
+
+
+
+            body.put("loop",body.getInteger("loop")-1);
+            Integer loop = body.getInteger("loop");
+            if(loop<1){
+                LOGGER.info("INFO 1 {}", "looped!!!!!!!!!!!!!!!!!!!！");
+                return;
+            }
+
 
             JsonObject sourceJson = body.getJsonObject("source");
             sourceJson.getJsonObject("body").put("query",answerParam.getAnswer());
@@ -138,7 +156,10 @@ public class EventBusHandler {
                 .sendJsonObject(body)
                 .onSuccess(response -> {
                     String an= response.body().getString("answer");
-                    promise.complete( AnswerParam.builder().answer(an).build());
+
+                    String cover= response.body().getString("conversation_id");
+
+                    promise.complete( AnswerParam.builder().answer(an).coverId(cover).build());
                 }).onFailure(throwable -> {
                     LOGGER.info("Error", throwable);
                 });

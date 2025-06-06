@@ -18,4 +18,9 @@ public class QueryParam implements Serializable {
 
     @JsonProperty(value = "action")
     private  String action;
+
+
+    @JsonProperty(value = "loop")
+    private  Integer loop;
+
 }
