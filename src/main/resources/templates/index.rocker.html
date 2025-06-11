@@ -1,758 +1,592 @@
-@import io.vertx.ext.web.RoutingContext
+@import cn.hutool.json.JSONObject
+@import cn.hutool.json.JSONUtil;
+@args (JSONObject data, RockerBody content)
 
-@args (String title, String name, String path)
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理系统</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/assets/css/main.css">
+</head>
+<body>
+<!-- 通知容器 -->
+<div class="toast-container" id="toastContainer"></div>
 
-@templates.main.template(title) -> {
+<div class="container">
+    <div class="header">
+        <h1 class="title">代理管理系统</h1>
+    </div>
 
+    <!-- 工具栏 -->
+    <div class="toolbar">
+        <div class="toolbar-actions">
+            <button class="btn btn-primary" id="addAgentBtn">
+                <i class="fas fa-plus"></i> 添加代理
+            </button>
+        </div>
 
+    </div>
 
-
-
-
-<main id="main">
-
-    <!-- ======= About Us Section ======= -->
-    <section id="about" class="about">
-        <div class="container" data-aos="fade-up">
-
-            <div class="section-header">
-                <h2>About Us</h2>
-                <p>Aperiam dolorum et et wuia molestias qui eveniet numquam nihil porro incidunt dolores placeat sunt id nobis omnis tiledo stran delop</p>
+    <!-- 数据表格 -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">代理列表</h2>
+            <button class="btn btn-outline" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i> 刷新
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>主机地址</th>
+                        <th>端口</th>
+                        <th>URI</th>
+                        <th>动作</th>
+                        <th>类型</th>
+                        <th>API Key</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="agentTableBody">
+                    <!-- 数据将通过JavaScript动态加载 -->
+                    </tbody>
+                </table>
             </div>
+        </div>
+    </div>
+</div>
 
-            <div class="row gy-4">
-                <div class="col-lg-6">
-                    <h3>Voluptatem dignissimos provident quasi corporis</h3>
-                    <img src="/static/assets/img/about.jpg" class="img-fluid rounded-4 mb-4" alt="">
-                    <p>Ut fugiat ut sunt quia veniam. Voluptate perferendis perspiciatis quod nisi et. Placeat debitis quia recusandae odit et consequatur voluptatem. Dignissimos pariatur consectetur fugiat voluptas ea.</p>
-                    <p>Temporibus nihil enim deserunt sed ea. Provident sit expedita aut cupiditate nihil vitae quo officia vel. Blanditiis eligendi possimus et in cum. Quidem eos ut sint rem veniam qui. Ut ut repellendus nobis tempore doloribus debitis explicabo similique sit. Accusantium sed ut omnis beatae neque deleniti repellendus.</p>
+<!-- 添加/编辑代理模态框 -->
+<div class="modal-overlay" id="agentModal">
+    <div class="modal">
+        <div class="modal-header">
+           <!-- <h3 class="modal-title" id="modalTitle">添加代理</h3>
+            <button class="modal-close" id="modalClose">&times;</button>-->
+        </div>
+        <div class="modal-body">
+            <form id="agentForm">
+                <input type="hidden" id="agentId">
+                <div class="form-group">
+                    <label for="hosts" class="form-label">主机地址</label>
+                    <input type="text" id="hosts" class="form-control" required>
+                    <div class="form-error" id="hostsError"></div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="content ps-0 ps-lg-5">
-                        <p class="fst-italic">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                            magna aliqua.
-                        </p>
-                        <ul>
-                            <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate trideta storacalaperda mastiro dolore eu fugiat nulla pariatur.</li>
-                        </ul>
-                        <p>
-                            Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                            velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident
-                        </p>
-
-                        <div class="position-relative mt-4">
-                            <img src="/static/assets/img/about-2.jpg" class="img-fluid rounded-4" alt="">
-                            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox play-btn"></a>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="port" class="form-label">端口</label>
+                    <input type="number" id="port" class="form-control" min="1" max="65535" required>
+                    <div class="form-error" id="portError"></div>
                 </div>
-            </div>
-
-        </div>
-    </section><!-- End About Us Section -->
-
-
-
-    <!-- ======= Stats Counter Section ======= -->
-    <section id="stats-counter" class="stats-counter">
-        <div class="container" data-aos="fade-up">
-
-            <div class="row gy-4 align-items-center">
-
-                <div class="col-lg-6">
-                    <img src="/static/assets/img/stats-img.svg" alt="" class="img-fluid">
+                <div class="form-group">
+                    <label for="uri" class="form-label">URI</label>
+                    <input type="text" id="uri" class="form-control" required>
+                    <div class="form-error" id="uriError"></div>
                 </div>
-
-                <div class="col-lg-6">
-
-                    <div class="stats-item d-flex align-items-center">
-                        <span data-purecounter-start="0" data-purecounter-end="232" data-purecounter-duration="1" class="purecounter"></span>
-                        <p><strong>Happy Clients</strong> consequuntur quae diredo para mesta</p>
-                    </div><!-- End Stats Item -->
-
-                    <div class="stats-item d-flex align-items-center">
-                        <span data-purecounter-start="0" data-purecounter-end="521" data-purecounter-duration="1" class="purecounter"></span>
-                        <p><strong>Projects</strong> adipisci atque cum quia aut</p>
-                    </div><!-- End Stats Item -->
-
-                    <div class="stats-item d-flex align-items-center">
-                        <span data-purecounter-start="0" data-purecounter-end="453" data-purecounter-duration="1" class="purecounter"></span>
-                        <p><strong>Hours Of Support</strong> aut commodi quaerat</p>
-                    </div><!-- End Stats Item -->
-
+                <div class="form-group">
+                    <label for="action" class="form-label">action</label>
+                    <input type="text" id="action" class="form-control" required>
                 </div>
-
-            </div>
-
-        </div>
-    </section><!-- End Stats Counter Section -->
-
-    <!-- ======= Call To Action Section ======= -->
-    <section id="call-to-action" class="call-to-action">
-        <div class="container text-center" data-aos="zoom-out">
-            <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ" class="glightbox play-btn"></a>
-            <h3>Call To Action</h3>
-            <p> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            <a class="cta-btn" href="#">Call To Action</a>
-        </div>
-    </section><!-- End Call To Action Section -->
-
-    <!-- ======= Our Services Section ======= -->
-    <section id="services" class="services sections-bg">
-        <div class="container" data-aos="fade-up">
-
-            <div class="section-header">
-                <h2>Our Services</h2>
-                <p>Aperiam dolorum et et wuia molestias qui eveniet numquam nihil porro incidunt dolores placeat sunt id nobis omnis tiledo stran delop</p>
-            </div>
-
-            <div class="row gy-4" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-item  position-relative">
-                        <div class="icon">
-                            <i class="bi bi-activity"></i>
-                        </div>
-                        <h3>Nesciunt Mete</h3>
-                        <p>Provident nihil minus qui consequatur non omnis maiores. Eos accusantium minus dolores iure perferendis tempore et consequatur.</p>
-                        <a href="#" class="readmore stretched-link">Read more <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="bi bi-broadcast"></i>
-                        </div>
-                        <h3>Eosle Commodi</h3>
-                        <p>Ut autem aut autem non a. Sint sint sit facilis nam iusto sint. Libero corrupti neque eum hic non ut nesciunt dolorem.</p>
-                        <a href="#" class="readmore stretched-link">Read more <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="bi bi-easel"></i>
-                        </div>
-                        <h3>Ledo Markt</h3>
-                        <p>Ut excepturi voluptatem nisi sed. Quidem fuga consequatur. Minus ea aut. Vel qui id voluptas adipisci eos earum corrupti.</p>
-                        <a href="#" class="readmore stretched-link">Read more <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="bi bi-bounding-box-circles"></i>
-                        </div>
-                        <h3>Asperiores Commodit</h3>
-                        <p>Non et temporibus minus omnis sed dolor esse consequatur. Cupiditate sed error ea fuga sit provident adipisci neque.</p>
-                        <a href="#" class="readmore stretched-link">Read more <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="bi bi-calendar4-week"></i>
-                        </div>
-                        <h3>Velit Doloremque</h3>
-                        <p>Cumque et suscipit saepe. Est maiores autem enim facilis ut aut ipsam corporis aut. Sed animi at autem alias eius labore.</p>
-                        <a href="#" class="readmore stretched-link">Read more <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-item position-relative">
-                        <div class="icon">
-                            <i class="bi bi-chat-square-text"></i>
-                        </div>
-                        <h3>Dolori Architecto</h3>
-                        <p>Hic molestias ea quibusdam eos. Fugiat enim doloremque aut neque non et debitis iure. Corrupti recusandae ducimus enim.</p>
-                        <a href="#" class="readmore stretched-link">Read more <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div><!-- End Service Item -->
-
-            </div>
-
-        </div>
-    </section><!-- End Our Services Section -->
-
-
-
-    <!-- ======= Portfolio Section ======= -->
-    <section id="portfolio" class="portfolio sections-bg">
-        <div class="container" data-aos="fade-up">
-
-            <div class="section-header">
-                <h2>Portfolio</h2>
-                <p>Quam sed id excepturi ccusantium dolorem ut quis dolores nisi llum nostrum enim velit qui ut et autem uia reprehenderit sunt deleniti</p>
-            </div>
-
-            <div class="portfolio-isotope" data-portfolio-filter="*" data-portfolio-layout="masonry" data-portfolio-sort="original-order" data-aos="fade-up" data-aos-delay="100">
-
-                <div>
-                    <ul class="portfolio-flters">
-                        <li data-filter="*" class="filter-active">All</li>
-                        <li data-filter=".filter-app">App</li>
-                        <li data-filter=".filter-product">Product</li>
-                        <li data-filter=".filter-branding">Branding</li>
-                        <li data-filter=".filter-books">Books</li>
-                    </ul><!-- End Portfolio Filters -->
+                <div class="form-group">
+                    <label for="type" class="form-label">类型</label>
+                    <select id="type" class="form-control" required>
+                        <option value="0">类型 0</option>
+                        <option value="1">类型 1</option>
+                    </select>
+                    <div class="form-error" id="typeError"></div>
                 </div>
-
-                <div class="row gy-4 portfolio-container">
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-app">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/app-1.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/app-1.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">App 1</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-product">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/product-1.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/product-1.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Product 1</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-branding">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/branding-1.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/branding-1.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Branding 1</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-books">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/books-1.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/books-1.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Books 1</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-app">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/app-2.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/app-2.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">App 2</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-product">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/product-2.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/product-2.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Product 2</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-branding">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/branding-2.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/branding-2.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Branding 2</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-books">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/books-2.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/books-2.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Books 2</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-app">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/app-3.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/app-3.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">App 3</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-product">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/product-3.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/product-3.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Product 3</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-branding">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/branding-3.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/branding-3.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Branding 3</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                    <div class="col-xl-4 col-md-6 portfolio-item filter-books">
-                        <div class="portfolio-wrap">
-                            <a href="/static/assets/img/portfolio/books-3.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/static/assets/img/portfolio/books-3.jpg" class="img-fluid" alt=""></a>
-                            <div class="portfolio-info">
-                                <h4><a href="portfolio-details/1" title="More Details">Books 3</a></h4>
-                                <p>Lorem ipsum, dolor sit amet consectetur</p>
-                            </div>
-                        </div>
-                    </div><!-- End Portfolio Item -->
-
-                </div><!-- End Portfolio Container -->
-
-            </div>
-
-        </div>
-    </section><!-- End Portfolio Section -->
-
-    <!-- ======= Our Team Section ======= -->
-    <section id="team" class="team">
-        <div class="container" data-aos="fade-up">
-
-            <div class="section-header">
-                <h2>Our Team</h2>
-                <p>Nulla dolorum nulla nesciunt rerum facere sed ut inventore quam porro nihil id ratione ea sunt quis dolorem dolore earum</p>
-            </div>
-
-            <div class="row gy-4">
-
-                <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
-                    <div class="member">
-                        <img src="/static/assets/img/team/team-1.jpg" class="img-fluid" alt="">
-                        <h4>Walter White</h4>
-                        <span>Web Development</span>
-                        <div class="social">
-                            <a href=""><i class="bi bi-twitter"></i></a>
-                            <a href=""><i class="bi bi-facebook"></i></a>
-                            <a href=""><i class="bi bi-instagram"></i></a>
-                            <a href=""><i class="bi bi-linkedin"></i></a>
-                        </div>
-                    </div>
-                </div><!-- End Team Member -->
-
-                <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
-                    <div class="member">
-                        <img src="/static/assets/img/team/team-2.jpg" class="img-fluid" alt="">
-                        <h4>Sarah Jhinson</h4>
-                        <span>Marketing</span>
-                        <div class="social">
-                            <a href=""><i class="bi bi-twitter"></i></a>
-                            <a href=""><i class="bi bi-facebook"></i></a>
-                            <a href=""><i class="bi bi-instagram"></i></a>
-                            <a href=""><i class="bi bi-linkedin"></i></a>
-                        </div>
-                    </div>
-                </div><!-- End Team Member -->
-
-                <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
-                    <div class="member">
-                        <img src="/static/assets/img/team/team-3.jpg" class="img-fluid" alt="">
-                        <h4>William Anderson</h4>
-                        <span>Content</span>
-                        <div class="social">
-                            <a href=""><i class="bi bi-twitter"></i></a>
-                            <a href=""><i class="bi bi-facebook"></i></a>
-                            <a href=""><i class="bi bi-instagram"></i></a>
-                            <a href=""><i class="bi bi-linkedin"></i></a>
-                        </div>
-                    </div>
-                </div><!-- End Team Member -->
-
-                <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="400">
-                    <div class="member">
-                        <img src="/static/assets/img/team/team-4.jpg" class="img-fluid" alt="">
-                        <h4>Amanda Jepson</h4>
-                        <span>Accountant</span>
-                        <div class="social">
-                            <a href=""><i class="bi bi-twitter"></i></a>
-                            <a href=""><i class="bi bi-facebook"></i></a>
-                            <a href=""><i class="bi bi-instagram"></i></a>
-                            <a href=""><i class="bi bi-linkedin"></i></a>
-                        </div>
-                    </div>
-                </div><!-- End Team Member -->
-
-            </div>
-
-        </div>
-    </section><!-- End Our Team Section -->
-
-    <!-- ======= Pricing Section ======= -->
-    <section id="pricing" class="pricing sections-bg">
-        <div class="container" data-aos="fade-up">
-
-            <div class="section-header">
-                <h2>Pricing</h2>
-                <p>Aperiam dolorum et et wuia molestias qui eveniet numquam nihil porro incidunt dolores placeat sunt id nobis omnis tiledo stran delop</p>
-            </div>
-
-            <div class="row g-4 py-lg-5" data-aos="zoom-out" data-aos-delay="100">
-
-                <div class="col-lg-4">
-                    <div class="pricing-item">
-                        <h3>Free Plan</h3>
-                        <div class="icon">
-                            <i class="bi bi-box"></i>
-                        </div>
-                        <h4><sup>$</sup>0<span> / month</span></h4>
-                        <ul>
-                            <li><i class="bi bi-check"></i> Quam adipiscing vitae proin</li>
-                            <li><i class="bi bi-check"></i> Nec feugiat nisl pretium</li>
-                            <li><i class="bi bi-check"></i> Nulla at volutpat diam uteera</li>
-                            <li class="na"><i class="bi bi-x"></i> <span>Pharetra massa massa ultricies</span></li>
-                            <li class="na"><i class="bi bi-x"></i> <span>Massa ultricies mi quis hendrerit</span></li>
-                        </ul>
-                        <div class="text-center"><a href="#" class="buy-btn">Buy Now</a></div>
-                    </div>
-                </div><!-- End Pricing Item -->
-
-                <div class="col-lg-4">
-                    <div class="pricing-item featured">
-                        <h3>Business Plan</h3>
-                        <div class="icon">
-                            <i class="bi bi-airplane"></i>
-                        </div>
-
-                        <h4><sup>$</sup>29<span> / month</span></h4>
-                        <ul>
-                            <li><i class="bi bi-check"></i> Quam adipiscing vitae proin</li>
-                            <li><i class="bi bi-check"></i> Nec feugiat nisl pretium</li>
-                            <li><i class="bi bi-check"></i> Nulla at volutpat diam uteera</li>
-                            <li><i class="bi bi-check"></i> Pharetra massa massa ultricies</li>
-                            <li><i class="bi bi-check"></i> Massa ultricies mi quis hendrerit</li>
-                        </ul>
-                        <div class="text-center"><a href="#" class="buy-btn">Buy Now</a></div>
-                    </div>
-                </div><!-- End Pricing Item -->
-
-                <div class="col-lg-4">
-                    <div class="pricing-item">
-                        <h3>Developer Plan</h3>
-                        <div class="icon">
-                            <i class="bi bi-send"></i>
-                        </div>
-                        <h4><sup>$</sup>49<span> / month</span></h4>
-                        <ul>
-                            <li><i class="bi bi-check"></i> Quam adipiscing vitae proin</li>
-                            <li><i class="bi bi-check"></i> Nec feugiat nisl pretium</li>
-                            <li><i class="bi bi-check"></i> Nulla at volutpat diam uteera</li>
-                            <li><i class="bi bi-check"></i> Pharetra massa massa ultricies</li>
-                            <li><i class="bi bi-check"></i> Massa ultricies mi quis hendrerit</li>
-                        </ul>
-                        <div class="text-center"><a href="#" class="buy-btn">Buy Now</a></div>
-                    </div>
-                </div><!-- End Pricing Item -->
-
-            </div>
-
-        </div>
-    </section><!-- End Pricing Section -->
-
-    <!-- ======= Frequently Asked Questions Section ======= -->
-    <section id="faq" class="faq">
-        <div class="container" data-aos="fade-up">
-
-            <div class="row gy-4">
-
-                <div class="col-lg-4">
-                    <div class="content px-xl-5">
-                        <h3>Frequently Asked <strong>Questions</strong></h3>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit
-                        </p>
-                    </div>
+                <div class="form-group">
+                    <label for="apikey" class="form-label">API Key</label>
+                    <input type="text" id="apikey" class="form-control" required>
+                    <div class="form-error" id="apikeyError"></div>
                 </div>
-
-                <div class="col-lg-8">
-
-                    <div class="accordion accordion-flush" id="faqlist" data-aos="fade-up" data-aos-delay="100">
-
-                        <div class="accordion-item">
-                            <h3 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-1">
-                                    <span class="num">1.</span>
-                                    Non consectetur a erat nam at lectus urna duis?
-                                </button>
-                            </h3>
-                            <div id="faq-content-1" class="accordion-collapse collapse" data-bs-parent="#faqlist">
-                                <div class="accordion-body">
-                                    Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.
-                                </div>
-                            </div>
-                        </div><!-- # Faq item-->
-
-                        <div class="accordion-item">
-                            <h3 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-2">
-                                    <span class="num">2.</span>
-                                    Feugiat scelerisque varius morbi enim nunc faucibus a pellentesque?
-                                </button>
-                            </h3>
-                            <div id="faq-content-2" class="accordion-collapse collapse" data-bs-parent="#faqlist">
-                                <div class="accordion-body">
-                                    Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.
-                                </div>
-                            </div>
-                        </div><!-- # Faq item-->
-
-                        <div class="accordion-item">
-                            <h3 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-3">
-                                    <span class="num">3.</span>
-                                    Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi?
-                                </button>
-                            </h3>
-                            <div id="faq-content-3" class="accordion-collapse collapse" data-bs-parent="#faqlist">
-                                <div class="accordion-body">
-                                    Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis
-                                </div>
-                            </div>
-                        </div><!-- # Faq item-->
-
-                        <div class="accordion-item">
-                            <h3 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-4">
-                                    <span class="num">4.</span>
-                                    Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?
-                                </button>
-                            </h3>
-                            <div id="faq-content-4" class="accordion-collapse collapse" data-bs-parent="#faqlist">
-                                <div class="accordion-body">
-                                    Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.
-                                </div>
-                            </div>
-                        </div><!-- # Faq item-->
-
-                        <div class="accordion-item">
-                            <h3 class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-5">
-                                    <span class="num">5.</span>
-                                    Tempus quam pellentesque nec nam aliquam sem et tortor consequat?
-                                </button>
-                            </h3>
-                            <div id="faq-content-5" class="accordion-collapse collapse" data-bs-parent="#faqlist">
-                                <div class="accordion-body">
-                                    Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in
-                                </div>
-                            </div>
-                        </div><!-- # Faq item-->
-
-                    </div>
-
-                </div>
-            </div>
-
+            </form>
         </div>
-    </section><!-- End Frequently Asked Questions Section -->
-
-    <!-- ======= Recent Blog Posts Section ======= -->
-    <section id="recent-posts" class="recent-posts sections-bg">
-        <div class="container" data-aos="fade-up">
-
-            <div class="section-header">
-                <h2>Recent Blog Posts</h2>
-                <p>Consequatur libero assumenda est voluptatem est quidem illum et officia imilique qui vel architecto accusamus fugit aut qui distinctio</p>
-            </div>
-
-            <div class="row gy-4">
-
-                <div class="col-xl-4 col-md-6">
-                    <article>
-
-                        <div class="post-img">
-                            <img src="/static/assets/img/blog/blog-1.jpg" alt="" class="img-fluid">
-                        </div>
-
-                        <p class="post-category">Politics</p>
-
-                        <h2 class="title">
-                            <a href="blog-details.html">Dolorum optio tempore voluptas dignissimos</a>
-                        </h2>
-
-                        <div class="d-flex align-items-center">
-                            <img src="/static/assets/img/blog/blog-author.jpg" alt="" class="img-fluid post-author-img flex-shrink-0">
-                            <div class="post-meta">
-                                <p class="post-author">Maria Doe</p>
-                                <p class="post-date">
-                                    <time datetime="2022-01-01">Jan 1, 2022</time>
-                                </p>
-                            </div>
-                        </div>
-
-                    </article>
-                </div><!-- End post list item -->
-
-                <div class="col-xl-4 col-md-6">
-                    <article>
-
-                        <div class="post-img">
-                            <img src="/static/assets/img/blog/blog-2.jpg" alt="" class="img-fluid">
-                        </div>
-
-                        <p class="post-category">Sports</p>
-
-                        <h2 class="title">
-                            <a href="blog-details.html">Nisi magni odit consequatur autem nulla dolorem</a>
-                        </h2>
-
-                        <div class="d-flex align-items-center">
-                            <img src="/static/assets/img/blog/blog-author-2.jpg" alt="" class="img-fluid post-author-img flex-shrink-0">
-                            <div class="post-meta">
-                                <p class="post-author">Allisa Mayer</p>
-                                <p class="post-date">
-                                    <time datetime="2022-01-01">Jun 5, 2022</time>
-                                </p>
-                            </div>
-                        </div>
-
-                    </article>
-                </div><!-- End post list item -->
-
-                <div class="col-xl-4 col-md-6">
-                    <article>
-
-                        <div class="post-img">
-                            <img src="/static/assets/img/blog/blog-3.jpg" alt="" class="img-fluid">
-                        </div>
-
-                        <p class="post-category">Entertainment</p>
-
-                        <h2 class="title">
-                            <a href="blog-details.html">Possimus soluta ut id suscipit ea ut in quo quia et soluta</a>
-                        </h2>
-
-                        <div class="d-flex align-items-center">
-                            <img src="/static/assets/img/blog/blog-author-3.jpg" alt="" class="img-fluid post-author-img flex-shrink-0">
-                            <div class="post-meta">
-                                <p class="post-author">Mark Dower</p>
-                                <p class="post-date">
-                                    <time datetime="2022-01-01">Jun 22, 2022</time>
-                                </p>
-                            </div>
-                        </div>
-
-                    </article>
-                </div><!-- End post list item -->
-
-            </div><!-- End recent posts list -->
-
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="cancelBtn">取消</button>
+            <button class="btn btn-primary" id="saveBtn">保存</button>
         </div>
-    </section><!-- End Recent Blog Posts Section -->
+    </div>
+</div>
 
-    <!-- ======= Contact Section ======= -->
-    <section id="contact" class="contact">
-        <div class="container" data-aos="fade-up">
 
-            <div class="section-header">
-                <h2>Contact</h2>
-                <p>Nulla dolorum nulla nesciunt rerum facere sed ut inventore quam porro nihil id ratione ea sunt quis dolorem dolore earum</p>
-            </div>
 
-            <div class="row gx-lg-0 gy-4">
-
-                <div class="col-lg-4">
-
-                    <div class="info-container d-flex flex-column align-items-center justify-content-center">
-                        <div class="info-item d-flex">
-                            <i class="bi bi-geo-alt flex-shrink-0"></i>
-                            <div>
-                                <h4>Location:</h4>
-                                <p>A108 Adam Street, New York, NY 535022</p>
-                            </div>
-                        </div><!-- End Info Item -->
-
-                        <div class="info-item d-flex">
-                            <i class="bi bi-envelope flex-shrink-0"></i>
-                            <div>
-                                <h4>Email:</h4>
-                                <p>info126.com</p>
-                            </div>
-                        </div><!-- End Info Item -->
-
-                        <div class="info-item d-flex">
-                            <i class="bi bi-phone flex-shrink-0"></i>
-                            <div>
-                                <h4>Call:</h4>
-                                <p>+1 5589 55488 55</p>
-                            </div>
-                        </div><!-- End Info Item -->
-
-                        <div class="info-item d-flex">
-                            <i class="bi bi-clock flex-shrink-0"></i>
-                            <div>
-                                <h4>Open Hours:</h4>
-                                <p>Mon-Sat: 11AM - 23PM</p>
-                            </div>
-                        </div><!-- End Info Item -->
-                    </div>
-
-                </div>
-
-                <div class="col-lg-8">
-                    <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
-                            </div>
-                            <div class="col-md-6 form-group mt-3 mt-md-0">
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
-                            </div>
-                        </div>
-                        <div class="form-group mt-3">
-                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required>
-                        </div>
-                        <div class="form-group mt-3">
-                            <textarea class="form-control" name="message" rows="7" placeholder="Message" required></textarea>
-                        </div>
-                        <div class="my-3">
-                            <div class="loading">Loading</div>
-                            <div class="error-message"></div>
-                            <div class="sent-message">Your message has been sent. Thank you!</div>
-                        </div>
-                        <div class="text-center"><button type="submit">Send Message</button></div>
-                    </form>
-                </div><!-- End Contact Form -->
-
-            </div>
-
+<!-- 查看代理详情模态框 -->
+<div class="modal-overlay" id="viewAgentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">代理详情</h3>
+            <button class="modal-close" id="viewModalClose">&times;</button>
         </div>
-    </section><!-- End Contact Section -->
+        <div class="modal-body">
+            <div id="agentDetails">
+                <!-- 代理详情将通过JavaScript动态加载 -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="closeViewBtn">关闭</button>
+        </div>
+    </div>
+</div>
+<input value="@data" type="hidden" id="4s" ></input>
+<script>
 
-</main><!-- End #main -->
+
+              // 初始数据
+              let agentData =JSON.parse($("#4s").val());
 
 
-<!-- End Footer -->
 
-<a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+              let filteredAgents = [];
+              let currentAgentId = null;
 
-<div id="preloader"></div>
-}
+              $(document).ready(function() {
+                  // 初始化
+                  initializeApp();
+
+                  // 绑定事件
+                  bindEvents();
+              });
+
+              // 初始化应用
+              function initializeApp() {
+                  // 初始化过滤后的代理列表
+                  filteredAgents = agentData.agents;
+
+                  // 渲染代理表格
+                  renderAgentTable();
+              }
+
+              // 绑定事件
+              function bindEvents() {
+                  // 搜索功能
+                  $("#searchInput").on('input', function() {
+                      applyFilters();
+                  });
+
+                  // 类型筛选
+                  $("#typeFilter").change(function() {
+                      applyFilters();
+                  });
+
+                  // 重置筛选
+                  $("#resetFilters").click(function() {
+                      $("#typeFilter").val('');
+                      $("#searchInput").val('');
+                      applyFilters();
+                  });
+
+                  // 刷新按钮
+                  $("#refreshBtn").click(function() {
+                      renderAgentTable();
+                      showToast('success', '刷新成功', '代理列表已刷新');
+                  });
+
+                  // 添加代理按钮
+                  $("#addAgentBtn").click(function() {
+                      openAddAgentModal();
+                  });
+
+                  // 模态框关闭按钮
+                  $("#modalClose, #cancelBtn").click(function() {
+                      closeModal("agentModal");
+                  });
+
+                  // 保存代理按钮
+                  $("#saveBtn").click(function() {
+                      saveAgent();
+                  });
+
+                  // 查看代理详情
+                  $(document).on('click', '.view-agent', function() {
+                      const agentId = $(this).data('id');
+                      openViewAgentModal(agentId);
+                  });
+
+                  // 编辑代理
+                  $(document).on('click', '.edit-agent', function() {
+                      const agentId = $(this).data('id');
+                      openEditAgentModal(agentId);
+                  });
+
+                  // 删除代理
+                  $(document).on('click', '.delete-agent', function() {
+                      const agentId = $(this).data('id');
+                      openDeleteConfirmModal(agentId);
+                  });
+
+                  // 关闭查看详情模态框
+                  $("#viewModalClose, #closeViewBtn").click(function() {
+                      closeModal("viewAgentModal");
+                  });
+
+                  // 取消删除
+                  $("#cancelDeleteBtn").click(function() {
+                      closeModal("deleteConfirmModal");
+                  });
+
+                  // 确认删除
+                  $("#confirmDeleteBtn").click(function() {
+                      deleteAgent();
+                  });
+              }
+
+              // 应用筛选
+              function applyFilters() {
+                  const typeFilter = $("#typeFilter").val();
+                  const searchTerm = $("#searchInput").val().toLowerCase();
+
+                  filteredAgents = agentData.agents.filter(agent => {
+                      const matchesType = !typeFilter || agent.type === typeFilter;
+                      const matchesSearch = !searchTerm ||
+                          agent.hosts.toLowerCase().includes(searchTerm) ||
+                          agent.uri.toLowerCase().includes(searchTerm) ||
+                          agent.apikey.toLowerCase().includes(searchTerm) ||
+                          agent.id.toString().includes(searchTerm);
+
+                      return matchesType && matchesSearch;
+                  });
+
+                  renderAgentTable();
+              }
+
+              // 渲染代理表格
+              function renderAgentTable() {
+                  const tableBody = $("#agentTableBody");
+                  tableBody.empty();
+                  console.log(filteredAgents);
+                  filteredAgents.forEach(agent => {
+                      const typeClass = agent.type === "0" ? 'status-0' : 'status-1';
+                      const typeText = agent.type === "0" ? '测试机' : '目标机';
+                      const shortApiKey = agent.apikey && agent.apikey.length > 20 ?
+                          agent.apikey.substring(0, 20) + '...' : agent.apikey;
+
+                      const row = `
+                          <tr data-id="${agent.id}">
+                              <td>${agent.id}</td>
+                              <td>${agent.hosts}</td>
+                              <td>${agent.port}</td>
+                              <td>${agent.uri}</td>
+                              <td>${agent.action}</td>
+                              <td><span class="status ${typeClass}">${typeText}</span></td>
+                              <td>
+                                  <span class="api-key" title="${agent.apikey}" onclick="copyToClipboard('${agent.apikey}')">
+                                      ${shortApiKey}
+                                  </span>
+                              </td>
+                              <td>
+                                  <div class="table-actions">
+                                      <button class="btn-action btn-view view-agent" title="查看" data-id="${agent.id}">
+                                          <i class="fas fa-eye"></i>
+                                      </button>
+                                      <button class="btn-action btn-edit edit-agent" title="编辑" data-id="${agent.id}">
+                                          <i class="fas fa-edit"></i>
+                                      </button>
+                                      <button class="btn-action btn-delete delete-agent" title="删除" data-id="${agent.id}">
+                                          <i class="fas fa-trash-alt"></i>
+                                      </button>
+                                  </div>
+                              </td>
+                          </tr>
+                      `;
+                      tableBody.append(row);
+                  });
+              }
+
+              // 打开添加代理模态框
+              function openAddAgentModal() {
+                  // 重置表单
+                  $("#agentForm")[0].reset();
+                  $("#agentId").val('');
+
+                  // 清除错误信息
+                  clearFormErrors();
+
+                  // 设置模态框标题
+                  $("#modalTitle").text("添加代理");
+
+                  // 打开模态框
+                  openModal("agentModal");
+              }
+
+              // 打开编辑代理模态框
+              function openEditAgentModal(agentId) {
+                  // 查找代理
+                  const agent = findAgentById(agentId);
+                  if (!agent) return;
+
+                  // 填充表单
+                  $("#agentId").val(agent.id);
+                  $("#hosts").val(agent.hosts);
+                  $("#port").val(agent.port);
+                  $("#uri").val(agent.uri);
+                  $("#type").val(agent.type);
+                  $("#apikey").val(agent.apikey);
+
+                  // 清除错误信息
+                  clearFormErrors();
+
+                  // 设置模态框标题
+                  $("#modalTitle").text("编辑代理");
+
+                  // 打开模态框
+                  openModal("agentModal");
+              }
+
+              // 打开查看代理详情模态框
+              function openViewAgentModal(agentId) {
+                  // 查找代理
+                  const agent = findAgentById(agentId);
+                  if (!agent) return;
+
+                  // 生成详情HTML
+                  const typeText = agent.type === "0" ? '类型 0' : '类型 1';
+                  const detailsHtml = `
+                      <div style="font-size: 1rem; line-height: 1.8;">
+                          <p><strong>ID:</strong> ${agent.id}</p>
+                          <p><strong>主机地址:</strong> ${agent.hosts}</p>
+                          <p><strong>端口:</strong> ${agent.port}</p>
+                          <p><strong>URI:</strong> ${agent.uri}</p>
+                          <p><strong>类型:</strong> <span class="status ${agent.type === "0" ? 'status-0' : 'status-1'}">${typeText}</span></p>
+                          <p><strong>API Key:</strong> <span class="api-key" onclick="copyToClipboard('${agent.apikey}')">${agent.apikey}</span></p>
+                      </div>
+                  `;
+
+                  // 填充详情
+                  $("#agentDetails").html(detailsHtml);
+
+                  // 打开模态框
+                  openModal("viewAgentModal");
+              }
+
+              // 打开删除确认对话框
+              function openDeleteConfirmModal(agentId) {
+                  // 保存当前要删除的代理ID
+                  currentAgentId = agentId;
+
+                  // 打开确认对话框
+                  openModal("deleteConfirmModal");
+              }
+
+              // 保存代理
+              function saveAgent() {
+                  // 获取表单数据
+                  const agentId = $("#agentId").val();
+                  const hosts = $("#hosts").val().trim();
+                  const port = $("#port").val();
+                  const uri = $("#uri").val().trim();
+                  const type = $("#type").val();
+                  const apikey = $("#apikey").val().trim();
+
+                  // 验证表单
+                  let isValid = true;
+
+                  if (!hosts) {
+                      showFormError("hosts", "主机地址不能为空");
+                      isValid = false;
+                  }
+
+                  if (!port || port < 1 || port > 65535) {
+                      showFormError("port", "端口必须在1-65535之间");
+                      isValid = false;
+                  }
+
+                  if (!uri) {
+                      showFormError("uri", "URI不能为空");
+                      isValid = false;
+                  }
+
+                  if (!apikey) {
+                      showFormError("apikey", "API Key不能为空");
+                      isValid = false;
+                  }
+
+                  if (!isValid) return;
+
+                  // 创建代理对象
+                  const agent = {
+                      id: agentId || generateId(),
+                      hosts,
+                      port: parseInt(port),
+                      uri,
+                      type,
+                      apikey
+                  };
+
+                  // 保存代理
+                  if (agentId) {
+                      // 更新现有代理
+                      updateAgent(agent);
+                      showToast('success', '更新成功', '代理已成功更新');
+                  } else {
+                      // 添加新代理
+                      addAgent(agent);
+                      showToast('success', '添加成功', '代理已成功添加');
+                  }
+
+                  // 关闭模态框
+                  closeModal("agentModal");
+
+                  // 重新渲染表格
+                  renderAgentTable();
+              }
+
+              // 添加代理
+              function addAgent(agent) {
+                  // 添加到代理列表
+                  agentData.agents.push(agent);
+                  agentData.total++;
+
+                  // 更新过滤后的代理列表
+                  applyFilters();
+              }
+
+              // 更新代理
+              function updateAgent(agent) {
+                  // 查找代理索引
+                  const index = agentData.agents.findIndex(a => a.id === agent.id);
+                  if (index === -1) return;
+
+                  // 更新代理
+                  agentData.agents[index] = agent;
+
+                  // 更新过滤后的代理列表
+                  applyFilters();
+              }
+
+              // 删除代理
+              function deleteAgent() {
+                  if (!currentAgentId) return;
+
+                  // 查找代理索引
+                  const index = agentData.agents.findIndex(a => a.id === currentAgentId);
+                  if (index === -1) return;
+
+                  // 删除代理
+                  agentData.agents.splice(index, 1);
+                  agentData.total--;
+
+                  // 更新过滤后的代理列表
+                  applyFilters();
+
+                  // 关闭确认对话框
+                  closeModal("deleteConfirmModal");
+
+                  // 显示通知
+                  showToast('success', '删除成功', '代理已成功删除');
+
+                  // 重置当前代理ID
+                  currentAgentId = null;
+              }
+
+              // 根据ID查找代理
+              function findAgentById(agentId) {
+                  return agentData.agents.find(agent => agent.id === agentId);
+              }
+
+              // 生成唯一ID
+              function generateId() {
+                  // 查找最大ID
+                  const maxId = Math.max(...agentData.agents.map(a => parseInt(a.id)));
+
+                  // 返回新ID
+                  return (maxId + 1).toString();
+              }
+
+              // 显示表单错误
+              function showFormError(field, message) {
+                  $(`#${field}Error`).text(message);
+              }
+
+              // 清除表单错误
+              function clearFormErrors() {
+                  $(".form-error").text('');
+              }
+
+              // 打开模态框
+              function openModal(modalId) {
+                  $(`#${modalId}`).addClass('active');
+              }
+
+              // 关闭模态框
+              function closeModal(modalId) {
+                  $(`#${modalId}`).removeClass('active');
+              }
+
+              // 复制API Key到剪贴板
+              function copyToClipboard(text) {
+                  if (navigator.clipboard) {
+                      navigator.clipboard.writeText(text).then(function() {
+                          showToast('success', '复制成功', 'API Key已复制到剪贴板');
+                      }).catch(function() {
+                          fallbackCopyToClipboard(text);
+                      });
+                  } else {
+                      fallbackCopyToClipboard(text);
+                  }
+              }
+
+              // 降级复制方案
+              function fallbackCopyToClipboard(text) {
+                  const textArea = document.createElement('textarea');
+                  textArea.value = text;
+                  textArea.style.position = 'fixed';
+                  textArea.style.left = '-999999px';
+                  textArea.style.top = '-999999px';
+                  document.body.appendChild(textArea);
+                  textArea.focus();
+                  textArea.select();
+
+                  try {
+                      document.execCommand('copy');
+                      showToast('success', '复制成功', 'API Key已复制到剪贴板');
+                  } catch (err) {
+                      showToast('error', '复制失败', '无法复制到剪贴板');
+                  }
+
+                  document.body.removeChild(textArea);
+              }
+
+              // 显示通知
+              function showToast(type, title, message) {
+                  const toastContainer = document.getElementById('toastContainer');
+
+                  const icon = type === 'success' ? 'check-circle' :
+                             type === 'error' ? 'times-circle' :
+                             type === 'info' ? 'info-circle' : 'exclamation-circle';
+
+                  const toast = document.createElement('div');
+                  toast.className = `toast toast-${type}`;
+                  toast.innerHTML = `
+                      <div class="toast-icon">
+                          <i class="fas fa-${icon}"></i>
+                      </div>
+                      <div class="toast-content">
+                          <div class="toast-title">${title}</div>
+                          <div class="toast-message">${message}</div>
+                      </div>
+                      <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+                  `;
+
+                  toastContainer.appendChild(toast);
+
+                  setTimeout(() => {
+                      toast.classList.add('show');
+                  }, 100);
+
+                  setTimeout(() => {
+                      toast.classList.remove('show');
+                      setTimeout(() => {
+                          if (toast.parentElement) {
+                              toast.remove();
+                          }
+                      }, 300);
+                  }, 3000);
+              }
+</script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+@args (String title, RockerBody content)
+
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="/static/assets/css/styles.css">
+</head>
+<body>
+<div class="background-animation">
+    <div class="floating-shapes"></div>
+    <div class="floating-shapes"></div>
+    <div class="floating-shapes"></div>
+</div>
+
+<div class="login-container">
+    <div class="login-header">
+        <h1 class="login-title">欢迎回来</h1>
+        <p class="login-subtitle">请登录您的账户</p>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        登录成功！正在跳转...
+    </div>
+
+    <form id="loginForm">
+        <div class="form-group">
+            <input type="text" class="form-input" id="username" placeholder=" " required>
+            <label class="form-label" for="username">用户名</label>
+            <div class="error-message" id="usernameError">请输入用户名</div>
+        </div>
+
+        <div class="form-group">
+            <input type="password" class="form-input" id="password" placeholder=" " required>
+            <label class="form-label" for="password">密码</label>
+            <span class="password-toggle" id="passwordToggle">👁️</span>
+            <div class="error-message" id="passwordError">请输入密码</div>
+        </div>
+
+        <div class="login-options">
+            <label class="remember-me">
+
+            </label>
+
+        </div>
+
+        <button type="submit" class="login-button" id="loginButton">
+            <span class="button-text">登录</span>
+            <div class="loading-spinner"></div>
+        </button>
+    </form>
+
+
+</div>
+
+<script>
+    $(document).ready(function() {
+        // 密码显示/隐藏切换
+        $('#passwordToggle').click(function() {
+            const passwordInput = $('#password');
+            const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
+            passwordInput.attr('type', type);
+            $(this).text(type === 'password' ? '👁️' : '🙈');
+        });
+
+        // 输入框焦点动画
+        $('.form-input').on('focus', function() {
+            $(this).parent().addClass('focused');
+        }).on('blur', function() {
+            if (!$(this).val()) {
+                $(this).parent().removeClass('focused');
+            }
+        });
+
+        // 实时验证
+        $('#username').on('input', function() {
+            const value = $(this).val().trim();
+            const errorElement = $('#usernameError');
+
+            if (value.length === 0) {
+                showError(errorElement, '请输入用户名或邮箱');
+            } else if (value.length < 3) {
+                showError(errorElement, '用户名至少需要3个字符');
+            } else {
+                hideError(errorElement);
+            }
+        });
+
+        $('#password').on('input', function() {
+            const value = $(this).val();
+            const errorElement = $('#passwordError');
+
+            if (value.length === 0) {
+                showError(errorElement, '请输入密码');
+            } else if (value.length < 6) {
+                showError(errorElement, '密码至少需要6个字符');
+            } else {
+                hideError(errorElement);
+            }
+        });
+
+        // 表单提交
+        $('#loginForm').submit(function(e) {
+            e.preventDefault();
+
+            const username = $('#username').val().trim();
+            const password = $('#password').val();
+            let isValid = true;
+
+            // 验证用户名
+            if (!username) {
+                showError($('#usernameError'), '请输入用户名或邮箱');
+                isValid = false;
+            } else if (username.length < 3) {
+                showError($('#usernameError'), '用户名至少需要3个字符');
+                isValid = false;
+            }
+
+            // 验证密码
+            if (!password) {
+                showError($('#passwordError'), '请输入密码');
+                isValid = false;
+            } else if (password.length < 6) {
+                showError($('#passwordError'), '密码至少需要6个字符');
+                isValid = false;
+            }
+
+            if (isValid) {
+                // 显示加载状态
+                const button = $('#loginButton');
+                const buttonText = $('.button-text');
+                const spinner = $('.loading-spinner');
+
+                button.addClass('loading');
+                buttonText.css('opacity', '0');
+                spinner.css('opacity', '1');
+
+                // 登录请求
+                   // 发送登录请求到API
+                    $.ajax({
+                        url: 'http://localhost:8888/user/v1/userToLogin',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            user_name: username,
+                            password: password
+
+                        }),
+                        timeout: 5000, // 10秒超时
+                        success: function(response) {
+                            // 隐藏加载状态
+                            button.removeClass('loading');
+                            buttonText.css('opacity', '1');
+                            spinner.css('opacity', '0');
+
+                            // 显示成功消息
+                            $('#successMessage').addClass('show');
+
+                            // 保存token或用户信息（如果API返回）
+                            if (response.data) {
+                                localStorage.setItem('authToken', response.data);
+                            }
+
+
+                            // 跳转到主页面或仪表板
+                            setTimeout(function() {
+                                window.location.href = response.redirectUrl || '/pages/v1/index';
+                            }, 1500);
+                        },
+                        error: function(xhr, status, error) {
+                            // 隐藏加载状态
+                            button.removeClass('loading');
+                            buttonText.css('opacity', '1');
+                            spinner.css('opacity', '0');
+
+                            let errorMessage = '登录失败，请重试';
+
+                            if (xhr.status === 401) {
+                                errorMessage = '用户名或密码错误';
+                            } else if (xhr.status === 403) {
+                                errorMessage = '账户已被锁定，请联系管理员';
+                            } else if (xhr.status === 429) {
+                                errorMessage = '登录尝试次数过多，请稍后再试';
+                            } else if (status === 'timeout') {
+                                errorMessage = '请求超时，请检查网络连接';
+                            } else if (xhr.status === 0) {
+                                errorMessage = '无法连接到服务器，请检查网络';
+                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+
+                            // 显示错误消息
+                            showGlobalError(errorMessage);
+                        }
+                    });
+            }
+        });
+
+        // 错误显示函数
+        function showError(element, message) {
+            element.text(message).addClass('show');
+            element.siblings('.form-input').css('border-color', '#e74c3c');
+        }
+
+        // 错误隐藏函数
+        function hideError(element) {
+            element.removeClass('show');
+            element.siblings('.form-input').css('border-color', '#e1e5e9');
+        }
+
+        // 输入框动画效果
+        $('.form-input').on('focus', function() {
+            $(this).animate({
+                'padding-left': '25px'
+            }, 200);
+        }).on('blur', function() {
+            $(this).animate({
+                'padding-left': '20px'
+            }, 200);
+        });
+
+        // 页面加载动画
+        setTimeout(function() {
+            $('.login-container').css('animation-delay', '0.2s');
+        }, 100);
+
+        // 记住我功能
+        $('#rememberMe').change(function() {
+            if ($(this).is(':checked')) {
+                $(this).parent().animate({
+                    'transform': 'scale(1.05)'
+                }, 100).animate({
+                    'transform': 'scale(1)'
+                }, 100);
+            }
+        });
+
+        // 忘记密码链接动画
+        $('.forgot-password').hover(
+            function() {
+                $(this).animate({
+                    'padding-left': '5px'
+                }, 200);
+            },
+            function() {
+                $(this).animate({
+                    'padding-left': '0px'
+                }, 200);
+            }
+        );
+    });
+</script>
+</body>
+</html>
+
+
+

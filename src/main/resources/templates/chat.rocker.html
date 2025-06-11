@@ -1,0 +1,320 @@
+@args (RockerBody content)
+
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天历史记录</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/static/assets/css/chat.css">
+</head>
+<body>
+<div class="chat-container">
+    <div class="chat-header">
+        <h1>聊天历史记录</h1>
+        <div class="connection-status" id="connectionStatus"></div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="loading" id="loadingIndicator">
+            <span>正在加载历史记录</span>
+            <div class="loading-dots">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+
+        <button class="btn btn-primary" id="chatBtn">发起对话</button>
+        <button class="btn btn-primary" id="loadHistoryBtn">加载历史记录</button>
+        <button class="btn btn-secondary" id="clearBtn">清空显示</button>
+        <button class="btn btn-secondary" id="reconnectBtn">重新连接</button>
+    </div>
+</div>
+
+<script>
+    class ChatHistoryViewer {
+        constructor() {
+            this.eventSource = null;
+            this.messages = [];
+            this.currentAgentFilter = '';
+            this.isLoading = false;
+
+            this.initializeElements();
+            this.bindEvents();
+
+        }
+
+        initializeElements() {
+            this.$chatMessages = $('#chatMessages');
+            this.$loadingIndicator = $('#loadingIndicator');
+            this.$connectionStatus = $('#connectionStatus');
+            this.$agentFilter = $('#agentFilter');
+            this.$loadHistoryBtn = $('#loadHistoryBtn');
+            this.$clearBtn = $('#clearBtn');
+            this.$reconnectBtn = $('#reconnectBtn');
+             this.$chatBtn = $('#chatBtn');
+
+
+        }
+
+        bindEvents() {
+            this.$loadHistoryBtn.on('click', () => this.loadHistory());
+            this.$clearBtn.on('click', () => this.clearMessages());
+            this.$reconnectBtn.on('click', () => this.reconnect());
+            this.$chatBtn.on('click', () => this.chat());
+
+            this.$agentFilter.on('change', (e) => {
+                this.currentAgentFilter = e.target.value;
+                this.filterMessages();
+            });
+        }
+
+        loadHistory() {
+        console.log('加载历史记录 '+this.isLoading);
+        this.clearMessages();
+        if(!localStorage.getItem('pingId')) return;
+
+
+            this.isLoading = true;
+            this.showLoading();
+            this.updateConnectionStatus(false);
+
+            // 关闭现有连接
+            if (this.eventSource) {
+                this.eventSource.close();
+            }
+
+            // 创建SSE连接
+            // 注意：这里的URL需要根据您的后端API进行调整
+            this.eventSource = new EventSource('http://localhost:8888/api/v1/chat-history/'+localStorage.getItem('pingId'));
+
+            this.eventSource.onopen = () => {
+                console.log('SSE连接已建立');
+                this.updateConnectionStatus(true);
+            };
+
+            this.eventSource.onmessage = (event) => {
+                try {
+
+                    const data = JSON.parse(event.data);
+                      console.log('onmessage记录 '+data);
+                    this.handleMessage(data);
+                } catch (error) {
+                    console.error('解析消息失败:', error);
+                }
+            };
+
+            this.eventSource.onerror = (error) => {
+                console.error('SSE连接错误:', error);
+                this.updateConnectionStatus(false);
+                this.hideLoading();
+                this.isLoading = false;
+
+                // 显示错误状态
+                this.showEmptyState('连接失败，请检查网络连接或重试');
+            };
+
+            // 监听特定事件类型
+            this.eventSource.addEventListener('history-data', (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                      console.log('addEventListener记录 '+data);
+                    this.handleMessage(data);
+                } catch (error) {
+                    console.error('解析历史数据失败:', error);
+                }
+            });
+
+            this.eventSource.addEventListener('history-complete', (event) => {
+                console.log('历史数据加载完成');
+                this.hideLoading();
+                this.isLoading = false;
+
+                if (this.messages.length === 0) {
+                    this.showEmptyState('暂无聊天记录');
+                }
+            });
+        }
+
+        handleMessage(data) {
+         console.log('handleMessage '+data);
+            // 根据数据库结构处理消息
+            if (data.type === 'history-item') {
+                const message = {
+                    id: data.id,
+                    query: data.querys,
+                    answer: data.answer,
+                    agentId: data.agentId,
+                    type: data.type,
+                    createTime: new Date(data.createTime),
+                    pingId: data.pingId
+                };
+
+                this.messages.push(message);
+                this.updateAgentFilter(message.agentId);
+
+                if (!this.currentAgentFilter || this.currentAgentFilter === message.agentId) {
+                    this.renderMessage(message);
+                }
+
+                this.scrollToBottom();
+            }
+        }
+
+        renderMessage(message) {
+            const messageHtml = this.createMessageHtml(message);
+            this.$chatMessages.append(messageHtml);
+        }
+
+        createMessageHtml(message) {
+            const timeStr = this.formatTime(message.createTime);
+
+            return `
+                <div class="message" data-agent-id="${message.agentId || ''}" data-message-id="${message.id}">
+                    ${message.query ? `
+                        <div class="message-query">
+                            <div class="message-bubble query-bubble">
+                                ${this.escapeHtml(message.query)}
+                                <div class="message-time">${timeStr}</div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${message.answer ? `
+                        <div class="message-answer">
+                            <div class="message-bubble answer-bubble">
+                                ${this.escapeHtml(message.answer)}
+                                <div class="message-time">${timeStr}</div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        updateAgentFilter(agentId) {
+            if (agentId && this.$agentFilter.find(`option[value="${agentId}"]`).length === 0) {
+                this.$agentFilter.append(`<option value="${agentId}">代理 ${agentId}</option>`);
+            }
+        }
+
+        filterMessages() {
+            const $messages = this.$chatMessages.find('.message');
+
+            if (!this.currentAgentFilter) {
+                $messages.show();
+            } else {
+                $messages.each((index, element) => {
+                    const $message = $(element);
+                    const agentId = $message.data('agent-id');
+
+                    if (agentId === this.currentAgentFilter) {
+                        $message.show();
+                    } else {
+                        $message.hide();
+                    }
+                });
+            }
+        }
+
+        clearMessages() {
+            this.messages = [];
+            this.$chatMessages.empty();
+            this.$agentFilter.find('option:not(:first)').remove();
+            this.showEmptyState('消息已清空');
+        }
+
+        reconnect() {
+            if (this.eventSource) {
+                this.eventSource.close();
+            }
+            this.clearMessages();
+            this.loadHistory();
+        }
+
+
+         chat(){
+        let slef=this;
+         $.ajax({
+                        url: 'http://localhost:8888/api/v1/agent2agent',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            querys: "开始扮演",
+                            action: "查询",
+                            loop:2
+                        }),
+                        timeout: 5000, // 10秒超时
+                        success: function(response) {
+                            if (response.data) {
+                               localStorage.setItem('pingId', response.data.pingId);
+                               console.log(this);
+                              slef.loadHistory();
+                            }
+                        },
+                    });
+
+         }
+
+
+
+
+        showLoading() {
+            this.$loadingIndicator.show();
+        }
+
+        hideLoading() {
+            this.$loadingIndicator.hide();
+        }
+
+        showEmptyState(message) {
+            const emptyStateHtml = `
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <p>${message}</p>
+                </div>
+            `;
+            this.$chatMessages.html(emptyStateHtml);
+        }
+
+        updateConnectionStatus(connected) {
+            if (connected) {
+                this.$connectionStatus.addClass('connected');
+            } else {
+                this.$connectionStatus.removeClass('connected');
+            }
+        }
+
+        scrollToBottom() {
+            this.$chatMessages.scrollTop(this.$chatMessages[0].scrollHeight);
+        }
+
+        formatTime(date) {
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    }
+
+    // 初始化聊天历史查看器
+    $(document).ready(() => {
+        new ChatHistoryViewer();
+    });
+</script>
+</body>
+</html>

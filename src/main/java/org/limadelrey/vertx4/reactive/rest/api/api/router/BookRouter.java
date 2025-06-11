@@ -5,12 +5,14 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.LoggerFormat;
 import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.AagentInfosHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
+import org.limadelrey.vertx4.reactive.rest.api.utils.SseMap;
 
 public class BookRouter {
     private static final Logger LOGGER = LogManager.getLogger(BookRouter.class);
@@ -60,6 +62,21 @@ public class BookRouter {
 
         router.post("/agent2agent").handler(agentHandler::chatToAgent);
 
+        router.get("/chat-history/:pingId").handler(TimeoutHandler.create(99999999)).handler(ctx -> {
+            System.out.println(" chat-history pingId:" + ctx.pathParam("pingId"));
+            ctx.response()
+                    .putHeader("Content-Type", "text/event-stream")
+                    .putHeader("Cache-Control", "no-cache")
+                    .setChunked(true);  // 启用分块传输编码
+
+
+            SseMap.sseClients.put(ctx.pathParam("pingId"), ctx.response());
+
+
+
+        });
+        //res.write(`event: history-complete\n`)
+        //res.write(`data: {"type": "complete"}\n\n`)
         return router;
     }
 

@@ -29,6 +29,9 @@ public class AgentInosGetByIdResponse implements Serializable {
     @JsonProperty(value = "apikey")
     private String apikey;
 
+    @JsonProperty(value = "action")
+    private String action;
+
 
     public AgentInosGetByIdResponse(AgentInfos info) {
             this.id = info.getId();
@@ -37,6 +40,7 @@ public class AgentInosGetByIdResponse implements Serializable {
             this.uri = info.getUri();
             this.type = info.getType();
             this.apikey = info.getApikey();
+           this.action = info.getAction();
     }
 
 

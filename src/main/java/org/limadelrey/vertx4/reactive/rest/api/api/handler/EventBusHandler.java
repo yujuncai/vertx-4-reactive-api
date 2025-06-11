@@ -1,10 +1,13 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.codec.BodyCodec;
@@ -13,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
+import org.limadelrey.vertx4.reactive.rest.api.utils.SseMap;
 import org.limadelrey.vertx4.reactive.rest.api.vos.AnswerParam;
 
 public class EventBusHandler {
@@ -27,11 +31,14 @@ public class EventBusHandler {
 
 
 
-    public void handlerStart(Message<Object> message, String pingId){
+    public void handlerStart(Message<Object> message){
         LOGGER.info("Message received: {}", message.body().toString());
         JsonObject body = (JsonObject) message.body();
         JsonObject sourceJson = body.getJsonObject("source");
         JsonObject targetJson = body.getJsonObject("target");
+
+        String  pingId=  body.getString("pingId");
+
         sourceJson.put("pingId",pingId);
         targetJson.put("pingId",pingId);
 
@@ -122,7 +129,7 @@ public class EventBusHandler {
 
             body.put("loop",body.getInteger("loop")-1);
             Integer loop = body.getInteger("loop");
-            if(loop<1){
+            if(loop<0){
                 LOGGER.info("INFO 1 {}", "looped!!!!!!!!!!!!!!!!!!!！");
                 return;
             }
@@ -131,6 +138,22 @@ public class EventBusHandler {
             JsonObject sourceJson = body.getJsonObject("source");
             sourceJson.getJsonObject("body").put("query",answerParam.getAnswer());
             vertx.eventBus().send("chat_to_0", body);
+
+            HttpServerResponse sse = SseMap.sseClients.get(targetJson.getString("pingId"));
+            if(!sse.closed()) {
+                JSONObject entries = JSONUtil.parseObj(book);
+                entries.put("type", "history-item");
+                String data = JSONUtil.toJsonStr(entries);
+                String event = """
+                        data: %s
+                        event: history-data
+                        \n\n
+                        """.formatted(data);
+                LOGGER.info("---------发送数据-------------- {}", event);
+                sse.write(event);
+            }
+
+
 
         }).onFailure(throwable -> {
             LOGGER.info("Error ", throwable);

@@ -1,6 +1,5 @@
 package org.limadelrey.vertx4.reactive.rest.api.verticle;
 
-import cn.hutool.core.util.IdUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.vertx.core.AbstractVerticle;
@@ -25,7 +24,7 @@ public class DifyVerticle extends AbstractVerticle {
         ObjectMapper mapper = DatabindCodec.mapper();
         mapper.registerModule(new JavaTimeModule());
         vertx.eventBus().consumer("chat_to_dify").handler(message ->{
-            eventBusHandler.handlerStart(message, IdUtil.fastSimpleUUID());
+            eventBusHandler.handlerStart(message);
                 });
 
 

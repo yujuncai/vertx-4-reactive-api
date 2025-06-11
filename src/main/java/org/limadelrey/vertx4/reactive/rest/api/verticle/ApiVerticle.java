@@ -42,7 +42,7 @@ public class ApiVerticle extends AbstractVerticle {
                 .allowedMethod(HttpMethod.PUT)
                 .allowedMethod(HttpMethod.DELETE)
                );
-        router.route().handler(TimeoutHandler.create(30000));
+        router.route().handler(TimeoutHandler.create(9990000));
 
 
 
@@ -55,9 +55,10 @@ public class ApiVerticle extends AbstractVerticle {
 
         bookRouter.setRouter(router);
         userRouter.setRouter(router);
-        router.get("/*").handler(rc -> {
+       /* router.get("/*").handler(rc -> {
+
             rc.response().setStatusCode(404).end("Custom 404 message");
-        });
+        });*/
         buildHttpServer( promise, router);
     }
 

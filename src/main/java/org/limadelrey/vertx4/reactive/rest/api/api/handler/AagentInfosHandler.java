@@ -1,6 +1,7 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.IdUtil;
 import com.google.inject.Singleton;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
@@ -80,7 +81,8 @@ public class AagentInfosHandler {
                 // 所有的Future都成功完成
                 JsonObject result1 = ar.result().resultAt(0);
                 JsonObject result2 = ar.result().resultAt(1);
-                 EvevtParam build =  EvevtParam.builder().source(result1).target(result2).loop(param.getLoop()).build();
+
+                 EvevtParam build =  EvevtParam.builder().source(result1).target(result2).loop(param.getLoop()).pingId(IdUtil.fastSimpleUUID()).build();
 
 
                 sendEventBusMessage( JsonObject.mapFrom(build));
