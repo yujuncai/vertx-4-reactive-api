@@ -120,6 +120,25 @@ public class EventBusHandler {
 
             targetJson.getJsonObject("body").put("conversation_id",answerParam.getCoverId());
 
+
+
+            HttpServerResponse sse = SseMap.sseClients.get(targetJson.getString("pingId"));
+            if(!sse.closed()) {
+                JSONObject entries = JSONUtil.parseObj(book);
+                entries.put("type", "history-item");
+                String data = JSONUtil.toJsonStr(entries);
+                String event = """
+                        data: %s
+                        event: history-data
+                        \n\n
+                        """.formatted(data);
+                LOGGER.info("---------发送数据-------------- {}", event);
+                sse.write(event);
+            }
+
+
+
+
             if(answerParam.getAnswer().contains("请点击立即转账")){
                 LOGGER.info("INFO 1 {}", "转账流程以是最后一步，结束测试！");
                 return;
@@ -139,19 +158,7 @@ public class EventBusHandler {
             sourceJson.getJsonObject("body").put("query",answerParam.getAnswer());
             vertx.eventBus().send("chat_to_0", body);
 
-            HttpServerResponse sse = SseMap.sseClients.get(targetJson.getString("pingId"));
-            if(!sse.closed()) {
-                JSONObject entries = JSONUtil.parseObj(book);
-                entries.put("type", "history-item");
-                String data = JSONUtil.toJsonStr(entries);
-                String event = """
-                        data: %s
-                        event: history-data
-                        \n\n
-                        """.formatted(data);
-                LOGGER.info("---------发送数据-------------- {}", event);
-                sse.write(event);
-            }
+
 
 
 

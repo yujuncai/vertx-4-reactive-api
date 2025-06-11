@@ -21,7 +21,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 800px;
-            height: 600px;
+            height: 850px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -263,4 +263,66 @@
                 display: flex;
                 gap: 10px;
             }
+        }
+  /* 消息截断样式 */
+        .truncated-message {
+            max-height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .truncated-message::after {
+            content: "...";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(to right, transparent, white 50%);
+            padding-left: 20px;
+            padding-right: 5px;
+        }
+
+        /* 浮窗样式 */
+        .message-tooltip {
+            position: fixed;
+            max-width: 500px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            border: 1px solid #e1e8ed;
+        }
+
+        .message-tooltip.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 浮窗滚动条样式 */
+        .message-tooltip::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .message-tooltip::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .message-tooltip::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .message-tooltip::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }

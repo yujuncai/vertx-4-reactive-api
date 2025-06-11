@@ -28,10 +28,10 @@
 
     <div class="controls">
 
-        <button class="btn btn-primary" id="chatBtn">发起对话</button>
-        <button class="btn btn-primary" id="loadHistoryBtn">加载历史记录</button>
+        <button class="btn btn-primary" id="chatBtn">发起查询对话</button>
+        <button class="btn btn-primary" id="chatzzBtn">发起转账对话</button>
         <button class="btn btn-secondary" id="clearBtn">清空显示</button>
-        <button class="btn btn-secondary" id="reconnectBtn">重新连接</button>
+
     </div>
 </div>
 
@@ -57,7 +57,7 @@
             this.$clearBtn = $('#clearBtn');
             this.$reconnectBtn = $('#reconnectBtn');
              this.$chatBtn = $('#chatBtn');
-
+            this.$chatzzBtn = $('#chatzzBtn');
 
         }
 
@@ -65,8 +65,8 @@
             this.$loadHistoryBtn.on('click', () => this.loadHistory());
             this.$clearBtn.on('click', () => this.clearMessages());
             this.$reconnectBtn.on('click', () => this.reconnect());
-            this.$chatBtn.on('click', () => this.chat());
-
+            this.$chatBtn.on('click', () => this.chat('查询'));
+            this.$chatzzBtn.on('click', () => this.chat('转账'));
             this.$agentFilter.on('change', (e) => {
                 this.currentAgentFilter = e.target.value;
                 this.filterMessages();
@@ -236,7 +236,7 @@
         }
 
 
-         chat(){
+         chat(action){
         let slef=this;
          $.ajax({
                         url: 'http://localhost:8888/api/v1/agent2agent',
@@ -244,8 +244,8 @@
                         contentType: 'application/json',
                         data: JSON.stringify({
                             querys: "开始扮演",
-                            action: "查询",
-                            loop:2
+                            action: action,
+                            loop:10
                         }),
                         timeout: 5000, // 10秒超时
                         success: function(response) {
