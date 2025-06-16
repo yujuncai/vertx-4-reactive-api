@@ -71,23 +71,14 @@ public class AagentInfosHandler {
         final QueryParam param  = rc.body().asJsonObject().mapTo(QueryParam.class);
         Future<JsonObject> sourceFuture = service.selectByType("0",param.getAction()).map(m -> buildJson(m,param));
         Future<JsonObject> targetFuture = service.selectByType("1",param.getAction()).map(m -> buildJson(m,param));
-
-
-
-
-
         return     CompositeFuture.all(sourceFuture, targetFuture).onComplete(ar -> {
             if (ar.succeeded()) {
                 // 所有的Future都成功完成
                 JsonObject result1 = ar.result().resultAt(0);
                 JsonObject result2 = ar.result().resultAt(1);
-
                  EvevtParam build =  EvevtParam.builder().source(result1).target(result2).loop(param.getLoop()).pingId(IdUtil.fastSimpleUUID()).build();
-
-
-                sendEventBusMessage( JsonObject.mapFrom(build));
+                sendEventBusMessage( JsonObject.mapFrom(build));//异步发给seventBus
                 ResponseUtils.buildOkResponse(rc,new Result<EvevtParam>().ok(build));
-
             } else {
                 // 至少有一个Future失败了
                 Throwable cause = ar.cause();

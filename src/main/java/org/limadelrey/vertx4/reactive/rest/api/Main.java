@@ -27,5 +27,4 @@ public class Main {
         vertx.deployVerticle(MainVerticle.class.getName())
                 .onFailure(throwable -> System.exit(-1));
     }
-
 }

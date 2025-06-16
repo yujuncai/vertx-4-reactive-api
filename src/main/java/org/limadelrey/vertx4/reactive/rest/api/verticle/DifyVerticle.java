@@ -27,7 +27,6 @@ public class DifyVerticle extends AbstractVerticle {
             eventBusHandler.handlerStart(message);
                 });
 
-
         //模拟方都为 0
         vertx.eventBus().consumer("chat_to_0").handler(eventBusHandler::handler0);
         //业务方都为 1
