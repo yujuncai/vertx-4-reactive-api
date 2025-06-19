@@ -1,7 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.lang.UUID;
 import com.google.inject.Singleton;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
@@ -13,12 +12,12 @@ import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.R.Result;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.*;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.AgentInfosService;
+import org.limadelrey.vertx4.reactive.rest.api.api.service.PingListService;
+import org.limadelrey.vertx4.reactive.rest.api.api.service.RolesService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
 import org.limadelrey.vertx4.reactive.rest.api.vos.EvevtParam;
 import org.limadelrey.vertx4.reactive.rest.api.vos.QueryParam;
-
-import java.util.List;
 
 @Singleton
 public class AagentInfosHandler {
@@ -28,6 +27,11 @@ public class AagentInfosHandler {
     private static final String LIMIT_PARAMETER = "limit";
 
     private final AgentInfosService service= GuiceUtil.getGuice().getInstance(AgentInfosService.class);
+
+    private final RolesService rolesService= GuiceUtil.getGuice().getInstance(RolesService.class);
+
+    private final PingListService pingListService= GuiceUtil.getGuice().getInstance(PingListService.class);
+
     private static final Logger LOGGER = LogManager.getLogger(AagentInfosHandler.class);
     private final Vertx vertx=  Vertx.currentContext().owner();
     public AagentInfosHandler() {
@@ -83,16 +87,43 @@ public class AagentInfosHandler {
 
     public CompositeFuture chatToAgent(RoutingContext rc) {
         final QueryParam param  = rc.body().asJsonObject().mapTo(QueryParam.class);
-        Future<JsonObject> sourceFuture = service.selectByType("0",param.getAction()).map(m -> buildJson(m,param));
-        Future<JsonObject> targetFuture = service.selectByType("1",param.getAction()).map(m -> buildJson(m,param));
-        return     CompositeFuture.all(sourceFuture, targetFuture).onComplete(ar -> {
+
+        Future<RolesGetByIdResponse> rolesFuture = rolesService.readOne(param.getRolesId());
+        Future<AgentInosGetByIdResponse> sourceFuture = service.readOne(param.getSid());
+        Future<AgentInosGetByIdResponse> targetFuture = service.readOne(param.getTid());
+
+        return     CompositeFuture.all(rolesFuture,sourceFuture, targetFuture).onComplete(ar -> {
             if (ar.succeeded()) {
                 // 所有的Future都成功完成
-                JsonObject result1 = ar.result().resultAt(0);
-                JsonObject result2 = ar.result().resultAt(1);
-                 EvevtParam build =  EvevtParam.builder().source(result1).target(result2).loop(param.getLoop()).pingId(IdUtil.fastSimpleUUID()).build();
-                sendEventBusMessage( JsonObject.mapFrom(build));//异步发给seventBus
-                ResponseUtils.buildOkResponse(rc,new Result<EvevtParam>().ok(build));
+                RolesGetByIdResponse result1 = ar.result().resultAt(0);
+                AgentInosGetByIdResponse result2 = ar.result().resultAt(1);
+                AgentInosGetByIdResponse result3 = ar.result().resultAt(2);
+              String pingId=  UUID.fastUUID().toString();
+                //插入流水
+                PingList p=new PingList();
+                p.setPingId(pingId);
+                p.setRoleId(param.getRolesId());
+                p.setSourceId(param.getSid());
+                p.setTargetId(param.getTid());
+                p.setDescInfo(param.getDesc());
+                PingListGetByIdResponse result = pingListService.create(p).result();
+
+                JsonObject roleInfo = JsonObject.mapFrom(result1);
+                JsonObject sourceJson = JsonObject.mapFrom(result2);
+                JsonObject targetJson = JsonObject.mapFrom(result3);
+
+
+                EvevtParam  build=  EvevtParam.builder()
+                        .roles(roleInfo)
+                        .source(sourceJson).
+                        target(targetJson)
+                        .loop(param.getLoop())
+                        .pingId(pingId)
+                        .build();
+                //异步发给seventBus
+                LOGGER.info("INFO Start {}", JsonObject.mapFrom(build));
+                sendEventBusMessage( JsonObject.mapFrom(build));
+                ResponseUtils.buildOkResponse(rc,new Result<String>().ok(pingId));
             } else {
                 // 至少有一个Future失败了
                 Throwable cause = ar.cause();
@@ -118,23 +149,6 @@ public class AagentInfosHandler {
     }
 
 
-    private JsonObject buildJson(List<AgentInosGetByIdResponse> m,QueryParam param){
-        if (CollectionUtil.isEmpty(m)) {
-            throw new RuntimeException("No agent available");
-        }
-        AgentInosGetByIdResponse first = m.getFirst();
-        JsonObject json = new JsonObject();
-        json.put("apikey", first.getApikey());
-        json.put("uri", first.getUri());
-        json.put("hosts", first.getHosts());
-        json.put("port", first.getPort());
-        JsonObject  body = new JsonObject();
-        body.put("inputs","");
-        body.put("query",param.getQuerys());
-        body.put("conversation_id","");
-        body.put("user","1001827281");
-        json.put("body",body);
-        return json;
-    }
+
     
 }

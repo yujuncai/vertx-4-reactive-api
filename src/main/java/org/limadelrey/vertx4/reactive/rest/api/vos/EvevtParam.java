@@ -10,6 +10,7 @@ public class EvevtParam {
 
     private JsonObject source;
     private JsonObject target;
+    private JsonObject roles;
     private Integer loop;
     private String pingId;
 }

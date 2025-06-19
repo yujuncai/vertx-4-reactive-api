@@ -12,15 +12,21 @@ public class QueryParam implements Serializable {
     @Serial
     private static final long serialVersionUID = 1169010391380979103L;
 
-    @JsonProperty(value = "querys")
-    private  String querys;
+    @JsonProperty(value = "rolesId")
+    private  String rolesId;
 
 
-    @JsonProperty(value = "action")
-    private  String action;
+    @JsonProperty(value = "sid")
+    private  String sid;
 
+
+    @JsonProperty(value = "tid")
+    private  String tid;
 
     @JsonProperty(value = "loop")
     private  Integer loop;
+
+    @JsonProperty(value = "desc")
+    private  String desc;
 
 }

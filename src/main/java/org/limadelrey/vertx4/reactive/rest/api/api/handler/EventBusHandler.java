@@ -1,12 +1,9 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.Message;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.codec.BodyCodec;
@@ -15,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
-import org.limadelrey.vertx4.reactive.rest.api.utils.SseMap;
 import org.limadelrey.vertx4.reactive.rest.api.vos.AnswerParam;
 
 import java.time.Instant;
@@ -37,28 +33,42 @@ public class EventBusHandler {
         JsonObject body = (JsonObject) message.body();
         JsonObject sourceJson = body.getJsonObject("source");
         JsonObject targetJson = body.getJsonObject("target");
-
+        JsonObject roles = body.getJsonObject("roles");
         String  pingId=  body.getString("pingId");
 
-        sourceJson.put("pingId",pingId);
-        targetJson.put("pingId",pingId);
 
-        Future<AnswerParam> source = chatToDify(sourceJson);
+        JsonObject  dify_json = new JsonObject();
+        JsonObject  inputs = new JsonObject();
+        inputs.put("roles",roles.getString("role_prompt"));
+        dify_json.put("inputs",inputs);
+        dify_json.put("query","开始扮演");
+        dify_json.put("conversation_id","");
+        dify_json.put("user",roles.getString("role_name"));
+
+
+        Future<AnswerParam> source = chatToDify(sourceJson,dify_json);
         source.onSuccess(answerParam -> {
-            LOGGER.info("INFO Start {}", answerParam);
-            Book book = new Book();
+            LOGGER.info("answerParam----> {}", answerParam);
+           /* Book book = new Book();
             book.setAgentId(sourceJson.getString("apikey"));
             book.setAnswer(answerParam.getAnswer());
-            book.setQuerys(sourceJson.getJsonObject("body").getString("query"));
+            book.setQuerys(dify_json.getString("query"));
             book.setType(0);
             book.setCreateTime(Instant.now());
             book.setPingId(pingId);
-            bookService.create(book);
-
-            sourceJson.getJsonObject("body").put("conversation_id",answerParam.getCoverId());
-            //回答替换为输入
-            targetJson.getJsonObject("body").put("query",answerParam.getAnswer());
-
+            bookService.create(book);*/
+            //初始化0
+            dify_json.put("conversation_id",answerParam.getCoverId());
+            body.put("source_dify_json",dify_json);
+            //初始化1
+            JsonObject  target_dify_json = new JsonObject();
+            JsonObject  tinputs = new JsonObject();
+            tinputs.put("history","");
+            target_dify_json.put("inputs",tinputs);
+            target_dify_json.put("conversation_id","");
+            target_dify_json.put("user",roles.getString("role_name"));
+            target_dify_json.put("query",answerParam.getAnswer());
+            body.put("target_dify_json",target_dify_json);
             vertx.eventBus().send("chat_to_1", body);
 
         }).onFailure(throwable -> {
@@ -75,23 +85,24 @@ public class EventBusHandler {
         LOGGER.info("Message received: {}", message.body().toString());
         JsonObject body = (JsonObject) message.body();
         JsonObject sourceJson = body.getJsonObject("source");
+        JsonObject source_dify_json = body.getJsonObject("source_dify_json");
 
-        Future<AnswerParam> source = chatToDify(sourceJson);
+        Future<AnswerParam> source = chatToDify(sourceJson,source_dify_json);
         source.onSuccess(answerParam -> {
             LOGGER.info("INFO 0 {}", answerParam);
-            Book book = new Book();
+           /* Book book = new Book();
             book.setAgentId(sourceJson.getString("apikey"));
             book.setAnswer(answerParam.getAnswer());
-            book.setQuerys(sourceJson.getJsonObject("body").getString("query"));
+            book.setQuerys(source_dify_json.getString("query"));
             book.setType(0);
             book.setCreateTime(Instant.now());
-            book.setPingId(sourceJson.getString("pingId"));
-            bookService.create(book);
+            book.setPingId(body.getString("pingId"));
+            bookService.create(book);*/
             //设置cover
-            sourceJson.getJsonObject("body").put("conversation_id",answerParam.getCoverId());
+            source_dify_json.put("conversation_id",answerParam.getCoverId());
 
-            JsonObject targetJson = body.getJsonObject("target");
-            targetJson.getJsonObject("body").put("query",answerParam.getAnswer());
+            JsonObject target_dify_json = body.getJsonObject("target_dify_json");
+            target_dify_json.put("query",answerParam.getAnswer());
             vertx.eventBus().send("chat_to_1", body);
 
 
@@ -106,24 +117,26 @@ public class EventBusHandler {
 
         JsonObject body = (JsonObject) message.body();
         JsonObject targetJson = body.getJsonObject("target");
+        JsonObject target_dify_json = body.getJsonObject("target_dify_json");
 
-        Future<AnswerParam> target = chatToDify(targetJson);
+
+        Future<AnswerParam> target = chatToDify(targetJson,target_dify_json);
         target.onSuccess(answerParam -> {
             LOGGER.info("INFO 1 {}", answerParam);
             Book book = new Book();
             book.setAgentId(targetJson.getString("apikey"));
             book.setAnswer(answerParam.getAnswer());
-            book.setQuerys(targetJson.getJsonObject("body").getString("query"));
+            book.setQuerys(target_dify_json.getString("query"));
             book.setType(1);
             book.setCreateTime(Instant.now());
-            book.setPingId(targetJson.getString("pingId"));
+            book.setPingId(body.getString("pingId"));
             bookService.create(book);
 
-            targetJson.getJsonObject("body").put("conversation_id",answerParam.getCoverId());
+            target_dify_json.put("conversation_id",answerParam.getCoverId());
 
 
 
-            HttpServerResponse sse = SseMap.sseClients.get(targetJson.getString("pingId"));
+           /* HttpServerResponse sse = SseMap.sseClients.get(targetJson.getString("pingId"));
             if(!sse.closed()) {
                 JSONObject entries = JSONUtil.parseObj(book);
                 entries.put("type", "history-item");
@@ -135,7 +148,7 @@ public class EventBusHandler {
                         """.formatted(data);
                 LOGGER.info("---------发送数据-------------- {}", event);
                 sse.write(event);
-            }
+            }*/
 
 
 
@@ -155,8 +168,8 @@ public class EventBusHandler {
             }
 
 
-            JsonObject sourceJson = body.getJsonObject("source");
-            sourceJson.getJsonObject("body").put("query",answerParam.getAnswer());
+            JsonObject sourceJson = body.getJsonObject("source_dify_json");
+            sourceJson.put("query",answerParam.getAnswer());
             vertx.eventBus().send("chat_to_0", body);
 
 
@@ -172,24 +185,23 @@ public class EventBusHandler {
 
 
 
-    private Future<AnswerParam> chatToDify(JsonObject messageBody) {
+    private Future<AnswerParam> chatToDify(JsonObject messageBody,JsonObject difyJson) {
 
         Integer port = messageBody.getInteger("port");
         String host = messageBody.getString("hosts");
         String uri = messageBody.getString("uri");
         String apikey = messageBody.getString("apikey");
-        JsonObject body=  messageBody.getJsonObject("body");
+
+
         final WebClient webClient = WebClient.create(vertx);
         Promise<AnswerParam> promise = Promise.promise();
         webClient.post(port, host, uri)
                 .putHeader("Authorization", "Bearer " + apikey)
                 .as(BodyCodec.jsonObject())
-                .sendJsonObject(body)
+                .sendJsonObject(difyJson)
                 .onSuccess(response -> {
                     String an= response.body().getString("answer");
-
                     String cover= response.body().getString("conversation_id");
-
                     promise.complete( AnswerParam.builder().answer(an).coverId(cover).build());
                 }).onFailure(throwable -> {
                     LOGGER.info("Error", throwable);
