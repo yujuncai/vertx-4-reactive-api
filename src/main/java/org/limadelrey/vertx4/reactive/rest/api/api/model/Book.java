@@ -1,10 +1,11 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 public class Book implements Serializable {
@@ -25,9 +26,9 @@ public class Book implements Serializable {
 
     @JsonProperty(value = "type")
     private Integer type;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @JsonProperty(value = "create_time")
-    private Date createTime;
+    private Instant createTime;
 
 
 

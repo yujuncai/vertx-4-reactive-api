@@ -17,14 +17,14 @@ public class BookRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(BookRepository.class);
 
-    private static final String SQL_SELECT_ALL = "SELECT * FROM books LIMIT #{limit} OFFSET #{offset}";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM books where ping_id = #{pingId} LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM books WHERE id = #{id}";
     private static final String SQL_INSERT = "INSERT INTO books (querys, answer, agent_id, type, create_time,ping_id) " +
             "VALUES (#{querys}, #{answer}, #{agent_id}, #{type}, NOW(),#{ping_id} ) ";
     private static final String SQL_UPDATE = "UPDATE books SET querys = #{querys}, answer = #{answer}, agent_id = #{agent_id}, " +
             "type = #{type}, create_time = #{create_time} WHERE id = #{id}";
     private static final String SQL_DELETE = "DELETE FROM books WHERE id = #{id}";
-    private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM books";
+    private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM books where ping_id = #{pingId}";
 
     public BookRepository() {
     }
@@ -39,11 +39,11 @@ public class BookRepository {
      */
     public Future<List<Book>> selectAll(SqlConnection connection,
                                         int limit,
-                                        int offset) {
+                                        int offset,String  pingId) {
         return SqlTemplate
                 .forQuery(connection, SQL_SELECT_ALL)
                 .mapTo(Book.class)
-                .execute(Map.of("limit", limit, "offset", offset))
+                .execute(Map.of("limit", limit, "offset", offset,"pingId",pingId))
                 .map(rowSet -> {
                     final List<Book> books = new ArrayList<>();
                     rowSet.forEach(books::add);
@@ -159,13 +159,13 @@ public class BookRepository {
      * @param connection PostgreSQL connection
      * @return Integer
      */
-    public Future<Integer> count(SqlConnection connection) {
+    public Future<Integer> count(SqlConnection connection,String  pingId) {
         final RowMapper<Integer> ROW_MAPPER = row -> row.getInteger("total");
 
         return SqlTemplate
                 .forQuery(connection, SQL_COUNT)
                 .mapTo(ROW_MAPPER)
-                .execute(Collections.emptyMap())
+                .execute(Collections.singletonMap("pingId", pingId))
                 .map(rowSet -> rowSet.iterator().next())
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Count books", SQL_COUNT)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Count book", throwable.getMessage())));

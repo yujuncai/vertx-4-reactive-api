@@ -11,8 +11,7 @@ import io.vertx.ext.web.RoutingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.R.Result;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.AgentInfosGetAllResponse;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.AgentInosGetByIdResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.*;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.AgentInfosService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.ResponseUtils;
@@ -49,20 +48,35 @@ public class AagentInfosHandler {
     public Future<AgentInosGetByIdResponse> readOne(RoutingContext rc) {
         final String id = rc.pathParam(ID_PARAMETER);
 
-        return service.readOne(Long.parseLong(id))
+        return service.readOne(id)
                 .onSuccess(success -> ResponseUtils.buildOkResponse(rc,  new Result<AgentInosGetByIdResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 
+    public Future<AgentInosGetByIdResponse> create(RoutingContext rc) {
 
+        final AgentInfos book = rc.getBodyAsJson().mapTo(AgentInfos.class);
 
+        return service.create(book)
+                .onSuccess(success -> ResponseUtils.buildCreatedResponse(rc, new Result<AgentInosGetByIdResponse>().ok(success)))
+                .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable))
+                ;
+    }
+    public Future<AgentInosGetByIdResponse> update(RoutingContext rc) {
+        final String id = rc.pathParam(ID_PARAMETER);
+        final AgentInfos book = rc.getBodyAsJson().mapTo(AgentInfos.class);
+
+        return service.update(id, book)
+                .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<AgentInosGetByIdResponse>().ok(success)))
+                .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
+    }
 
     public Future<Void> delete(RoutingContext rc) {
         final String id = rc.pathParam(ID_PARAMETER);
 
 
-        return service.delete(Long.parseLong(id))
-                .onSuccess(success -> ResponseUtils.buildNoContentResponse(rc))
+        return service.delete(id)
+                .onSuccess(success -> ResponseUtils.buildOkResponse(rc,new Result<String>().ok(id)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
 

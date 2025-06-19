@@ -1,6 +1,5 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import io.vertx.core.Future;
@@ -18,6 +17,8 @@ import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.SseMap;
 import org.limadelrey.vertx4.reactive.rest.api.vos.AnswerParam;
+
+import java.time.Instant;
 
 public class EventBusHandler {
     public EventBusHandler() {
@@ -50,7 +51,7 @@ public class EventBusHandler {
             book.setAnswer(answerParam.getAnswer());
             book.setQuerys(sourceJson.getJsonObject("body").getString("query"));
             book.setType(0);
-            book.setCreateTime(DateUtil.date());
+            book.setCreateTime(Instant.now());
             book.setPingId(pingId);
             bookService.create(book);
 
@@ -83,7 +84,7 @@ public class EventBusHandler {
             book.setAnswer(answerParam.getAnswer());
             book.setQuerys(sourceJson.getJsonObject("body").getString("query"));
             book.setType(0);
-            book.setCreateTime(DateUtil.date());
+            book.setCreateTime(Instant.now());
             book.setPingId(sourceJson.getString("pingId"));
             bookService.create(book);
             //设置cover
@@ -114,7 +115,7 @@ public class EventBusHandler {
             book.setAnswer(answerParam.getAnswer());
             book.setQuerys(targetJson.getJsonObject("body").getString("query"));
             book.setType(1);
-            book.setCreateTime(DateUtil.date());
+            book.setCreateTime(Instant.now());
             book.setPingId(targetJson.getString("pingId"));
             bookService.create(book);
 

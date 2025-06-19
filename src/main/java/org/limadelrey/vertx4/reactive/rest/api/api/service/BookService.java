@@ -38,7 +38,7 @@ public class BookService {
      * @return BookGetAllResponse
      */
     public Future<BookGetAllResponse> readAll(String p,
-                                              String l) {
+                                              String l,String  pingId) {
 
         return dbClient.withTransaction(
                 connection -> {
@@ -46,9 +46,9 @@ public class BookService {
                     final int limit = QueryUtils.getLimit(l);
                     final int offset = QueryUtils.getOffset(page, limit);
                     LOGGER.info("page {}  , limit {} ,  offset {}" , page, limit, offset);
-                    return bookRepository.count(connection)
+                    return bookRepository.count(connection,pingId)
                             .flatMap(total ->
-                                    bookRepository.selectAll(connection, limit, offset)
+                                    bookRepository.selectAll(connection, limit, offset,pingId)
                                             .map(result -> {
                                                 final List<BookGetByIdResponse> books = result.stream()
                                                         .map(BookGetByIdResponse::new)

@@ -35,8 +35,8 @@ public class BookHandler {
     public Future<BookGetAllResponse> readAll(RoutingContext rc) {
         final String page = rc.queryParams().get(PAGE_PARAMETER);
         final String limit = rc.queryParams().get(LIMIT_PARAMETER);
-
-        return bookService.readAll(page, limit)
+        final String pingId = rc.queryParams().get("pingId");
+        return bookService.readAll(page, limit,pingId)
                 .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<BookGetAllResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }

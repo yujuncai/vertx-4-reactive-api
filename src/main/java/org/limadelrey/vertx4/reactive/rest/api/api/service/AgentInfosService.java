@@ -1,13 +1,12 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
+import cn.hutool.core.lang.UUID;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.AgentInfos;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.AgentInfosGetAllResponse;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.AgentInosGetByIdResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.*;
 import org.limadelrey.vertx4.reactive.rest.api.api.repository.AgentInfosRepository;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
@@ -58,7 +57,7 @@ public class AgentInfosService {
     }
 
 
-    public Future<AgentInosGetByIdResponse> readOne(long id) {
+    public Future<AgentInosGetByIdResponse> readOne(String id) {
 
         return dbClient.withTransaction(
                 connection -> agentInfosRepository.selectById(connection, id)
@@ -69,14 +68,23 @@ public class AgentInfosService {
 
 
     public Future<AgentInosGetByIdResponse> create(AgentInfos u) {
+        u.setId(UUID.fastUUID().toString());
         return dbClient.withTransaction(
                 connection -> agentInfosRepository.insert(connection, u)
                         .map(AgentInosGetByIdResponse::new))
-                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Create one user", success)))
-                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Create one user", throwable.getMessage())));
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Create one AgentInfos", success)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Create one AgentInfos", throwable.getMessage())));
     }
 
-
+    public Future<AgentInosGetByIdResponse> update(String id,
+                                                   AgentInfos book) {
+        book.setId(id);
+        return dbClient.withTransaction(
+                        connection -> agentInfosRepository.update(connection, book)
+                                .map(AgentInosGetByIdResponse::new))
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Update one AgentInfos", success)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Update one AgentInfos", throwable.getMessage())));
+    }
 
 
     public Future<List<AgentInosGetByIdResponse>> selectByType(String type,String action) {
@@ -99,7 +107,7 @@ public class AgentInfosService {
 
 
 
-    public Future<Void> delete(Long id) {
+    public Future<Void> delete(String id) {
         return dbClient.withTransaction(
                 connection -> agentInfosRepository.delete(connection, id))
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Delete one ", id)))

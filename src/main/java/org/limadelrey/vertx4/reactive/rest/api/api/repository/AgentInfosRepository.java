@@ -23,10 +23,11 @@ public class AgentInfosRepository {
 
     private static final String SQL_SELECT_BY_TYPE = "SELECT * FROM agent_infos WHERE type = #{type} and action = #{action}";
 
-    private static final String SQL_INSERT = "INSERT INTO agent_infos (id, hosts, port, uri,type,apikey) " +
-            "VALUES (#{id}, #{hosts}, #{port}, #{uri},#{type},#{apikey}) ";
+    private static final String SQL_INSERT = "INSERT INTO agent_infos (id, hosts, port, uri,type,apikey,action) " +
+            "VALUES (#{id}, #{hosts}, #{port}, #{uri},#{type},#{apikey},#{action}) ";
 
-
+    private static final String SQL_UPDATE = "UPDATE agent_infos SET hosts = #{hosts}, port = #{port}, uri = #{uri}, " +
+            "type = #{type}, apikey = #{apikey} ,action= #{action} WHERE id = #{id}";
 
     private static final String SQL_DELETE = "DELETE FROM agent_infos WHERE id = #{id}";
     private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM agent_infos";
@@ -73,7 +74,7 @@ public class AgentInfosRepository {
 
 
     public Future<AgentInfos>  selectById(SqlConnection connection,
-                                   Long id) {
+                                   String id) {
 
         return SqlTemplate
                 .forQuery(connection, SQL_SELECT_BY_ID)
@@ -117,7 +118,7 @@ public class AgentInfosRepository {
 
 
     public Future<Void> delete(SqlConnection connection,
-                               Long id) {
+                               String id) {
         return SqlTemplate
                 .forUpdate(connection, SQL_DELETE)
                 .execute(Collections.singletonMap("id", id))
@@ -146,7 +147,22 @@ public class AgentInfosRepository {
     }
 
 
-
+    public Future<AgentInfos> update(SqlConnection connection,
+                                     AgentInfos book) {
+        return SqlTemplate
+                .forUpdate(connection, SQL_UPDATE)
+                .mapFrom(AgentInfos.class)
+                .execute(book)
+                .flatMap(rowSet -> {
+                    if (rowSet.rowCount() > 0) {
+                        return Future.succeededFuture(book);
+                    } else {
+                        throw new NoSuchElementException(LogUtils.NO_ENTITY_WITH_ID_MESSAGE.buildMessage(book.getId()));
+                    }
+                })
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Update AgentInfos", SQL_UPDATE)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Update AgentInfos", throwable.getMessage())));
+    }
 
 
 
