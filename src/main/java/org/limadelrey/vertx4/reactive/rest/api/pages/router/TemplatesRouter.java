@@ -7,7 +7,9 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.LoggerFormat;
 import io.vertx.ext.web.handler.LoggerHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.handler.JwtAuthHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.AgentInfosGetAllResponse;
+import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.pages.handler.TemplatesHandler;
 import org.limadelrey.vertx4.reactive.rest.api.verticle.PagesVerticle;
 
@@ -15,6 +17,7 @@ import org.limadelrey.vertx4.reactive.rest.api.verticle.PagesVerticle;
 public class TemplatesRouter {
     private final Vertx vertx;
     private final TemplatesHandler templatesHandler;
+    private final JwtAuthHandler jwtAuthHandler= GuiceUtil.getGuice().getInstance(JwtAuthHandler.class);
     public TemplatesRouter(Vertx vertx,TemplatesHandler templatesHandler) {
         this.templatesHandler = templatesHandler;
         this.vertx = vertx;

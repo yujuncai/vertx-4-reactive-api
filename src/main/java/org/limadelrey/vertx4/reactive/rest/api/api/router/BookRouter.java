@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.AagentInfosHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookHandler;
 import org.limadelrey.vertx4.reactive.rest.api.api.handler.BookValidationHandler;
+import org.limadelrey.vertx4.reactive.rest.api.api.handler.JwtAuthHandler;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.SseMap;
 
@@ -22,7 +23,7 @@ public class BookRouter {
     private final BookValidationHandler bookValidationHandler=GuiceUtil.getGuice().getInstance(BookValidationHandler.class);
 
     private final AagentInfosHandler agentHandler= GuiceUtil.getGuice().getInstance(AagentInfosHandler.class);
-
+    private final JwtAuthHandler jwtAuthHandler= GuiceUtil.getGuice().getInstance(JwtAuthHandler.class);
 
     public BookRouter() {
 
