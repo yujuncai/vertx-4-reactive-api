@@ -17,6 +17,9 @@ public class BookRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(BookRepository.class);
 
+
+    private static final String SQL_GET_ALL = "SELECT * FROM books where ping_id = #{pingId} order by id desc ";
+
     private static final String SQL_SELECT_ALL = "SELECT * FROM books where ping_id = #{pingId} order by id desc LIMIT #{limit} OFFSET #{offset} ";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM books WHERE id = #{id}";
     private static final String SQL_INSERT = "INSERT INTO books (querys, answer, agent_id, type, create_time,ping_id) " +
@@ -53,6 +56,29 @@ public class BookRepository {
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read all books", SQL_SELECT_ALL)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read all books", throwable.getMessage())));
     }
+
+
+
+    public Future<List<Book>> getAll(SqlConnection connection,
+                                       String  pingId) {
+        return SqlTemplate
+                .forQuery(connection, SQL_GET_ALL)
+                .mapTo(Book.class)
+                .execute(Map.of("pingId",pingId))
+                .map(rowSet -> {
+                    final List<Book> books = new ArrayList<>();
+                    rowSet.forEach(books::add);
+                    return books;
+                })
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read all books", SQL_GET_ALL)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read all books", throwable.getMessage())));
+    }
+
+
+
+
+
+
 
     /**
      * Read one book

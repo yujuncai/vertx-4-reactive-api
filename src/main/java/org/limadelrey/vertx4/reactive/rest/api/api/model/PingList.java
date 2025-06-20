@@ -27,4 +27,12 @@ public class PingList implements Serializable {
 
     @JsonProperty(value = "desc_info")
     private String descInfo;
+
+
+    @JsonProperty(value = "status")
+    private String status;
+
+
+    @JsonProperty(value = "reports")
+    private String reports;
 }

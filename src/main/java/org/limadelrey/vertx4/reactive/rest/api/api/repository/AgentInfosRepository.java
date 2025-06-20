@@ -18,7 +18,7 @@ public class AgentInfosRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(AgentInfosRepository.class);
 
-    private static final String SQL_SELECT_ALL = "SELECT * FROM agent_infos LIMIT #{limit} OFFSET #{offset}";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM agent_infos  where  type = #{type} LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM agent_infos WHERE id = #{id}";
 
     private static final String SQL_SELECT_BY_TYPE = "SELECT * FROM agent_infos WHERE type = #{type} and action = #{action}";
@@ -30,7 +30,7 @@ public class AgentInfosRepository {
             "type = #{type}, apikey = #{apikey} ,action= #{action} WHERE id = #{id}";
 
     private static final String SQL_DELETE = "DELETE FROM agent_infos WHERE id = #{id}";
-    private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM agent_infos";
+    private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM agent_infos  where  type = #{type}";
 
     public AgentInfosRepository() {
     }
@@ -57,11 +57,11 @@ public class AgentInfosRepository {
 
     public Future<List<AgentInfos>> selectAll(SqlConnection connection,
                                               int limit,
-                                              int offset) {
+                                              int offset, String type) {
         return SqlTemplate
                 .forQuery(connection, SQL_SELECT_ALL)
                 .mapTo(AgentInfos.class)
-                .execute(Map.of("limit", limit, "offset", offset))
+                .execute(Map.of("limit", limit, "offset", offset,"type",type))
                 .map(rowSet -> {
                     final List<AgentInfos> agent_infos = new ArrayList<>();
                     rowSet.forEach(agent_infos::add);
@@ -134,7 +134,7 @@ public class AgentInfosRepository {
     }
 
 
-    public Future<Integer> count(SqlConnection connection) {
+    public Future<Integer> count(SqlConnection connection,String type) {
         final RowMapper<Integer> ROW_MAPPER = row -> row.getInteger("total");
 
         return SqlTemplate

@@ -14,7 +14,9 @@ import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.PingList;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
+import org.limadelrey.vertx4.reactive.rest.api.api.service.PingListService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.vos.AnswerParam;
 
@@ -32,7 +34,7 @@ public class EventBusHandler {
     private static final Logger LOGGER = LogManager.getLogger(EventBusHandler.class);
     private final BookService bookService= GuiceUtil.getGuice().getInstance(BookService.class);
     private final Vertx vertx=  Vertx.currentContext().owner();
-
+    private final PingListService pingListService= GuiceUtil.getGuice().getInstance(PingListService.class);
 
 
 
@@ -192,6 +194,7 @@ public class EventBusHandler {
                 .as(BodyCodec.jsonObject())
                 .sendJsonObject(difyJson)
                 .onSuccess(response -> {
+                    LOGGER.info("response=========={}", response.body());
                     String an= response.body().getString("answer");
                     String cover= response.body().getString("conversation_id");
                     promise.complete( AnswerParam.builder().answer(an).coverId(cover).build());
@@ -200,6 +203,56 @@ public class EventBusHandler {
                 });
         return  promise.future();
     }
+
+
+
+
+    public void analysis(Message<Object> message){
+        JsonObject body = (JsonObject) message.body();
+        String history = body.getString("history");
+        String role = body.getString("role");
+        JsonObject pingList = body.getJsonObject("pingList");
+
+
+        JsonObject  dify_json = new JsonObject();
+        JsonObject  inputs = new JsonObject();
+        inputs.put("chatlist",history);
+        inputs.put("role",role);
+        dify_json.put("inputs",inputs);
+        dify_json.put("query","开始分析");
+        dify_json.put("conversation_id","");
+        dify_json.put("user","user");
+        Future<AnswerParam> source = chatToDify(body,dify_json);
+        source.onSuccess(answerParam -> {
+            LOGGER.info("body-------{}",body);
+            LOGGER.info("对话历史-------{}",history);
+            LOGGER.info("角色信息-------{}",role);
+            LOGGER.info("分析报告-------{}",answerParam.getAnswer());
+            LOGGER.info("pingList-------{}",pingList);
+
+            PingList p=new PingList();
+            p.setReports(answerParam.getAnswer());
+            p.setStatus("1");
+            p.setRoleId(pingList.getString("role_id"));
+           p.setTargetId(pingList.getString("target_id"));
+           p.setSourceId(pingList.getString("source_id"));
+           p.setDescInfo(pingList.getString("desc_info"));
+            pingListService.update(pingList.getString("ping_id"), p);
+        });
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
 
 
 

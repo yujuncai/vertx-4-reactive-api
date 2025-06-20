@@ -20,9 +20,9 @@ public class PingListRepository {
 
     private static final String SQL_SELECT_ALL = "SELECT * FROM ping_list  LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM ping_list WHERE ping_id = #{pingId}";
-    private static final String SQL_INSERT = "INSERT INTO ping_list (ping_id,role_id,source_id,target_id,desc_info) " +
-            "VALUES (#{ping_id}, #{role_id}, #{source_id},#{target_id},#{desc_info} ) ";
-    private static final String SQL_UPDATE = "UPDATE ping_list SET role_id = #{roleId}, source_id = #{sourceId},target_id = #{targetId},desc_info = #{descInfo} WHERE ping_id = #{pingId}";
+    private static final String SQL_INSERT = "INSERT INTO ping_list (ping_id,role_id,source_id,target_id,desc_info,status,reports) " +
+            "VALUES (#{ping_id}, #{role_id}, #{source_id},#{target_id},#{desc_info} ,#{status},#{reports}) ";
+    private static final String SQL_UPDATE = "UPDATE ping_list SET role_id = #{role_id}, source_id = #{source_id},target_id = #{target_id},desc_info = #{desc_info},status=#{status},reports=#{reports} WHERE ping_id = #{ping_id}";
     private static final String SQL_DELETE = "DELETE FROM ping_list WHERE ping_id = #{pingId}";
     private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM ping_list ";
 
@@ -67,7 +67,7 @@ public class PingListRepository {
         return SqlTemplate
                 .forQuery(connection, SQL_SELECT_BY_ID)
                 .mapTo(PingList.class)
-                .execute(Collections.singletonMap("id", id))
+                .execute(Collections.singletonMap("pingId", id))
                 .map(rowSet -> {
                     final RowIterator<PingList> iterator = rowSet.iterator();
 

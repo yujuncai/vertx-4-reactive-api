@@ -62,6 +62,28 @@ public class BookService {
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read all books", throwable.getMessage())));
     }
 
+
+
+    public Future<List<BookGetByIdResponse>> getAll(String  pingId) {
+
+        return dbClient.withTransaction(
+                        connection -> {
+                                        return     bookRepository.getAll(connection, pingId)
+                                                    .map(result -> {
+                                                        return result.stream()
+                                                                .map(BookGetByIdResponse::new)
+                                                                .collect(Collectors.toList());
+                                                    });
+                        })
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read all books", success)))
+                .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read all books", throwable.getMessage())));
+    }
+
+
+
+
+
+
     /**
      * Read one book
      *

@@ -25,6 +25,12 @@ public class PingListGetByIdResponse implements Serializable {
 
     @JsonProperty(value = "desc_info")
     private String descInfo;
+    @JsonProperty(value = "status")
+    private String status;
+
+
+    @JsonProperty(value = "reports")
+    private String reports;
 
     public PingListGetByIdResponse(PingList book) {
         this.pingId = book.getPingId();
@@ -32,6 +38,8 @@ public class PingListGetByIdResponse implements Serializable {
         this.sourceId = book.getSourceId();
         this.targetId = book.getTargetId();
         this.descInfo = book.getDescInfo();
+        this.status = book.getStatus();
+        this.reports = book.getReports();
     }
 
 

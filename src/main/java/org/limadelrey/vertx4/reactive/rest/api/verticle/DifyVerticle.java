@@ -33,6 +33,11 @@ public class DifyVerticle extends AbstractVerticle {
         vertx.eventBus().consumer("chat_to_1").handler(eventBusHandler::handler1);
 
 
+       //分析
+        vertx.eventBus().consumer("analysis").handler(eventBusHandler::analysis);
+
+
+
         promise.complete();
         LOGGER.info("Verticle started!");
     }

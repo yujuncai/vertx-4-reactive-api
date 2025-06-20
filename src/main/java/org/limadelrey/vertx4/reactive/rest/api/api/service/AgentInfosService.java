@@ -32,17 +32,17 @@ public class AgentInfosService {
 
 
     public Future<AgentInfosGetAllResponse> readAll(String p,
-                                              String l) {
+                                              String l, String type) {
 
         return dbClient.withTransaction(
                 connection -> {
                     final int page = QueryUtils.getPage(p);
                     final int limit = QueryUtils.getLimit(l);
                     final int offset = QueryUtils.getOffset(page, limit);
-                    LOGGER.info("page {}  , limit {} ,  offset {}" , page, limit, offset);
-                    return agentInfosRepository.count(connection)
+                    LOGGER.info("page {}  , limit {} ,  offset {} ,type {}" , page, limit, offset,type);
+                    return agentInfosRepository.count(connection,type)
                             .flatMap(total ->
-                                    agentInfosRepository.selectAll(connection, limit, offset)
+                                    agentInfosRepository.selectAll(connection, limit, offset,type)
                                             .map(result -> {
                                                 final List<AgentInosGetByIdResponse> users = result.stream()
                                                         .map(AgentInosGetByIdResponse::new)

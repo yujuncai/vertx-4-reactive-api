@@ -59,7 +59,7 @@ public class BookRouter {
         router.get("/rest-books/:pingId/:page/:limit").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
         router.get("/rest-books/:id").handler(bookValidationHandler.readOne()).handler(bookHandler::readOne);
 
-        router.get("/rest-agents/:page/:limit").handler(agentValidationHandler.readAll()).handler(agentHandler::readAll);
+        router.get("/rest-agents/:type/:page/:limit").handler(agentValidationHandler.readAll()).handler(agentHandler::readAll);
         router.get("/rest-agents/:id").handler(agentValidationHandler.readOne()).handler(agentHandler::readOne);
         router.delete("/rest-agents/:id").handler(agentValidationHandler.delete()).handler(agentHandler::delete);
 
@@ -80,13 +80,11 @@ public class BookRouter {
         router.post("/rest-agent2agent").handler(agentHandler::chatToAgent);
         //router.get("/rest-chat-history").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
 
-
-
         router.get("/rest-ping/:page/:limit").handler(pingValidationHandler.readAll()).handler(pingHandler::readAll);
 
 
 
-
+        router.get("/rest-analysis/:pingId").handler(bookHandler::analysis);
 
 
       /*  router.get("/rest-chat-history/:pingId").handler(TimeoutHandler.create(99999999)).handler(ctx -> {

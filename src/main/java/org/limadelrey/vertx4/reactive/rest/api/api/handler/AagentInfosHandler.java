@@ -43,8 +43,8 @@ public class AagentInfosHandler {
     public Future<AgentInfosGetAllResponse> readAll(RoutingContext rc) {
         final String page = StrUtil.isEmpty(rc.pathParam(PAGE_PARAMETER))?rc.queryParams().get(PAGE_PARAMETER):rc.pathParam(PAGE_PARAMETER);
         final String limit = StrUtil.isEmpty(rc.pathParam(LIMIT_PARAMETER))?rc.queryParams().get(LIMIT_PARAMETER):rc.pathParam(LIMIT_PARAMETER);
-
-        return service.readAll(page, limit)
+        final String type = StrUtil.isEmpty(rc.pathParam("type"))?rc.queryParams().get("type"):rc.pathParam("type");
+        return service.readAll(page, limit,type)
                 .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<AgentInfosGetAllResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));
     }
@@ -107,6 +107,8 @@ public class AagentInfosHandler {
                 p.setSourceId(param.getSid());
                 p.setTargetId(param.getTid());
                 p.setDescInfo(param.getDesc());
+                p.setStatus("0");
+                p.setReports("");
                 PingListGetByIdResponse result = pingListService.create(p).result();
 
                 JsonObject roleInfo = JsonObject.mapFrom(result1);
