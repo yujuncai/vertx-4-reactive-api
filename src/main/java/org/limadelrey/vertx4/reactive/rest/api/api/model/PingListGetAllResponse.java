@@ -19,17 +19,17 @@ public class PingListGetAllResponse implements Serializable {
     @JsonProperty(value = "page")
     private final int page;
 
-    @JsonProperty(value = "list")
+    @JsonProperty(value = "lists")
     private final List<PingListGetByIdResponse> lists;
 
     public PingListGetAllResponse(int total,
                                   int limit,
                                   int page,
-                                  List<PingListGetByIdResponse> books) {
+                                  List<PingListGetByIdResponse> lists) {
         this.total = total;
         this.limit = limit;
         this.page = page;
-        this.lists = books;
+        this.lists = lists;
     }
 
     public int getTotal() {
@@ -44,7 +44,7 @@ public class PingListGetAllResponse implements Serializable {
         return page;
     }
 
-    public List<PingListGetByIdResponse> getBooks() {
+    public List<PingListGetByIdResponse> getLists() {
         return lists;
     }
 

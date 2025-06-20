@@ -20,8 +20,12 @@ public class BookRouter {
 
     private final RolesValidationHandler rolesValidationHandler=GuiceUtil.getGuice().getInstance(RolesValidationHandler.class);
 
+    private final PingValidationHandler pingValidationHandler=GuiceUtil.getGuice().getInstance(PingValidationHandler.class);
     private final AagentInfosHandler agentHandler= GuiceUtil.getGuice().getInstance(AagentInfosHandler.class);
     private final RolesHandler rolesHandler= GuiceUtil.getGuice().getInstance(RolesHandler.class);
+
+    private final PingHandler pingHandler= GuiceUtil.getGuice().getInstance(PingHandler.class);
+
     private final JwtAuthHandler jwtAuthHandler= GuiceUtil.getGuice().getInstance(JwtAuthHandler.class);
 
     public BookRouter() {
@@ -52,10 +56,10 @@ public class BookRouter {
 
 
 
-        router.get("/rest-books").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
+        router.get("/rest-books/:pingId/:page/:limit").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
         router.get("/rest-books/:id").handler(bookValidationHandler.readOne()).handler(bookHandler::readOne);
 
-        router.get("/rest-agents").handler(agentValidationHandler.readAll()).handler(agentHandler::readAll);
+        router.get("/rest-agents/:page/:limit").handler(agentValidationHandler.readAll()).handler(agentHandler::readAll);
         router.get("/rest-agents/:id").handler(agentValidationHandler.readOne()).handler(agentHandler::readOne);
         router.delete("/rest-agents/:id").handler(agentValidationHandler.delete()).handler(agentHandler::delete);
 
@@ -63,7 +67,7 @@ public class BookRouter {
         router.post("/rest-agents").handler(agentValidationHandler.create()).handler(agentHandler::create);
 
 
-        router.get("/rest-roles").handler(rolesValidationHandler.readAll()).handler(rolesHandler::readAll);
+        router.get("/rest-roles/:page/:limit").handler(rolesValidationHandler.readAll()).handler(rolesHandler::readAll);
         router.get("/rest-roles/:id").handler(rolesValidationHandler.readOne()).handler(rolesHandler::readOne);
         router.delete("/rest-roles/:id").handler(rolesValidationHandler.delete()).handler(rolesHandler::delete);
         router.put("/rest-roles/:id").handler(rolesValidationHandler.update()).handler(rolesHandler::update);
@@ -74,9 +78,15 @@ public class BookRouter {
 
 
         router.post("/rest-agent2agent").handler(agentHandler::chatToAgent);
+        //router.get("/rest-chat-history").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
 
 
-        router.get("/rest-chat-history").handler(bookValidationHandler.readAll()).handler(bookHandler::readAll);
+
+        router.get("/rest-ping/:page/:limit").handler(pingValidationHandler.readAll()).handler(pingHandler::readAll);
+
+
+
+
 
 
       /*  router.get("/rest-chat-history/:pingId").handler(TimeoutHandler.create(99999999)).handler(ctx -> {

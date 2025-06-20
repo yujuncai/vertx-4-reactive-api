@@ -17,7 +17,7 @@ public class BookRepository {
 
     private static final Logger LOGGER = LogManager.getLogger(BookRepository.class);
 
-    private static final String SQL_SELECT_ALL = "SELECT * FROM books where ping_id = #{pingId} LIMIT #{limit} OFFSET #{offset}";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM books where ping_id = #{pingId} order by id desc LIMIT #{limit} OFFSET #{offset} ";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM books WHERE id = #{id}";
     private static final String SQL_INSERT = "INSERT INTO books (querys, answer, agent_id, type, create_time,ping_id) " +
             "VALUES (#{querys}, #{answer}, #{agent_id}, #{type}, NOW(),#{ping_id} ) ";

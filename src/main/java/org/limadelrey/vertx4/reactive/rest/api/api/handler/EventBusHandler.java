@@ -1,5 +1,7 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -10,13 +12,20 @@ import io.vertx.ext.web.codec.BodyCodec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.limadelrey.vertx4.reactive.rest.api.api.model.Book;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetAllResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.BookGetByIdResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.service.BookService;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.vos.AnswerParam;
 
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.List;
+
 
 public class EventBusHandler {
+
+
     public EventBusHandler() {
 
     }
@@ -120,65 +129,48 @@ public class EventBusHandler {
         JsonObject target_dify_json = body.getJsonObject("target_dify_json");
 
 
-        Future<AnswerParam> target = chatToDify(targetJson,target_dify_json);
-        target.onSuccess(answerParam -> {
-            LOGGER.info("INFO 1 {}", answerParam);
-            Book book = new Book();
-            book.setAgentId(targetJson.getString("apikey"));
-            book.setAnswer(answerParam.getAnswer());
-            book.setQuerys(target_dify_json.getString("query"));
-            book.setType(1);
-            book.setCreateTime(Instant.now());
-            book.setPingId(body.getString("pingId"));
-            bookService.create(book);
-
-            target_dify_json.put("conversation_id",answerParam.getCoverId());
 
 
+        Future<String> future = xBookList(body.getString("pingId"), target_dify_json);
+        future.onSuccess(result -> {
+            //灌history
+            LOGGER.info("result---------------->  {}", result);
+            target_dify_json.put("history", result);
+            Future<AnswerParam> target = chatToDify(targetJson,target_dify_json);
+            target.onSuccess(answerParam -> {
+                LOGGER.info("INFO 1 {}", answerParam);
+                Book book = new Book();
+                book.setAgentId(targetJson.getString("apikey"));
+                book.setAnswer(answerParam.getAnswer());
+                book.setQuerys(target_dify_json.getString("query"));
+                book.setType(1);
+                book.setCreateTime(Instant.now());
+                book.setPingId(body.getString("pingId"));
+                bookService.create(book);
+                target_dify_json.put("conversation_id",answerParam.getCoverId());
+                if(answerParam.getAnswer().contains("请点击立即转账")){
+                    LOGGER.info("INFO 1 {}", "转账流程以是最后一步，结束测试！");
+                    return;
+                }
+                body.put("loop",body.getInteger("loop")-1);
+                Integer loop = body.getInteger("loop");
+                if(loop<0){
+                    LOGGER.info("INFO 1 {}", "looped!!!!!!!!!!!!!!!!!!!！");
+                    return;
+                }
+                JsonObject sourceJson = body.getJsonObject("source_dify_json");
+                sourceJson.put("query",answerParam.getAnswer());
+                vertx.eventBus().send("chat_to_0", body);
 
-           /* HttpServerResponse sse = SseMap.sseClients.get(targetJson.getString("pingId"));
-            if(!sse.closed()) {
-                JSONObject entries = JSONUtil.parseObj(book);
-                entries.put("type", "history-item");
-                String data = JSONUtil.toJsonStr(entries);
-                String event = """
-                        data: %s
-                        event: history-data
-                        \n\n
-                        """.formatted(data);
-                LOGGER.info("---------发送数据-------------- {}", event);
-                sse.write(event);
-            }*/
-
-
-
-
-            if(answerParam.getAnswer().contains("请点击立即转账")){
-                LOGGER.info("INFO 1 {}", "转账流程以是最后一步，结束测试！");
-                return;
-            }
-
-
-
-            body.put("loop",body.getInteger("loop")-1);
-            Integer loop = body.getInteger("loop");
-            if(loop<0){
-                LOGGER.info("INFO 1 {}", "looped!!!!!!!!!!!!!!!!!!!！");
-                return;
-            }
-
-
-            JsonObject sourceJson = body.getJsonObject("source_dify_json");
-            sourceJson.put("query",answerParam.getAnswer());
-            vertx.eventBus().send("chat_to_0", body);
-
-
-
-
+            }).onFailure(throwable -> {
+                LOGGER.info("Error ", throwable);
+            });
 
         }).onFailure(throwable -> {
             LOGGER.info("Error ", throwable);
         });
+
+
     }
 
 
@@ -210,4 +202,44 @@ public class EventBusHandler {
     }
 
 
+
+
+    private Future<String>   xBookList(String pingId,JsonObject target_dify_json){
+        Promise promise = Promise.promise();
+        Future<BookGetAllResponse> bookGetAllResponseFuture = bookService.readAll("1", "10", pingId).onSuccess(s -> {
+            String history = "";
+
+            if(CollectionUtil.isEmpty(s.getBooks())){
+                promise.future();
+            }
+
+            List<BookGetByIdResponse> list = s.getBooks().stream()
+                    .sorted(Comparator.comparing(BookGetByIdResponse::getId))
+                    .toList();
+            for (BookGetByIdResponse book : list) {
+              /*  "
+                'time: 2025-06-19 20:21:06.000',
+                 'user: 我要给张三转账',
+                 'assistant: 您要转账的张三，我这边没有找到匹配的转账好友，请提供收款人账号或确认是否为陌生人转账。',
+                "*/
+
+                String answer = book.getAnswer();
+                if(StrUtil.isNotBlank(answer)&&answer.contains("@!@")){
+                    String[] split = answer.split("@!@");
+                        if(split.length>=1){
+                            answer=split[0];
+                        }
+                }
+
+                String x = String.format("'time: %s'\n'user: %s'\n'assistant: %s'\n",
+                        book.getCreateTime().toString(),
+                        book.getQuerys(),
+                        answer);
+                history += x;
+            }
+            promise.complete(history);
+        });
+
+        return promise.future();
+    }
 }

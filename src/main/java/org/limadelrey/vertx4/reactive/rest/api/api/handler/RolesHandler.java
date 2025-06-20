@@ -1,5 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.handler;
 
+import cn.hutool.core.util.StrUtil;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;
@@ -34,8 +35,8 @@ public class RolesHandler {
      * @return BookGetAllResponse
      */
     public Future<RolesGetAllResponse> readAll(RoutingContext rc) {
-        final String page = rc.queryParams().get(PAGE_PARAMETER);
-        final String limit = rc.queryParams().get(LIMIT_PARAMETER);
+        final String page = StrUtil.isEmpty(rc.pathParam(PAGE_PARAMETER))?rc.queryParams().get(PAGE_PARAMETER):rc.pathParam(PAGE_PARAMETER);
+        final String limit = StrUtil.isEmpty(rc.pathParam(LIMIT_PARAMETER))?rc.queryParams().get(LIMIT_PARAMETER):rc.pathParam(LIMIT_PARAMETER);
         return service.readAll(page, limit)
                 .onSuccess(success -> ResponseUtils.buildOkResponse(rc, new Result<RolesGetAllResponse>().ok(success)))
                 .onFailure(throwable -> ResponseUtils.buildErrorResponse(rc, throwable));

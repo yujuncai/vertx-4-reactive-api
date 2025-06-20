@@ -6,7 +6,9 @@ import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.limadelrey.vertx4.reactive.rest.api.api.model.*;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.PingList;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.PingListGetAllResponse;
+import org.limadelrey.vertx4.reactive.rest.api.api.model.PingListGetByIdResponse;
 import org.limadelrey.vertx4.reactive.rest.api.api.repository.PingListRepository;
 import org.limadelrey.vertx4.reactive.rest.api.guice.GuiceUtil;
 import org.limadelrey.vertx4.reactive.rest.api.utils.DbUtils;
@@ -50,15 +52,15 @@ public class PingListService {
                             .flatMap(total ->
                                     pingListRepository.selectAll(connection, limit, offset)
                                             .map(result -> {
-                                                final List<PingListGetByIdResponse> books = result.stream()
+                                                final List<PingListGetByIdResponse> lists = result.stream()
                                                         .map(PingListGetByIdResponse::new)
                                                         .collect(Collectors.toList());
 
-                                                return new PingListGetAllResponse(total, limit, page, books);
+                                                return new PingListGetAllResponse(total, limit, page, lists);
                                             })
                             );
                 })
-                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read all books", success.getBooks())))
+                .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Read all books", success.getLists())))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Read all books", throwable.getMessage())));
     }
 
@@ -122,5 +124,6 @@ public class PingListService {
                 .onSuccess(success -> LOGGER.info(LogUtils.REGULAR_CALL_SUCCESS_MESSAGE.buildMessage("Delete one book", id)))
                 .onFailure(throwable -> LOGGER.error(LogUtils.REGULAR_CALL_ERROR_MESSAGE.buildMessage("Delete one book", throwable.getMessage())));
     }
+
 
 }
