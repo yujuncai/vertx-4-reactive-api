@@ -77,7 +77,7 @@ public class EventBusHandler {
             tinputs.put("history","");
             target_dify_json.put("inputs",tinputs);
             target_dify_json.put("conversation_id","");
-            target_dify_json.put("user",roles.getString("role_name"));
+            target_dify_json.put("user",roles.getString("role_value"));
             target_dify_json.put("query",answerParam.getAnswer());
             body.put("target_dify_json",target_dify_json);
             vertx.eventBus().send("chat_to_1", body);
@@ -142,7 +142,9 @@ public class EventBusHandler {
         future.onSuccess(result -> {
             //灌history
             LOGGER.info("result---------------->  {}", result);
-            target_dify_json.put("history", result);
+            JsonObject inputs = target_dify_json.getJsonObject("inputs");
+            inputs.put("history", result);
+          //  target_dify_json.put("history", result);
             Future<AnswerParam> target = chatToDify(targetJson,target_dify_json);
             target.onSuccess(answerParam -> {
                 LOGGER.info("INFO 1 {}", answerParam);
@@ -155,10 +157,10 @@ public class EventBusHandler {
                 book.setPingId(body.getString("pingId"));
                 bookService.create(book);
                 target_dify_json.put("conversation_id",answerParam.getCoverId());
-                if(answerParam.getAnswer().contains("请点击立即转账")){
+                /*if(answerParam.getAnswer().contains("请点击立即转账")){
                     LOGGER.info("INFO 1 {}", "转账流程以是最后一步，结束测试！");
                     return;
-                }
+                }*/
 
                 JsonObject sourceJson = body.getJsonObject("source_dify_json");
                 sourceJson.put("query",answerParam.getAnswer());

@@ -29,7 +29,7 @@ public class MainVerticle extends AbstractVerticle {
     private Future<String> deployApiVerticle(Vertx vertx) {
         return vertx.deployVerticle(ApiVerticle.class.getName(),
                 new DeploymentOptions()
-                        .setInstances(Runtime.getRuntime().availableProcessors() / 4).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
+                        .setInstances(Runtime.getRuntime().availableProcessors() ).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
         );
 
 
@@ -38,7 +38,7 @@ public class MainVerticle extends AbstractVerticle {
     private Future<String> deployDifyVerticle(Vertx vertx) {
         return vertx.deployVerticle(DifyVerticle.class.getName(),
                 new DeploymentOptions()
-                        .setInstances(Runtime.getRuntime().availableProcessors() / 4).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
+                        .setInstances(Runtime.getRuntime().availableProcessors() ).setThreadingModel(ThreadingModel.VIRTUAL_THREAD)
         );
 
 
