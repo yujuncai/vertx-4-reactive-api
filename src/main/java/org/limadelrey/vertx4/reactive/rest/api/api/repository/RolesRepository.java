@@ -20,9 +20,9 @@ public class RolesRepository {
 
     private static final String SQL_SELECT_ALL = "SELECT * FROM roles  LIMIT #{limit} OFFSET #{offset}";
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM roles WHERE id = #{id}";
-    private static final String SQL_INSERT = "INSERT INTO roles (id,role_name,role_prompt) " +
-            "VALUES (#{id}, #{role_name}, #{role_prompt} ) ";
-    private static final String SQL_UPDATE = "UPDATE roles SET role_name = #{role_name}, role_prompt = #{role_prompt} WHERE id = #{id}";
+    private static final String SQL_INSERT = "INSERT INTO roles (id,role_name,role_prompt,role_value) " +
+            "VALUES (#{id}, #{role_name}, #{role_prompt} ,#{role_value}) ";
+    private static final String SQL_UPDATE = "UPDATE roles SET role_name = #{role_name}, role_prompt = #{role_prompt},role_value = #{role_value} WHERE id = #{id}";
     private static final String SQL_DELETE = "DELETE FROM roles WHERE id = #{id}";
     private static final String SQL_COUNT = "SELECT COUNT(*) AS total FROM roles ";
 

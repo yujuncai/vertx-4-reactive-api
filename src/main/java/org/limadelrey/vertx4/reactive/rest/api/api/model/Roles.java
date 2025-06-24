@@ -20,4 +20,9 @@ public class Roles implements Serializable {
 
     @JsonProperty(value = "role_prompt")
     private String rolePrompt;
+
+    @JsonProperty(value = "role_value")
+    private String roleValue;
+
+
 }

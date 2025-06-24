@@ -3,7 +3,7 @@ package org.limadelrey.vertx4.reactive.rest.api.utils;
 public class QueryUtils {
 
     private static final int DEFAULT_PAGE = 1;
-    private static final int DEFAULT_LIMIT = 20;
+    private static final int DEFAULT_LIMIT = 50;
 
     private QueryUtils() {
 

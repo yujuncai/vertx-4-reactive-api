@@ -54,7 +54,7 @@ public class EventBusHandler {
         dify_json.put("inputs",inputs);
         dify_json.put("query","开始扮演");
         dify_json.put("conversation_id","");
-        dify_json.put("user",roles.getString("role_name"));
+        dify_json.put("user",roles.getString("role_value"));
 
 
         Future<AnswerParam> source = chatToDify(sourceJson,dify_json);
@@ -130,7 +130,12 @@ public class EventBusHandler {
         JsonObject targetJson = body.getJsonObject("target");
         JsonObject target_dify_json = body.getJsonObject("target_dify_json");
 
-
+        body.put("loop",body.getInteger("loop")-1);
+        Integer loop = body.getInteger("loop");
+        if(loop<0){
+            LOGGER.info("INFO 1 {}", "looped!!!!!!!!!!!!!!!!!!!！");
+            return;
+        }
 
 
         Future<String> future = xBookList(body.getString("pingId"), target_dify_json);
@@ -154,12 +159,7 @@ public class EventBusHandler {
                     LOGGER.info("INFO 1 {}", "转账流程以是最后一步，结束测试！");
                     return;
                 }
-                body.put("loop",body.getInteger("loop")-1);
-                Integer loop = body.getInteger("loop");
-                if(loop<0){
-                    LOGGER.info("INFO 1 {}", "looped!!!!!!!!!!!!!!!!!!!！");
-                    return;
-                }
+
                 JsonObject sourceJson = body.getJsonObject("source_dify_json");
                 sourceJson.put("query",answerParam.getAnswer());
                 vertx.eventBus().send("chat_to_0", body);

@@ -18,11 +18,13 @@ public class RolesGetByIdResponse implements Serializable {
 
     @JsonProperty(value = "role_prompt")
     private String rolePrompt;
-
+    @JsonProperty(value = "role_value")
+    private String roleValue;
     public RolesGetByIdResponse(Roles book) {
         this.id = book.getId();
         this.roleName = book.getRoleName();
         this.rolePrompt = book.getRolePrompt();
+        this.roleValue = book.getRoleValue();
     }
 
 

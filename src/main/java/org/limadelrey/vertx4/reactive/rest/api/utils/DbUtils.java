@@ -54,12 +54,21 @@ public class DbUtils {
         Vertx vertx = Vertx.currentContext().owner();
 
 
+        String dbHost = System.getenv().getOrDefault("DB_HOST",  properties.getProperty(HOST_CONFIG));
+        int dbPort = Integer.parseInt(System.getenv().getOrDefault("DB_PORT", properties.getProperty(PORT_CONFIG)));
+        String dbName = System.getenv().getOrDefault("DB_NAME",  properties.getProperty(DATABASE_CONFIG));
+        String dbUser = System.getenv().getOrDefault("DB_USER", properties.getProperty(USERNAME_CONFIG));
+        String dbPassword = System.getenv().getOrDefault("DB_PASSWORD", properties.getProperty(PASSWORD_CONFIG));
+
+
+
+
         final PgConnectOptions connectOptions = new PgConnectOptions()
-                .setPort(Integer.parseInt(properties.getProperty(PORT_CONFIG)))
-                .setHost(properties.getProperty(HOST_CONFIG))
-                .setDatabase(properties.getProperty(DATABASE_CONFIG))
-                .setUser(properties.getProperty(USERNAME_CONFIG))
-                .setPassword(properties.getProperty(PASSWORD_CONFIG))
+                .setPort(dbPort)
+                .setHost(dbHost)
+                .setDatabase(dbName)
+                .setUser(dbUser)
+                .setPassword(dbPassword)
                 .setReconnectAttempts(10)
                 .setReconnectInterval(1000);
 

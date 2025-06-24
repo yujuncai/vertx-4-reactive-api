@@ -1,6 +1,5 @@
 package org.limadelrey.vertx4.reactive.rest.api.api.service;
 
-import cn.hutool.core.lang.UUID;
 import com.google.inject.Singleton;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Pool;
@@ -86,7 +85,7 @@ public class PingListService {
      * @return BookGetByIdResponse
      */
     public Future<PingListGetByIdResponse> create(PingList book) {
-        book.setPingId(UUID.fastUUID().toString());
+      //  book.setPingId(UUID.fastUUID().toString());
         return dbClient.withTransaction(
                 connection -> pingListRepository.insert(connection, book)
                         .map(PingListGetByIdResponse::new))
