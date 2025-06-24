@@ -1,9 +1,6 @@
 package org.limadelrey.vertx4.reactive.rest.api;
 
 import cn.hutool.core.util.URLUtil;
-import cn.hutool.crypto.SecureUtil;
-
-import java.net.URL;
 
 public class Test {
     public static void main(String[] args) {
@@ -12,15 +9,7 @@ public class Test {
         System.out.println( URLUtil.getPath(path));
 
         String normalize = URLUtil.normalize(path);
-
-        URL url = URLUtil.url(normalize);
-
-        System.out.println(url.getProtocol());
-        System.out.println(url.getHost());
-        System.out.println(url.getPort());
-
-
-        String sha1Hex = SecureUtil.sha1("aaaaaa");
-        System.out.println(sha1Hex);
+        System.out.println( normalize);
+        System.out.println(Runtime.getRuntime().availableProcessors()/16 == 0 ?1 : Runtime.getRuntime().availableProcessors()/16);
     }
 }
